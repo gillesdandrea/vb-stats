@@ -1,0 +1,21 @@
+.vb-board {
+  margin: 1rem 1rem;
+
+  .ant-table-body {
+    height: calc(100vh - 9.5rem);
+  }
+
+  .table-row-disabled {
+    color: #444444;
+  }
+
+  .trophies {
+    display: flex;
+    flex-direction: row;
+
+    .trophy {
+      width: 3rem;
+      text-align: right;
+    }
+  }
+}
