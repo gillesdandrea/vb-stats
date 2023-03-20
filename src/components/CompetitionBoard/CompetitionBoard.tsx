@@ -39,14 +39,14 @@ const getMatch = (match: Match, selected: Team) => {
 };
 
 export const getTrophies = (competition: Competition, team: Team, selected?: Team) => {
-  const rankings = Array(competition.days)
+  const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
-  const firsts = Array(competition.days)
+  const firsts = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
   if (selected && selected !== team) {
-    const matchs = selected.matchs.filter((match: Match) => match.teamA === team || match.teamB === team);
+    const matchs = selected.stats.matchs.filter((match: Match) => match.teamA === team || match.teamB === team);
     const pool = matchs.length > 0 ? getPool(competition, selected, matchs[0].day) : [];
     const host = pool.length === 3 ? pool[0].name : '';
 
@@ -56,7 +56,9 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
         {getDayDistance(competition, selected, match.day)}
         {firsts[match.day - 1] === 2 ? '*' : ''}
         &nbsp;
-        {match.winner === undefined ? null : match.winner === selected ? (
+        {match.winner === undefined ? (
+          match.date
+        ) : match.winner === selected ? (
           <CheckCircleTwoTone twoToneColor="green" />
         ) : (
           <CloseCircleTwoTone twoToneColor="red" />
@@ -142,7 +144,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
       title: 'Competition',
       key: 'competition',
       align: 'left',
-      // width: `${competition.days * 3 + 1.75}rem`,
+      // width: `${competition.lastDays * 3 + 1.75}rem`,
       ellipsis: true,
       render: (team: Team) => getTrophies(competition, team, selectedTeam),
     },
@@ -159,7 +161,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) => (team.stats.lastDay < competition.days ? 'table-row-disabled' : '')}
+        rowClassName={(team: Team, index) => (team.stats.lastDay < competition.lastDay ? 'table-row-disabled' : '')}
         rowKey={(team: Team) => team.id}
         rowSelection={{
           type: 'radio',

@@ -22,10 +22,10 @@ const Shell = () => {
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
     const data = await fetchData();
     const seasons = Object.keys(data);
-    const season = seasons[seasons.length - 1];
-    setSeason(seasons[seasons.length - 1]);
+    const season = seasons[0];
+    setSeason(season);
     const categories = Object.keys(data[season]);
-    const category = categories[categories.length - 1];
+    const category = categories[0];
     setCategory(category);
     const competitionCollection = createCompetitionCollection(data);
     return competitionCollection;

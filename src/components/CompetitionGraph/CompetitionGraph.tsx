@@ -24,19 +24,21 @@ const CompetitionGraph = ({ competition, className }: Props) => {
     () =>
       getGraph(
         competition,
-        (team: Team, index: number) => team.stats.lastDay >= competition.days,
+        (team: Team, index: number) => team.stats.lastDay >= competition.lastDay,
         //
-        // (team: Team, index: number) => team.stats.lastDay >= competition.days,
-        // (match: Match) => match.day === competition.days,
+        // (team: Team, index: number) => team.stats.lastDay >= competition.lastDay,
+        // (match: Match) => match.day === competition.lastDay,
         //
         // (team: Team, index: number) =>
-        //   team.stats.lastDay >= competition.days && getDayRanking(competition, team, competition.days) < 3,
+        //   team.stats.lastDay >= competition.lastDay &&
+        //   (getDayRanking(competition, team, competition.lastDay) < 3 || team.id === '0836296'),
         // (match: Match) => !match.winner,
       ),
     [competition],
   );
 
-  console.log('rendering CompetitionGraph');
+  // console.log('rendering CompetitionGraph');
+  console.log(dot);
   return (
     <div className={cx('vb-graph', className)}>
       <Graphviz

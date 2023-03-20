@@ -30,10 +30,10 @@ const getColor = (match: Match) => {
 };
 
 export const getTrophies = (competition: Competition, team: Team): string => {
-  const rankings = Array(competition.days)
+  const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
-  const firsts = Array(competition.days)
+  const firsts = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
   const trophies =
@@ -56,7 +56,8 @@ const getTeamNode = (competition: Competition, team: Team, index: number): strin
   const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
   // const eliminated = countLastDayVictories(team) === 0;
   const trophies = getTrophies(competition, team);
-  const eliminated = getDayRanking(competition, team, competition.days - 1) === 3; // rankings[days - 1] !== 1 && rankings[days - 1] !== 2;
+  const dayRanking = getDayRanking(competition, team, competition.lastDay);
+  const eliminated = dayRanking !== 1 && dayRanking !== 2;
   const pre = eliminated ? '<s>' : '';
   const post = eliminated ? '</s>' : '';
   const [mean, stdev] = getTeamOpposition(team);
@@ -86,9 +87,10 @@ const getMatchEdge = (competition: Competition, match: Match) => {
     .join(',')}\\n${proba.toFixed(1)}%`;
   const tooltip = `${match.teamA.name} - ${match.teamB.name}`;
   const style = match.winner ? '' : ' style="dashed"';
-  const width = match.day === competition.days ? ' penwidth=3' : '';
+  const width = match.day === competition.lastDay ? ' penwidth=3' : '';
+  const weight = `weight=${match.day}`;
   const dir = match.victory === Victory.Unplayed && Math.round(10 * proba) === 500 ? ' dir="none"' : '';
-  return `T${teamW.id} -> T${teamL.id} [color="${getColor(
+  return `T${teamW.id} -> T${teamL.id} [${weight} color="${getColor(
     match,
   )}" edgetooltip="${label}" label="${label}" labeltooltip="${tooltip}"${predicted}${width}${style}${dir}]`;
   // return `T${teamW.id} -> T${teamL.id} [color="${getColor(match)}" edgetooltip="${label}" taillabel="${label}"]`;

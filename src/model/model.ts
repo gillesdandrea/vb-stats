@@ -17,13 +17,28 @@ const SET_RANKING = true;
 
 export type CompetitionCollection = Record<string, Record<string, Competition>>;
 
+// TODO
+export interface Pool {
+  name: string;
+  teams: Team[];
+}
+
+// TODO
+export interface DayCompetition {
+  day: number;
+  pools: Pool[];
+  matchs: Match[];
+  // teams?
+}
+
 export interface Competition {
   name: string;
   season: string;
   category: string;
   teams: Map<string, Team>;
   matchs: Match[];
-  days: number;
+  days: DayCompetition[]; // TODO
+  lastDay: number; // last played day
 }
 
 export const createCompetition = (name: string, season: string, category: string): Competition => {
@@ -33,12 +48,13 @@ export const createCompetition = (name: string, season: string, category: string
     category,
     teams: new Map<string, Team>(),
     matchs: [],
-    days: 0,
+    days: [],
+    lastDay: 0,
   };
   return competition;
 };
 
-export interface Stats {
+interface BaseStats {
   rating: Rating;
   points: number;
   matchCount: number;
@@ -48,17 +64,31 @@ export interface Stats {
   setLost: number;
   pointWon: number;
   pointLost: number;
+  matchs: Match[];
+}
+
+export interface Stats extends BaseStats {
   lastDay: number;
-  ratings: Record<number, Rating>;
-  rankings: Record<number, number>; // pool rankings per day
+  ratings: Record<number, Rating>; // TODO
+  rankings: Record<number, number>; // TODO pool rankings per day
+}
+
+// TODO
+export interface DayStats extends BaseStats {
+  day: number;
+  pool: Pool;
+  globalRanking: number;
+  regionRanking: number;
+  poolRanking: number;
 }
 
 export interface Team {
   id: string;
   name: string;
   department: Department;
-  matchs: Match[];
-  stats: Stats;
+  // matchs: Match[];
+  stats: Stats; // TODO rename as  gstats
+  dstats: DayStats[]; // TODO
 }
 
 export interface Score {
@@ -97,10 +127,6 @@ export interface Match {
   winProbability: number;
   victory: Victory;
 }
-
-// const teams = new Map<string, Team>();
-// export const matchs: Match[] = [];
-// export let days = 0;
 
 export const defineRating = (team: Team, day: number, rating = team.stats.rating) => {
   if (!team.stats.ratings[day]) {
@@ -245,7 +271,7 @@ export const getUncachedDayRanking = (competition: Competition, team1: Team, day
 
 // returns [mean, standard deviation] of opposition (chance to lose)
 export const getTeamOpposition = (team: Team): [number, number] => {
-  const oppositions = team.matchs.map((match: Match) =>
+  const oppositions = team.stats.matchs.map((match: Match) =>
     match.teamA === team ? 1 - match.winProbability : match.winProbability,
   );
   // team.matchs.forEach((match: Match, index: number) => {
@@ -279,7 +305,6 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
     id,
     name: name ?? id,
     department: getDepartment(id.substring(1, 3)) ?? 'N/A',
-    matchs: [],
     stats: {
       rating,
       points: 0,
@@ -293,7 +318,9 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
       lastDay: 0,
       ratings: { 0: rating },
       rankings: { 0: 0 },
+      matchs: [],
     },
+    dstats: [],
   };
   competition.teams.set(id, newTeam);
   return newTeam;
@@ -393,13 +420,13 @@ export const createMatch = (competition: Competition, data: any): Match => {
 
 export const addMatch = (competition: Competition, match: Match) => {
   const { teamA, teamB, winner, setA, setB, day } = match;
-  if (winner && competition.days < day) {
-    competition.days = day;
+  if (winner && competition.lastDay < day) {
+    competition.lastDay = day;
   }
 
   competition.matchs.push(match);
-  teamA.matchs.push(match);
-  teamB.matchs.push(match);
+  teamA.stats.matchs.push(match);
+  teamB.stats.matchs.push(match);
   if (!winner) {
     return;
   }

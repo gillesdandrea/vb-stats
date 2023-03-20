@@ -4,6 +4,7 @@
 
 - [ ] ranking, rating, etc. history
 - [ ] Team localisation to compute distance for each competition days
+- [x] Set more weight on last match edges.
 
 ## Technical
 
