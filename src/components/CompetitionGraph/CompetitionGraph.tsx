@@ -38,7 +38,7 @@ const CompetitionGraph = ({ competition, className }: Props) => {
   );
 
   // console.log('rendering CompetitionGraph');
-  console.log(dot);
+  // console.log(dot);
   return (
     <div className={cx('vb-graph', className)}>
       <Graphviz
