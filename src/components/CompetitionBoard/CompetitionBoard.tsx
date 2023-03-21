@@ -150,7 +150,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
     },
   ];
 
-  console.log('rendering CompetitionBoard');
+  // console.log('rendering CompetitionBoard');
   return (
     <div className={cx('vb-board', className)}>
       <Table<Team>

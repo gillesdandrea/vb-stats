@@ -55,7 +55,7 @@ const Shell = () => {
   const categories = Object.keys(competitions && season ? competitions[season] : {});
   const competition = competitions && season && category ? competitions[season][category] : undefined;
 
-  console.log('rendering Shell');
+  // console.log('rendering Shell');
   return (
     <Layout style={{ height: '100vh' }}>
       <Layout.Header>
