@@ -55,7 +55,7 @@ const Shell = () => {
   const categories = Object.keys(competitions && season ? competitions[season] : {});
   const competition = competitions && season && category ? competitions[season][category] : undefined;
 
-  console.log('rendering Shell');
+  // console.log('rendering Shell');
   return (
     <Layout style={{ height: '100vh' }}>
       <Layout.Header>
@@ -69,7 +69,7 @@ const Shell = () => {
           ]}
           tabBarExtraContent={
             <Space size={'middle'}>
-              <span style={{ fontSize: '1.25rem' }}>{competition?.name}</span>
+              <span style={{ fontSize: '1rem' }}>{competition?.name}</span>
               <Radio.Group onChange={(e: RadioChangeEvent) => setCategory(e.target.value)} defaultValue={category}>
                 {categories.map((category) => (
                   <Radio.Button key={category} value={category}>

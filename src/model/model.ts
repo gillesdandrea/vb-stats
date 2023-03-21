@@ -331,36 +331,40 @@ enum Sorting {
   RATING,
 }
 
+// Sorting.RATING
+export const ratingSorter = (a: Team, b: Team) => {
+  if (a.stats.rating.mu === b.stats.rating.mu) {
+    return a.name.localeCompare(b.name);
+  }
+
+  return b.stats.rating.mu - a.stats.rating.mu;
+};
+
+// Sorting.POINTS
+export const rankingSorter = (a: Team, b: Team) => {
+  const apoints = (a.stats.points * 2 * a.stats.lastDay) / a.stats.matchCount;
+  const bpoints = (b.stats.points * 2 * b.stats.lastDay) / b.stats.matchCount;
+  return apoints === bpoints ? setSorter(a, b) : bpoints - apoints;
+};
+
+export const setSorter = (a: Team, b: Team) => {
+  const asratio = a.stats.setLost === 0 ? Number.MAX_SAFE_INTEGER : a.stats.setWon / a.stats.setLost;
+  const bsratio = b.stats.setLost === 0 ? Number.MAX_SAFE_INTEGER : b.stats.setWon / b.stats.setLost;
+  return asratio === bsratio ? pointSorter(a, b) : bsratio - asratio;
+};
+
+export const pointSorter = (a: Team, b: Team) => {
+  const apratio = a.stats.pointLost === 0 ? Number.MAX_SAFE_INTEGER : a.stats.pointWon / a.stats.pointLost;
+  const bpratio = b.stats.pointLost === 0 ? Number.MAX_SAFE_INTEGER : b.stats.pointWon / b.stats.pointLost;
+  return bpratio - apratio;
+};
+
 export const getBoard = (competition: Competition, sorting = Sorting.POINTS, lastDay?: number): Team[] => {
   const board = Array.from(competition.teams.values()).filter((team) => !lastDay || lastDay === team.stats.lastDay);
   if (sorting === Sorting.RATING) {
-    // Sorting.RATING
-    board.sort((a: Team, b: Team) => {
-      if (a.stats.rating.mu === b.stats.rating.mu) {
-        return a.name.localeCompare(b.name);
-      }
-
-      return a.stats.rating > b.stats.rating ? -1 : 1;
-    });
+    board.sort(ratingSorter);
   } else {
-    // Sorting.POINTS
-    board.sort((a: Team, b: Team) => {
-      const apoints = (a.stats.points * 2 * a.stats.lastDay) / a.stats.matchCount;
-      const bpoints = (b.stats.points * 2 * b.stats.lastDay) / b.stats.matchCount;
-      if (apoints === bpoints) {
-        const asratio = a.stats.setLost === 0 ? Number.MAX_SAFE_INTEGER : a.stats.setWon / a.stats.setLost;
-        const bsratio = b.stats.setLost === 0 ? Number.MAX_SAFE_INTEGER : b.stats.setWon / b.stats.setLost;
-        if (asratio === bsratio) {
-          const apratio = a.stats.pointLost === 0 ? Number.MAX_SAFE_INTEGER : a.stats.pointWon / a.stats.pointLost;
-          const bpratio = b.stats.pointLost === 0 ? Number.MAX_SAFE_INTEGER : b.stats.pointWon / b.stats.pointLost;
-          return bpratio - apratio;
-        }
-
-        return bsratio - asratio;
-      }
-
-      return bpoints - apoints;
-    });
+    board.sort(rankingSorter);
   }
 
   return board;

@@ -8,7 +8,7 @@ import Shell from '../Shell/Shell';
 const queryClient = new QueryClient({});
 
 const App = () => {
-  console.log('rendering App');
+  // console.log('rendering App');
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider

@@ -54,7 +54,7 @@ export const addMatchMeta = (match: Match) => {
       globalMeta.predicted++;
     }
   } else {
-    console.log('Cannot find a meta stat for match', match);
+    // console.log('Cannot find a meta stat for match', match);
   }
 };
 
