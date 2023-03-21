@@ -1,9 +1,9 @@
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import cx from 'classnames';
 import { useMemo, useState } from 'react';
 import { Rating } from 'ts-trueskill';
-import cx from 'classnames';
 import {
   Competition,
   getBoard,
@@ -12,6 +12,10 @@ import {
   getFirstCountInPreviousDay,
   getPool,
   Match,
+  rankingSorter,
+  ratingSorter,
+  setSorter,
+  pointSorter,
   Score,
   Stats,
   Team,
@@ -51,7 +55,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
     const host = pool.length === 3 ? pool[0].name : '';
 
     return matchs.map((match) => (
-      <div className="match">
+      <div key={match.id} className="match">
         {`J${match.day}`}
         {getDayDistance(competition, selected, match.day)}
         {firsts[match.day - 1] === 2 ? '*' : ''}
@@ -72,9 +76,11 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
   const trophies =
     rankings.length > 0
       ? rankings.map((rank, index) => (
-          <div key={index} className="trophy">{`J${index + 1}${getDayDistance(competition, team, index + 1)}${
-            firsts[index] === 2 ? '*' : ''
-          }${medals[rank]}`}</div>
+          <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
+            competition,
+            team,
+            index + 1,
+          )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
         ))
       : null;
   return <div className="trophies">{trophies}</div>;
@@ -87,7 +93,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
   const board = useMemo(() => getBoard(competition), [competition]);
   // const board = getBoard(competition);
   const columns: ColumnsType<Team> = [
-    { title: '', key: 'index', align: 'right', width: 48, render: (value, item, index) => index + 1 },
+    { title: '', key: 'index', align: 'right', width: 48, render: (value, item, index) => index + 1, fixed: true },
     {
       title: 'Rating',
       key: 'rating',
@@ -95,7 +101,8 @@ const CompetitionBoard = ({ competition, className }: Props) => {
       align: 'center',
       width: smallWidth,
       render: (value: Rating) => value.mu.toFixed(3),
-      sorter: (a: Team, b: Team) => b.stats.rating.mu - a.stats.rating.mu,
+      sorter: ratingSorter,
+      showSorterTooltip: false,
     },
     {
       title: 'Points',
@@ -107,6 +114,8 @@ const CompetitionBoard = ({ competition, className }: Props) => {
         `${Math.round((stats.points * 2 * stats.lastDay) / stats.matchCount)}${
           2 * stats.lastDay !== stats.matchCount ? '*' : ''
         }`,
+      sorter: rankingSorter,
+      showSorterTooltip: false,
     },
     {
       title: 'Matchs',
@@ -126,6 +135,8 @@ const CompetitionBoard = ({ competition, className }: Props) => {
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
+      sorter: setSorter,
+      showSorterTooltip: false,
     },
     {
       title: 'Points',
@@ -137,14 +148,27 @@ const CompetitionBoard = ({ competition, className }: Props) => {
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
+      sorter: pointSorter,
+      showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '26rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
-    { title: 'Region', key: 'region', width: '14rem', render: (team: Team) => `${team.department.region_name}` },
+    {
+      title: 'Region',
+      key: 'region',
+      width: '14rem',
+      render: (team: Team) => `${team.department.region_name}`,
+      sorter: (a: Team, b: Team) =>
+        a.department.region_name === b.department.region_name
+          ? rankingSorter(a, b)
+          : a.department.region_name.localeCompare(b.department.region_name),
+      showSorterTooltip: false,
+    },
     {
       title: 'Competition',
       key: 'competition',
       align: 'left',
       // width: `${competition.lastDays * 3 + 1.75}rem`,
+      width: '25rem',
       ellipsis: true,
       render: (team: Team) => getTrophies(competition, team, selectedTeam),
     },
@@ -156,6 +180,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
       <Table<Team>
         dataSource={board}
         columns={columns}
+        sortDirections={['ascend']}
         pagination={false}
         footer={(data) => <div />}
         scroll={{ y: 1280 }}
@@ -168,17 +193,14 @@ const CompetitionBoard = ({ competition, className }: Props) => {
           selectedRowKeys: selectedKeys,
           onChange: (selectedRowKeys: React.Key[], selectedRows: Team[]) => {
             setSelectedKeys(selectedRowKeys);
-            // setSelectedTeams(selectedRows);
           },
         }}
         onRow={(team: Team) => ({
           onClick: () => {
             if (selectedKeys.includes(team.id)) {
               setSelectedKeys([]);
-              // setSelectedTeams([]);
             } else {
               setSelectedKeys([team.id]);
-              // setSelectedTeams([team]);
             }
           },
         })}

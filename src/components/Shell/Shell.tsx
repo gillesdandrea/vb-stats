@@ -69,7 +69,7 @@ const Shell = () => {
           ]}
           tabBarExtraContent={
             <Space size={'middle'}>
-              <span style={{ fontSize: '1.25rem' }}>{competition?.name}</span>
+              <span style={{ fontSize: '1rem' }}>{competition?.name}</span>
               <Radio.Group onChange={(e: RadioChangeEvent) => setCategory(e.target.value)} defaultValue={category}>
                 {categories.map((category) => (
                   <Radio.Button key={category} value={category}>
