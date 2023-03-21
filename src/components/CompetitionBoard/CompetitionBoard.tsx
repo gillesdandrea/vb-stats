@@ -12,11 +12,11 @@ import {
   getFirstCountInPreviousDay,
   getPool,
   Match,
+  pointSorter,
   rankingSorter,
   ratingSorter,
-  setSorter,
-  pointSorter,
   Score,
+  setSorter,
   Stats,
   Team,
 } from '../../model/model';

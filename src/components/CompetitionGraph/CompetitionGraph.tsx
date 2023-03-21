@@ -1,11 +1,11 @@
-import { Graphviz } from 'graphviz-react';
 import cx from 'classnames';
+import { Graphviz } from 'graphviz-react';
 
 import { getGraph } from '../../model/graph';
-import { Competition, getDayRanking, Match, Team } from '../../model/model';
+import { Competition, Team } from '../../model/model';
 
-import './CompetitionGraph.scss';
 import { useMemo } from 'react';
+import './CompetitionGraph.scss';
 
 interface Props {
   competition: Competition;
