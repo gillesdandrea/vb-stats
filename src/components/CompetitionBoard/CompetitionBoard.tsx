@@ -32,8 +32,8 @@ interface Props {
 }
 
 const smallWidth = 60;
-const mediumWidth = 80;
-const largeWidth = 100;
+const mediumWidth = 100;
+const largeWidth = 120;
 
 const medals = [' -', '🥇', '🥈', '🥉'];
 
@@ -99,7 +99,7 @@ const CompetitionBoard = ({ competition, day, singleDay, className }: Props) => 
   );
   // const board = getBoard(competition);
   const columns: ColumnsType<Team> = [
-    { title: '', key: 'index', align: 'right', width: 32, render: (value, item, index) => index + 1, fixed: true },
+    { title: '', key: 'index', align: 'right', width: 40, render: (value, item, index) => index + 1, fixed: true },
     {
       title: 'Rating',
       key: 'rating',
@@ -174,11 +174,11 @@ const CompetitionBoard = ({ competition, day, singleDay, className }: Props) => 
       sorter: pointSorter,
       showSorterTooltip: false,
     },
-    { title: 'Name', key: 'name', width: '16rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
+    { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
     {
       title: 'Region',
       key: 'region',
-      width: '10rem',
+      width: '12rem',
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
