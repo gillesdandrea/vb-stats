@@ -38,6 +38,7 @@ export interface Competition {
   teams: Map<string, Team>;
   matchs: Match[];
   days: DayCompetition[]; // TODO
+  dayCount: number;
   lastDay: number; // last played day
 }
 
@@ -49,6 +50,7 @@ export const createCompetition = (name: string, season: string, category: string
     teams: new Map<string, Team>(),
     matchs: [],
     days: [],
+    dayCount: 0,
     lastDay: 0,
   };
   return competition;
@@ -68,9 +70,11 @@ interface BaseStats {
 }
 
 export interface Stats extends BaseStats {
+  dayCount: number;
   lastDay: number;
   ratings: Record<number, Rating>; // TODO
   rankings: Record<number, number>; // TODO pool rankings per day
+  difficulty: Record<number, [mean: number, stdev: number]>;
 }
 
 // TODO
@@ -270,23 +274,23 @@ export const getUncachedDayRanking = (competition: Competition, team1: Team, day
 };
 
 // returns [mean, standard deviation] of opposition (chance to lose)
-export const getTeamOpposition = (team: Team): [number, number] => {
-  const oppositions = team.stats.matchs.map((match: Match) =>
-    match.teamA === team ? 1 - match.winProbability : match.winProbability,
-  );
-  // team.matchs.forEach((match: Match, index: number) => {
-  //   console.log(
-  //     oppositions[index].toFixed(3),
-  //     match.winProbability.toFixed(3),
-  //     match.teamA.name,
-  //     match.ratingA.toString(),
-  //     match.setA,
-  //     '-',
-  //     match.setB,
-  //     match.ratingB.toString(),
-  //     match.teamB.name,
-  //   );
-  // });
+export const getTeamOpposition = (
+  competition: Competition,
+  team: Team,
+  day: number = competition.dayCount,
+): [number, number] => {
+  let difficulty = team.stats.difficulty[day];
+  if (!difficulty) {
+    difficulty = getUncachedTeamOpposition(team, day);
+    team.stats.difficulty[day] = difficulty;
+  }
+  return difficulty;
+};
+
+const getUncachedTeamOpposition = (team: Team, day: number): [number, number] => {
+  const oppositions = team.stats.matchs
+    .filter((match: Match) => match.day <= day)
+    .map((match: Match) => (match.teamA === team ? 1 - match.winProbability : match.winProbability));
   const mean = oppositions.reduce((sum, opposition) => sum + opposition, 0) / oppositions.length;
   const variance =
     oppositions.map((opposition) => (opposition - mean) ** 2).reduce((sum, opposition) => sum + opposition, 0) /
@@ -315,9 +319,11 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
       setLost: 0,
       pointWon: 0,
       pointLost: 0,
+      dayCount: 0,
       lastDay: 0,
       ratings: { 0: rating },
       rankings: { 0: 0 },
+      difficulty: {},
       matchs: [],
     },
     dstats: [],
@@ -359,8 +365,8 @@ export const pointSorter = (a: Team, b: Team) => {
   return bpratio - apratio;
 };
 
-export const getBoard = (competition: Competition, sorting = Sorting.POINTS, lastDay?: number): Team[] => {
-  const board = Array.from(competition.teams.values()).filter((team) => !lastDay || lastDay === team.stats.lastDay);
+export const getBoard = (competition: Competition, sorting = Sorting.POINTS, day?: number): Team[] => {
+  const board = Array.from(competition.teams.values()).filter((team) => !day || day <= team.stats.dayCount);
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter);
   } else {
@@ -424,6 +430,9 @@ export const createMatch = (competition: Competition, data: any): Match => {
 
 export const addMatch = (competition: Competition, match: Match) => {
   const { teamA, teamB, winner, setA, setB, day } = match;
+  if (competition.dayCount < day) {
+    competition.dayCount = day;
+  }
   if (winner && competition.lastDay < day) {
     competition.lastDay = day;
   }
@@ -431,12 +440,15 @@ export const addMatch = (competition: Competition, match: Match) => {
   competition.matchs.push(match);
   teamA.stats.matchs.push(match);
   teamB.stats.matchs.push(match);
-  if (!winner) {
-    return;
-  }
 
   const statsA = teamA.stats;
   const statsB = teamB.stats;
+  statsA.dayCount = match.day;
+  statsB.dayCount = match.day;
+
+  if (!winner) {
+    return;
+  }
   statsA.matchCount++;
   statsB.matchCount++;
   if (winner === teamA) {

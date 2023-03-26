@@ -60,7 +60,7 @@ const getTeamNode = (competition: Competition, team: Team, index: number): strin
   const eliminated = dayRanking !== 1 && dayRanking !== 2;
   const pre = eliminated ? '<s>' : '';
   const post = eliminated ? '</s>' : '';
-  const [mean, stdev] = getTeamOpposition(team);
+  const [mean, stdev] = getTeamOpposition(competition, team);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
   return (
     // `T${team.id} [label="${index + 1}\\n${team.name} (${stats.rating.mu.toFixed(3)})\\n\\n` +

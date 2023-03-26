@@ -11,6 +11,7 @@ import {
   getDayRanking,
   getFirstCountInPreviousDay,
   getPool,
+  getTeamOpposition,
   Match,
   pointSorter,
   rankingSorter,
@@ -25,12 +26,14 @@ import './CompetitionBoard.scss';
 
 interface Props {
   competition: Competition;
+  day: number;
+  singleDay: boolean;
   className?: string | string[];
 }
 
-const smallWidth = 80;
-const mediumWidth = 110;
-const largeWidth = 140;
+const smallWidth = 60;
+const mediumWidth = 80;
+const largeWidth = 100;
 
 const medals = [' -', '🥇', '🥈', '🥉'];
 
@@ -86,14 +89,17 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
   return <div className="trophies">{trophies}</div>;
 };
 
-const CompetitionBoard = ({ competition, className }: Props) => {
+const CompetitionBoard = ({ competition, day, singleDay, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
 
-  const board = useMemo(() => getBoard(competition), [competition]);
+  const board = useMemo(
+    () => getBoard(competition, undefined, singleDay ? day : undefined),
+    [competition, day, singleDay],
+  );
   // const board = getBoard(competition);
   const columns: ColumnsType<Team> = [
-    { title: '', key: 'index', align: 'right', width: 48, render: (value, item, index) => index + 1, fixed: true },
+    { title: '', key: 'index', align: 'right', width: 32, render: (value, item, index) => index + 1, fixed: true },
     {
       title: 'Rating',
       key: 'rating',
@@ -102,6 +108,23 @@ const CompetitionBoard = ({ competition, className }: Props) => {
       width: smallWidth,
       render: (value: Rating) => value.mu.toFixed(3),
       sorter: ratingSorter,
+      showSorterTooltip: false,
+    },
+    {
+      title: 'Diff.',
+      key: 'difficulty',
+      align: 'center',
+      width: smallWidth,
+      render: (team: Team) => {
+        const [mean, stdev] = getTeamOpposition(competition, team /*, day*/); // TODO removed day to not introduce interactivity yet
+        // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
+        return `${(100 * mean).toFixed(1)}%`;
+      },
+      sorter: (a: Team, b: Team) => {
+        const [amean, astdev] = getTeamOpposition(competition, a /*, day*/);
+        const [bmean, bstdev] = getTeamOpposition(competition, b /*, day*/);
+        return amean === bmean ? bstdev - astdev : bmean - amean;
+      },
       showSorterTooltip: false,
     },
     {
@@ -151,11 +174,11 @@ const CompetitionBoard = ({ competition, className }: Props) => {
       sorter: pointSorter,
       showSorterTooltip: false,
     },
-    { title: 'Name', key: 'name', width: '26rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
+    { title: 'Name', key: 'name', width: '16rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
     {
       title: 'Region',
       key: 'region',
-      width: '14rem',
+      width: '10rem',
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
@@ -186,7 +209,7 @@ const CompetitionBoard = ({ competition, className }: Props) => {
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) => (team.stats.lastDay < competition.lastDay ? 'table-row-disabled' : '')}
+        rowClassName={(team: Team, index) => (team.stats.dayCount < day ? 'table-row-disabled' : '')}
         rowKey={(team: Team) => team.id}
         rowSelection={{
           type: 'radio',

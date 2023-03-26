@@ -1,5 +1,4 @@
-import type { TableProps } from 'antd';
-import { Table, theme } from 'antd';
+import { Table, TableProps, theme } from 'antd';
 import classNames from 'classnames';
 import ResizeObserver from 'rc-resize-observer';
 import React, { useEffect, useRef, useState } from 'react';

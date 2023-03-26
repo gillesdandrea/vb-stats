@@ -76,7 +76,7 @@ const processData = (competition: Competition, datas: any[][]) => {
     });
   });
   console.log(
-    `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.lastDay} day(s).`,
+    `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.dayCount} day(s).`,
   );
   console.log(metaToString());
 };
