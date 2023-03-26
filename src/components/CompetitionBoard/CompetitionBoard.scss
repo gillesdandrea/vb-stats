@@ -1,6 +1,10 @@
 .vb-board {
   margin: 1rem 1rem;
 
+  .ant-table.ant-table-small {
+    font-size: 12px;
+  }
+
   .ant-table-body {
     height: calc(100vh - 9.5rem);
   }

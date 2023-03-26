@@ -2,17 +2,19 @@ import cx from 'classnames';
 import { Graphviz } from 'graphviz-react';
 
 import { getGraph } from '../../model/graph';
-import { Competition, Team } from '../../model/model';
+import { Competition, Match, Team } from '../../model/model';
 
 import { useMemo } from 'react';
 import './CompetitionGraph.scss';
 
 interface Props {
   competition: Competition;
+  day: number;
+  singleDay: boolean;
   className?: string | string[];
 }
-const CompetitionGraph = ({ competition, className }: Props) => {
-  //   const dot = `graph {
+const CompetitionGraph = ({ competition, day, singleDay, className }: Props) => {
+  // const dot = `graph {
   //     a -- b;
   //     b -- c;
   //     a -- c;
@@ -24,17 +26,10 @@ const CompetitionGraph = ({ competition, className }: Props) => {
     () =>
       getGraph(
         competition,
-        (team: Team, index: number) => team.stats.lastDay >= competition.lastDay,
-        //
-        // (team: Team, index: number) => team.stats.lastDay >= competition.lastDay,
-        // (match: Match) => match.day === competition.lastDay,
-        //
-        // (team: Team, index: number) =>
-        //   team.stats.lastDay >= competition.lastDay &&
-        //   (getDayRanking(competition, team, competition.lastDay) < 3 || team.id === '0836296'),
-        // (match: Match) => !match.winner,
+        (team: Team, index: number) => team.stats.dayCount >= day,
+        (match: Match) => (singleDay ? match.day === day : match.day <= day),
       ),
-    [competition],
+    [competition, day, singleDay],
   );
 
   // console.log('rendering CompetitionGraph');
@@ -43,7 +38,14 @@ const CompetitionGraph = ({ competition, className }: Props) => {
     <div className={cx('vb-graph', className)}>
       <Graphviz
         dot={dot}
-        options={{ worker: false, useSharedWorker: false, zoom: true, width: '100vw', height: '100vh', fit: true }}
+        options={{
+          worker: false,
+          useSharedWorker: false,
+          zoom: true,
+          width: '100vw',
+          height: '100vh',
+          fit: true,
+        }}
       />
     </div>
   );
