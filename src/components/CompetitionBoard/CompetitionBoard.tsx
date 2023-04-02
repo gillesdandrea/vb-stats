@@ -12,6 +12,7 @@ import {
   getFirstCountInPreviousDay,
   getPool,
   getTeamOpposition,
+  getWinProbability,
   Match,
   pointSorter,
   rankingSorter,
@@ -56,6 +57,10 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
     const matchs = selected.stats.matchs.filter((match: Match) => match.teamA === team || match.teamB === team);
     const pool = matchs.length > 0 ? getPool(competition, selected, matchs[0].day) : [];
     const host = pool.length === 3 ? pool[0].name : '';
+
+    if (selected && matchs.length === 0) {
+      return `${(getWinProbability(selected, team, competition.dayCount) * 100).toFixed(1)}%`;
+    }
 
     return matchs.map((match) => (
       <div key={match.id} className="match">

@@ -139,7 +139,7 @@ export const defineRating = (team: Team, day: number, rating = team.stats.rating
 };
 
 export const getRating = (team: Team, day: number) => {
-  return team.stats.ratings[day]; // ?? team.stats.rating;
+  return team.stats.ratings[day] ?? team.stats.ratings[team.stats.lastDay] ?? team.stats.rating;
 };
 
 export const getPool = (competition: Competition, team: Team, day: number): Team[] => {
@@ -376,6 +376,10 @@ export const getBoard = (competition: Competition, sorting = Sorting.POINTS, day
   return board;
 };
 
+export const getWinProbability = (teamA: Team, teamB: Team, day: number): number => {
+  return winProbability([getRating(teamA, day)], [getRating(teamB, day)], ts);
+};
+
 export const createMatch = (competition: Competition, data: any): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
   const teamB = getTeam(competition, data.EQB_no, data.EQB_nom);
@@ -414,7 +418,7 @@ export const createMatch = (competition: Competition, data: any): Match => {
     score,
     ratingA: teamA.stats.rating,
     ratingB: teamB.stats.rating,
-    winProbability: winProbability([getRating(teamA, day)], [getRating(teamB, day)], ts),
+    winProbability: getWinProbability(teamA, teamB, day),
     victory: unplayed
       ? Victory.Unplayed
       : Math.abs(setA - setB) < 2
