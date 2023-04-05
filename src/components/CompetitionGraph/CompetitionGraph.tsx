@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { Graphviz } from 'graphviz-react';
 
 import { getGraph } from '../../model/graph';
-import { Competition, Match, Team } from '../../model/model';
+import { Competition, Match, Team, isTeamInCourse } from '../../model/model';
 
 import { useMemo } from 'react';
 import './CompetitionGraph.scss';
@@ -26,7 +26,7 @@ const CompetitionGraph = ({ competition, day, singleDay, className }: Props) => 
     () =>
       getGraph(
         competition,
-        (team: Team, index: number) => team.stats.dayCount >= day,
+        (team: Team, index: number) => isTeamInCourse(competition, team, day),
         (match: Match) => (singleDay ? match.day === day : match.day <= day),
       ),
     [competition, day, singleDay],

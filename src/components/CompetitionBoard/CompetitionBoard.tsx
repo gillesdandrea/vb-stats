@@ -13,6 +13,7 @@ import {
   getPool,
   getTeamOpposition,
   getWinProbability,
+  isTeamInCourse,
   Match,
   pointSorter,
   rankingSorter,
@@ -214,7 +215,7 @@ const CompetitionBoard = ({ competition, day, singleDay, className }: Props) => 
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) => (team.stats.dayCount < day ? 'table-row-disabled' : '')}
+        rowClassName={(team: Team, index) => (!isTeamInCourse(competition, team, day) ? 'table-row-disabled' : '')}
         rowKey={(team: Team) => team.id}
         rowSelection={{
           type: 'radio',

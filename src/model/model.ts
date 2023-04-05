@@ -132,6 +132,18 @@ export interface Match {
   victory: Victory;
 }
 
+export const isTeamInCourse = (competition: Competition, team: Team, day: number): boolean => {
+  console.log(day, team.stats.dayCount, team.name);
+  if (day === 1 || team.stats.dayCount >= day) {
+    return true;
+  }
+  if (day > 1) {
+    const previousDayRanking = getDayRanking(competition, team, day - 1);
+    return previousDayRanking === 1 || previousDayRanking === 2;
+  }
+  return false;
+};
+
 export const defineRating = (team: Team, day: number, rating = team.stats.rating) => {
   if (!team.stats.ratings[day]) {
     team.stats.ratings[day] = rating;
@@ -366,7 +378,7 @@ export const pointSorter = (a: Team, b: Team) => {
 };
 
 export const getBoard = (competition: Competition, sorting = Sorting.POINTS, day?: number): Team[] => {
-  const board = Array.from(competition.teams.values()).filter((team) => !day || day <= team.stats.dayCount);
+  const board = Array.from(competition.teams.values()).filter((team) => !day || isTeamInCourse(competition, team, day));
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter);
   } else {
