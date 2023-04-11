@@ -35,9 +35,24 @@ const Shell = () => {
   const [season, setSeason] = useState<string>();
   const [category, setCategory] = useState<string>();
   const [day, setDay] = useState<number>(1);
-  const [singleDay, setSingleDay] = useState<boolean>(false);
+  const [singleDay, setSingleDay] = useState<boolean>(false); // OVERALL - J0x
+  const [qualified, setQualified] = useState<boolean>(true); // ALL TEAMS - QUALIFIED
 
   const [tab, setTab] = useState<string>('board');
+
+  const handleTabChange = (key: string) => {
+    if (key === 'graph' && !qualified) {
+      setQualified(true);
+    }
+    setTab(key);
+  };
+
+  const setOverall = (toggle: boolean) => {
+    setSingleDay(toggle);
+    if (toggle && !qualified) {
+      setQualified(true);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -71,7 +86,7 @@ const Shell = () => {
         <Tabs
           size="large"
           defaultActiveKey="board"
-          onChange={(key) => setTab(key)}
+          onChange={handleTabChange}
           items={[
             { key: 'board', label: 'Board' },
             { key: 'graph', label: 'Graph' },
@@ -81,9 +96,17 @@ const Shell = () => {
               <span style={{ fontSize: '1rem' }}>{competition?.name}</span>
               <Switch
                 checkedChildren={`J${day}`}
-                unCheckedChildren="ALL"
+                unCheckedChildren="OVERALL"
                 checked={singleDay}
-                onChange={setSingleDay}
+                onChange={setOverall}
+                size="small"
+              />
+              <Switch
+                checkedChildren="QUALIFIED"
+                unCheckedChildren="ALL TEAMS"
+                checked={qualified}
+                onChange={setQualified}
+                disabled={singleDay || tab === 'graph'}
                 size="small"
               />
               <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} defaultValue={day}>
@@ -102,7 +125,7 @@ const Shell = () => {
               </Radio.Group>
               <Select
                 defaultValue={season}
-                onChange={(value: string) => setSeason(value)}
+                onChange={setSeason}
                 options={seasons.map((season) => ({
                   value: season,
                   label: season,
@@ -120,6 +143,7 @@ const Shell = () => {
             competition={competition}
             day={day}
             singleDay={singleDay}
+            qualified={qualified}
           />
         )}
         {competition && tab === 'graph' && (
@@ -128,6 +152,7 @@ const Shell = () => {
             competition={competition}
             day={day}
             singleDay={singleDay}
+            qualified={qualified}
           />
         )}
       </Layout.Content>
