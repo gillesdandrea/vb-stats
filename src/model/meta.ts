@@ -1,5 +1,6 @@
 import { Match } from './model';
 
+// TODO compute average predicted for each slot to better compare with result
 export interface MetaStats {
   low: number;
   high: number;
@@ -16,6 +17,7 @@ const createMeta = (low: number, high: number): MetaStats => {
   };
 };
 
+// TODO attach this to each Competition
 const globalMeta = createMeta(0, 100);
 
 const metas = [

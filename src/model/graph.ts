@@ -1,15 +1,14 @@
+import { Competition, Match, Score, Team, Victory } from './model';
 import {
-  Competition,
   getBoard,
   getDayDistance,
   getDayRanking,
   getFirstCountInPreviousDay,
   getTeamOpposition,
-  Match,
-  Score,
-  Team,
-  Victory,
-} from './model';
+  getTeamRanking,
+  getTeamStats,
+} from './model-helpers';
+import { Sorting } from './model-sorters';
 
 const medals = ['-', '🥇', '🥈', '🥉'];
 // const medals = ['', '1', '2', '2'];
@@ -50,8 +49,14 @@ export const getTrophies = (competition: Competition, team: Team): string => {
   return trophies;
 };
 
-const getTeamNode = (competition: Competition, team: Team, index: number): string => {
-  const { stats } = team;
+const getTeamNode = (
+  competition: Competition,
+  team: Team,
+  day: number,
+  singleDay: boolean,
+  qualified: boolean,
+): string => {
+  const stats = getTeamStats(team, day, !singleDay);
   const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
   const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
   // const eliminated = countLastDayVictories(team) === 0;
@@ -62,12 +67,13 @@ const getTeamNode = (competition: Competition, team: Team, index: number): strin
   const post = eliminated ? '</s>' : '';
   const [mean, stdev] = getTeamOpposition(competition, team);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
+  const ranking = getTeamRanking(team, day, singleDay, qualified);
   return (
     // `T${team.id} [label="${index + 1}\\n${team.name} (${stats.rating.mu.toFixed(3)})\\n\\n` +
     // `matchs: ${stats.matchWon}/${stats.matchCount}, sets: ${stats.setWon}/${stats.setLost}=${sratio}, points: ${stats.pointWon}/${stats.pointLost}=${pratio}"]`
     `T${team.id} [label=<` +
     `<font point-size="8pt">${trophies}</font><br/>` +
-    `${pre}${index + 1} ${team.name}${post}<br/>` +
+    `${pre}${ranking} ${team.name}${post}<br/>` +
     `<font point-size="8pt">` +
     `${team.department.num_dep} - ${team.department.region_name}` +
     `<br/>matchs: ${stats.matchWon}/${stats.matchCount} | sets: ${stats.setWon}/${stats.setLost}=${sratio} | points: ${stats.pointWon}/${stats.pointLost}=${pratio}` +
@@ -98,19 +104,22 @@ const getMatchEdge = (competition: Competition, match: Match) => {
 
 export const getGraph = (
   competition: Competition,
+  day: number,
+  singleDay: boolean,
+  qualified: boolean,
   teamFilter: (team: Team, index: number) => boolean = () => true,
   matchFilter: (match: Match) => boolean = () => true,
 ) => {
   const title = `${competition.name} ${competition.category} ${competition.season}`;
   const qualifiedTeams = new Set<Team>();
-  const teams: Team[] = getBoard(competition).filter(teamFilter);
+  const teams: Team[] = getBoard(competition, Sorting.POINTS, day, singleDay, qualified).filter(teamFilter);
   teams.forEach((team) => qualifiedTeams.add(team));
   return `digraph {
   tooltip="${title}"
   node [fontname="Arial" shape="note" style="filled" fillcolor="white"]
   edge [fontname="Arial" fontsize="8pt" minlen=2 dir="both" arrowtail="dot" arrowsize=0.5]
  
-${teams.map((team: Team, index: number) => `  ${getTeamNode(competition, team, index)}`).join('\n')}
+${teams.map((team: Team, index: number) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
 
 ${competition.matchs
   .filter(matchFilter)
