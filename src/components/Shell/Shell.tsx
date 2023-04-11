@@ -79,6 +79,11 @@ const Shell = () => {
         .map((_, index) => index + 1)
     : [];
 
+  if (competition && day > competition.dayCount) {
+    setDay(competition.dayCount);
+    return <div />;
+  }
+
   // console.log('rendering Shell');
   return (
     <Layout style={{ height: '100vh' }}>
@@ -109,14 +114,14 @@ const Shell = () => {
                 disabled={singleDay || tab === 'graph'}
                 size="small"
               />
-              <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} defaultValue={day}>
+              <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} value={day}>
                 {days.map((day) => (
                   <Radio.Button key={`J${day}`} value={day}>
                     {`J${day}`}
                   </Radio.Button>
                 ))}
               </Radio.Group>
-              <Radio.Group onChange={(e: RadioChangeEvent) => setCategory(e.target.value)} defaultValue={category}>
+              <Radio.Group onChange={(e: RadioChangeEvent) => setCategory(e.target.value)} value={category}>
                 {categories.map((category) => (
                   <Radio.Button key={category} value={category}>
                     {category}
@@ -124,7 +129,7 @@ const Shell = () => {
                 ))}
               </Radio.Group>
               <Select
-                defaultValue={season}
+                value={season}
                 onChange={setSeason}
                 options={seasons.map((season) => ({
                   value: season,

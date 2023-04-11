@@ -17,6 +17,9 @@ const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
 export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating): [Rating, Rating] =>
   rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
 
+export const rateWinPropability = (ratingWinner: Rating, ratingLoser: Rating): number =>
+  winProbability([ratingWinner], [ratingLoser], ts);
+
 export const getWinProbability = (teamA: Team, teamB: Team, day: number): number => {
   return winProbability([getTeamRating(teamA, day)], [getTeamRating(teamB, day)], ts);
 };
@@ -102,7 +105,7 @@ export const getTeamStats = (team: Team, day: number, global = true): Stats => {
 };
 
 export const getTeamRating = (team: Team, day: number): Rating => {
-  return team.dstats[day].rating ?? getGlobalTeamStats(team, day).rating;
+  return team.dstats[day]?.rating ?? getGlobalTeamStats(team, day).rating;
 };
 
 export const getTeamRanking = (team: Team, day: number, daily: boolean, qualified: boolean) => {
@@ -220,9 +223,15 @@ export const getTeamOpposition = (
 
 const getUncachedTeamOpposition = (team: Team, day: number, global: boolean): [number, number] => {
   const stats = getTeamStats(team, day, global);
-  const oppositions = stats.matchs.map((match: Match) =>
-    match.teamA === team ? 1 - match.winProbability : match.winProbability,
-  );
+  const oppositions = stats.matchs
+    .filter((match) => global || match.day === day)
+    .map((match) => {
+      const teamB = match.teamA === team ? match.teamB : match.teamA;
+      const ratingA = getGlobalTeamStats(team, match.day - 1).rating;
+      const ratingB = getGlobalTeamStats(teamB, match.day - 1).rating;
+      // console.log(global, rateWinPropability(ratingB, ratingA), team.name, teamB.name);
+      return rateWinPropability(ratingB, ratingA);
+    });
   const mean = oppositions.reduce((sum, opposition) => sum + opposition, 0) / oppositions.length;
   const variance =
     oppositions.map((opposition) => (opposition - mean) ** 2).reduce((sum, opposition) => sum + opposition, 0) /

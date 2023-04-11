@@ -134,7 +134,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       colSpan: 2,
       key: 'delta',
       align: 'left',
-      width: 32,
+      width: 40,
       render: (team: Team, item, index) => {
         const ranking = getTeamRanking(team, day, singleDay, qualified);
         if (day === 1) {
@@ -172,13 +172,13 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const [mean, stdev] = getTeamOpposition(competition, team, day);
+        const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
         // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
         return `${(100 * mean).toFixed(1)}%`;
       },
       sorter: (a: Team, b: Team) => {
-        const [amean, astdev] = getTeamOpposition(competition, a, day);
-        const [bmean, bstdev] = getTeamOpposition(competition, b, day);
+        const [amean, astdev] = getTeamOpposition(competition, a, day, !singleDay);
+        const [bmean, bstdev] = getTeamOpposition(competition, b, day, !singleDay);
         return amean === bmean ? bstdev - astdev : bmean - amean;
       },
       showSorterTooltip: false,
