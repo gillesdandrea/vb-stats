@@ -61,11 +61,11 @@ const getTeamNode = (
   const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
   // const eliminated = countLastDayVictories(team) === 0;
   const trophies = getTrophies(competition, team);
-  const dayRanking = getDayRanking(competition, team, competition.lastDay);
+  const dayRanking = getDayRanking(competition, team, Math.min(day, competition.lastDay));
   const eliminated = dayRanking !== 1 && dayRanking !== 2;
   const pre = eliminated ? '<s>' : '';
   const post = eliminated ? '</s>' : '';
-  const [mean, stdev] = getTeamOpposition(competition, team);
+  const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
   const ranking = getTeamRanking(team, day, singleDay, qualified);
   return (

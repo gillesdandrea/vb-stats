@@ -4,6 +4,7 @@ import { Match } from './model';
 export interface MetaStats {
   low: number;
   high: number;
+  expected: number;
   predicted: number;
   played: number;
 }
@@ -12,6 +13,7 @@ const createMeta = (low: number, high: number): MetaStats => {
   return {
     low: low / 100.0,
     high: high / 100.0,
+    expected: 0,
     predicted: 0,
     played: 0,
   };
@@ -50,7 +52,9 @@ export const addMatchMeta = (match: Match) => {
   const meta: MetaStats | undefined = metas.find((meta) => meta.low <= slot && slot < meta.high);
   if (meta) {
     meta.played++;
+    meta.expected += slot;
     globalMeta.played++;
+    globalMeta.expected += slot;
     if (predicted) {
       meta.predicted++;
       globalMeta.predicted++;
@@ -61,15 +65,17 @@ export const addMatchMeta = (match: Match) => {
 };
 
 export const metaToString = (): string => {
-  return `Globally predicted ${globalMeta.predicted}/${globalMeta.played} (${(
+  return `Globally expected: ${((100 * globalMeta.expected) / globalMeta.played).toFixed(1)}% predicted: ${(
     (100 * globalMeta.predicted) /
     globalMeta.played
-  ).toFixed(1)})%\n${metas
+  ).toFixed(1)}% (${globalMeta.predicted}/${globalMeta.played})\n${metas
     .map(
       (meta) =>
-        `Expected ${100 * meta.low}-${100 * meta.high}% predicted ${((100 * meta.predicted) / meta.played).toFixed(
+        `Range: ${100 * meta.low}-${100 * meta.high}% | expected: ${((100 * meta.expected) / meta.played).toFixed(
           1,
-        )}% (${meta.predicted}/${meta.played})`,
+        )}% | predicted: ${((100 * meta.predicted) / meta.played).toFixed(1)}% (${meta.predicted}/${
+          meta.played
+        }) | proportion: ${((100 * meta.played) / globalMeta.played).toFixed(1)}%`,
     )
     .join('\n')}`;
 };

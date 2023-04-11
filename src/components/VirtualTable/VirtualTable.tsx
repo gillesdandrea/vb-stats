@@ -63,7 +63,7 @@ const VirtualTable = <RecordType extends object>(props: TableProps<RecordType>) 
         columnCount={mergedColumns.length}
         columnWidth={(index: number) => {
           const { width } = mergedColumns[index];
-          return totalHeight > scroll!.y! && index === mergedColumns.length - 1
+          return totalHeight > Number(scroll!.y!) && index === mergedColumns.length - 1
             ? (width as number) - scrollbarSize - 1
             : (width as number);
         }}
