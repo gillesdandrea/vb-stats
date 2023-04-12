@@ -227,8 +227,9 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       teams.forEach((team, index) => {
         team.ranking.globals[day] = index + 1;
       });
-      teams.sort(rankingSorter(day, false));
-      teams.forEach((team, index) => {
+      const dteams = [...competition.days[day].teams];
+      dteams.sort(rankingSorter(day, false));
+      dteams.forEach((team, index) => {
         team.ranking.days[day] = index + 1;
       });
       const running = [...competition.days[day].teams];

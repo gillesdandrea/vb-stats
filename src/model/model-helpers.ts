@@ -196,7 +196,7 @@ export const getBoard = (
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
 ): Team[] => {
-  const board = qualified ? competition.days[day].teams : Array.from(competition.teams.values());
+  const board = qualified ? competition.days[day]?.teams ?? [] : Array.from(competition.teams.values());
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {

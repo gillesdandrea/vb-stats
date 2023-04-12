@@ -120,11 +120,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'right',
       width: 40,
       render: (team: Team, item, index) => {
-        const ranking = singleDay
-          ? team.ranking.days[day]
-          : qualified
-          ? team.ranking.qualifieds[day]
-          : team.ranking.globals[day];
+        const ranking = getTeamRanking(team, day, singleDay, qualified);
         return ranking ?? '-';
       },
       fixed: true,
