@@ -114,14 +114,18 @@ const Shell = () => {
                 disabled={singleDay || tab === 'graph'}
                 size="small"
               />
-              <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} value={day}>
+              <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} value={day} buttonStyle="solid">
                 {days.map((day) => (
                   <Radio.Button key={`J${day}`} value={day}>
                     {`J${day}`}
                   </Radio.Button>
                 ))}
               </Radio.Group>
-              <Radio.Group onChange={(e: RadioChangeEvent) => setCategory(e.target.value)} value={category}>
+              <Radio.Group
+                onChange={(e: RadioChangeEvent) => setCategory(e.target.value)}
+                value={category}
+                buttonStyle="solid"
+              >
                 {categories.map((category) => (
                   <Radio.Button key={category} value={category}>
                     {category}

@@ -102,8 +102,8 @@ export const updateRating = (match: Match, statsA: Stats, statsB: Stats) => {
 };
 
 export const addTeamMatch = (team: Team, stats: Stats, match: Match) => {
+  stats.matchs = [...stats.matchs, match];
   if (match.winner) {
-    stats.matchs = [...stats.matchs, match];
     const tmatch = getTeamMatch(team, match);
     stats.matchCount++;
     stats.setWon += tmatch.setA;
