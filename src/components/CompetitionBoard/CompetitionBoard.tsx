@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
+import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import cx from 'classnames';
@@ -68,7 +68,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
     const host = pool.length === 3 ? pool[0].name : '';
 
     if (selected && matchs.length === 0) {
-      return `${(getWinProbability(selected, team, competition.dayCount) * 100).toFixed(1)}%`;
+      return `(${(getWinProbability(selected, team, competition.dayCount) * 100).toFixed(1)}%)`;
     }
 
     return matchs.map((match) => (
@@ -78,7 +78,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
         {firsts[match.day - 1] === 2 ? '*' : ''}
         &nbsp;
         {match.winner === undefined ? (
-          match.date
+          <QuestionCircleTwoTone />
         ) : match.winner === selected ? (
           <CheckCircleTwoTone twoToneColor="green" />
         ) : (
@@ -86,7 +86,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
         )}
         &nbsp;
         {getMatch(match, selected)}
-        {` @${host}`}
+        {` ${match.date} @${host}`}
       </div>
     ));
   }

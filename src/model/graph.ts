@@ -88,9 +88,9 @@ const getMatchEdge = (competition: Competition, match: Match) => {
   const teamL = teamW === match.teamA ? match.teamB : match.teamA;
   const proba = 100 * (teamW === match.teamA ? match.winProbability : 1 - match.winProbability);
   const predicted = Math.round(10 * proba) < 500 ? ' fontcolor="tomato"' : '';
-  const label = `J${match.day}:${match.score
-    .map((set: Score) => `${set.scoreA}-${set.scoreB}`)
-    .join(',')}\\n${proba.toFixed(1)}%`;
+  const label = `J${match.day}: ${
+    match.winner ? match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',') : match.date
+  }\\n${proba.toFixed(1)}%`;
   const tooltip = `${match.teamA.name} - ${match.teamB.name}`;
   const style = match.winner ? '' : ' style="dashed"';
   const width = match.day === competition.lastDay ? ' penwidth=3' : '';
