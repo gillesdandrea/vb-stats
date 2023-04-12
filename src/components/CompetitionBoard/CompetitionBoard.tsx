@@ -244,12 +244,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       width: smallWidth,
       ellipsis: true,
       render: (team: Team) => {
-        let ranking = '';
-        // if (day > 1) {
-        //   const r = team.ranking.days[day - 1];
-        //   ranking = r ? ` (${r})` : '';
-        // }
-        return team.pools[day] ? poolId2Name(team.pools[day].name) + ranking : '-';
+        return team.pools[day]
+          ? `${poolId2Name(team.pools[day].name)}${team.pools[day].teams[0] === team ? '*' : ''}`
+          : '-';
       },
       sorter: poolSorter(day, !singleDay),
       showSorterTooltip: false,
