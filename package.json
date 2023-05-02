@@ -1,6 +1,6 @@
 {
   "name": "vb-stats",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "homepage": "https://gillesdandrea.github.io/vb-stats",
   "private": true,
   "dependencies": {
@@ -45,7 +45,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "pnpm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "pdf-parse": "ts-node src/scripts/pdf-parse.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -66,6 +67,8 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0"
+    "gh-pages": "^5.0.0",
+    "pdf2json": "^3.0.3",
+    "ts-node": "^10.9.1"
   }
 }
