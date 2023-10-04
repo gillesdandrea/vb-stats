@@ -4,10 +4,11 @@ import { Layout, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, T
 
 import { useQuery } from 'react-query';
 import { CompetitionCollection } from '../../model/model';
-import { createCompetitionCollection, fetchData } from '../../utils/fetch-utils';
+import { createCompetitionCollection, fetchData, fetchSheets } from '../../utils/fetch-utils';
 
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
+import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
 
 import './Shell.scss';
 
@@ -32,13 +33,14 @@ const Shell = () => {
     refetch,
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
     const data = await fetchData();
+    const sheets = await fetchSheets();
     const seasons = Object.keys(data);
     const season = params.season ?? seasons[0];
     setSeason(season);
     const categories = Object.keys(data[season]);
     const category = params.category ?? categories[0];
     setCategory(category);
-    const competitionCollection = createCompetitionCollection(data);
+    const competitionCollection = createCompetitionCollection(data, sheets);
     const competition = competitionCollection[season][category];
     const day: number = Number.parseInt(params.day);
     setDay(Number.isNaN(day) ? competition.dayCount : day);
@@ -117,6 +119,7 @@ const Shell = () => {
           items={[
             { key: 'board', label: 'Board' },
             { key: 'graph', label: 'Graph' },
+            { key: 'sheet', label: 'Sheet' },
           ]}
           tabBarExtraContent={
             <Space size={'middle'}>
@@ -179,6 +182,15 @@ const Shell = () => {
         )}
         {competition && tab === 'graph' && (
           <CompetitionGraph
+            // className={tab === 'graph' ? '' : 'no-display'}
+            competition={competition}
+            day={day}
+            singleDay={singleDay}
+            qualified={qualified}
+          />
+        )}
+        {competition && tab === 'sheet' && (
+          <CompetitionSheet
             // className={tab === 'graph' ? '' : 'no-display'}
             competition={competition}
             day={day}

@@ -46,7 +46,7 @@
     "eject": "react-scripts eject",
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d build",
-    "pdf-parse": "ts-node src/scripts/pdf-parse.ts"
+    "pdf-parse": "ts-node src/scripts/pdf-parse.mjs"
   },
   "eslintConfig": {
     "extends": [

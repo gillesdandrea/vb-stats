@@ -1,11 +1,13 @@
 import { Rating } from 'ts-trueskill';
 
 import { Department } from './geography';
+import { CSheetMatch, SheetMap, SheetMatch } from './sheet';
 
 // each set updates ts-ranking vs each match
 export const SET_RANKING = true;
 
 export type CompetitionCollection = Record<string, Record<string, Competition>>;
+export type SheetCollection = Record<string, Record<string, SheetMap[]>>;
 
 export interface Competition {
   readonly name: string;
@@ -14,6 +16,7 @@ export interface Competition {
   readonly teams: Map<string, Team>;
   readonly matchs: Match[];
   readonly days: CompetitionDay[];
+  readonly sheets?: SheetMap[];
   dayCount: number;
   lastDay: number; // last played day
 }
@@ -46,6 +49,7 @@ export interface Team {
   readonly gstats: Stats[];
   readonly dstats: Stats[];
   readonly pools: Pool[];
+  readonly sheets: Sheet[];
   dayCount: number;
   lastDay: number; // last played day
 }
@@ -99,4 +103,10 @@ export interface Match {
   readonly ratingB: Rating; // before match
   readonly winProbability: number;
   readonly victory: Victory;
+}
+export interface Sheet {
+  isA: boolean;
+  match: Match;
+  smatch: SheetMatch;
+  csmatch: CSheetMatch;
 }

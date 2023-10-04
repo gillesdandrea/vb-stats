@@ -22,6 +22,7 @@ import {
   rateMatch,
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
+import { createSheet } from './sheet-helpers';
 
 export const createMatch = (competition: Competition, data: any): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
@@ -134,6 +135,16 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
     }
     if (match.teamB.lastDay < day) {
       match.teamB.lastDay = day;
+    }
+  }
+
+  if (competition.sheets) {
+    const sheetMatch = competition.sheets[match.day - 1]?.[match.id];
+    if (sheetMatch) {
+      const sheetA = createSheet(teamA, match, sheetMatch);
+      teamA.sheets.push(sheetA);
+      const sheetB = createSheet(teamB, match, sheetMatch);
+      teamB.sheets.push(sheetB);
     }
   }
 

@@ -163,10 +163,15 @@ const parseSet = (teamA, texts, index) => {
     .filter((token) => token.x > x1 && token.x < x2)
     .map((x) => (x.text === 'X' ? -1 : Number.parseInt(x.text)))
     .sort((a, b) => a - b);
-  const pointsB = tokens5
+  let pointsB = tokens5
     .filter((token) => token.x > x2)
     .map((x) => (x.text === 'X' ? -1 : Number.parseInt(x.text)))
     .sort((a, b) => a - b);
+  if (pointsA[0] !== -1 && pointsB[0] !== -1) {
+    if (!tiebreak) console.log('Missing X');
+    // missing X in tie break when serve is reversed
+    pointsB = [-1, ...pointsB];
+  }
 
   return inverted
     ? {
@@ -280,16 +285,20 @@ const parsePDF = async (filePath, last) => {
     const match = parseMatch(texts);
     // console.log(JSON.stringify(match, null, 2));
     addMatch(match);
+    console.log(`Added ${match.description}`);
 
     if (last) {
-      // console.log(JSON.stringify(days, null, 2));
-      Object.keys(days).forEach((key) => {
-        console.log(path.resolve(`./public/sheets/2022-23/2022-23-cdfm15m-j${key}.json`));
-        writeFileSync(
-          path.resolve(`./public/sheets/2022-23/2022-23-cdfm15m-j${key}.json`),
-          JSON.stringify(days[key], null, 2),
-        );
-      });
+      // TODO hack...
+      setTimeout(() => {
+        // console.log(JSON.stringify(days, null, 2));
+        Object.keys(days).forEach((key) => {
+          console.log(path.resolve(`./public/sheets/2022-23/2022-23-cdfm18m-j${key}.json`));
+          writeFileSync(
+            path.resolve(`./public/sheets/2022-23/2022-23-cdfm18m-j${key}.json`),
+            JSON.stringify(days[key], null, 2),
+          );
+        });
+      }, 2000);
     }
   });
   // const buffer = readFileSync(path.resolve(filePath));
