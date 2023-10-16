@@ -105,7 +105,8 @@ const Player = ({
 
 const CompetitionSheet = ({ competition, day, singleDay, qualified, className }: Props) => {
   //const teamId = '0060036'; // PGVB
-  const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
+  const teamId = '0060007'; // AS Cannes
+  //const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
   const team = competition.teams.get(teamId);
 
   const Tom = '2309489';
@@ -121,17 +122,24 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
   const AlexF = '2194387';
   const Maxim = '2119743';
 
+  const AxelGD = '2052969'; // 01 setter AS Cannes
+  const MatteoC = '2153177';
+  const Arman = '16';
+
   const DornicM = '2128747'; // 14 setter PAYS D'AIX VENELLES V.B. 2
   const NataliaB = '2193754'; // 11 setter PAYS D'AIX VENELLES V.B. 2
 
   const usheets: Sheet[] = team?.sheets || [];
-  const setters = [Maxim, Mady, Aless, Nathan, DornicM, NataliaB];
+  // const setters = [Maxim, Mady, Aless, Nathan];
+  const setters = [AxelGD, MatteoC, Nathan, Arman];
+  // const setters = [DornicM, NataliaB];
 
   // const sheets = filterMatchSetSheets(usheets, acceptSetWon(false));
   // const sheets = filterMatchSetSheets(usheets, acceptMatchs(['MMA022']));
   const sheets = usheets;
   const csstats = calcCSStats(setters, sheets);
 
+  /*
   console.log(
     'Nathan R4\n',
     summary(
@@ -208,6 +216,7 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
       calcCSStats(setters, filterPointSheets(sheets, acceptEveryPoint([acceptServe(), acceptPosition(Loic, 1)]))),
     ),
   );
+  */
 
   // console.log('rendering CompetitionSheet');
   // console.log(sheets);
@@ -233,10 +242,34 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
       <Spacer />
       <Spacer />
       <pre>
-        <div>All Setters:</div>
+        <div>Global:</div>
         <div>{summary(csstats)}</div>
         <Spacer />
-        <div>Aless:</div>
+        {sheets.map((sheet) => (
+          <>
+            <div>Match {sheet.match.id}:</div>
+            <div>{summary(calcCSStats(setters, [sheet]))}</div>
+            <Spacer />
+          </>
+        ))}
+        <div>Axel:</div>
+        <div>{summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([AxelGD], []))))}</div>
+        <Spacer />
+        <div>Nathan:</div>
+        <div>{summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([Nathan], [AxelGD]))))}</div>
+        <Spacer />
+        <div>Matteo:</div>
+        <div>
+          {summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([MatteoC], [AxelGD, Nathan]))))}
+        </div>
+        <Spacer />
+        <div>Unknown:</div>
+        <div>
+          {summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([], [AxelGD, Nathan, MatteoC]))))}
+        </div>
+        <Spacer />
+
+        {/* <div>Aless:</div>
         <div>{summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([Aless], [Maxim, Mady]))))}</div>
         <Spacer />
         <div>Nathan:</div>
@@ -352,7 +385,7 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
               ),
             ),
           )}
-        </div>
+        </div> */}
       </pre>
     </div>
   );

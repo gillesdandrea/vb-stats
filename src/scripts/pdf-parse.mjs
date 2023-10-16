@@ -11,7 +11,8 @@ import PDFParser from 'pdf2json';
 // [ ] scores
 
 // const PREFIX = './public/sheets/2022-23/2022-23-cdfm18m';
-const PREFIX = './public/sheets/2023-24/2023-24-2fa';
+//const PREFIX = './public/sheets/2023-24/2023-24-2fa';
+const PREFIX = './public/sheets/2023-24/2023-24-pmaa';
 const days = {};
 
 const addMatch = (match) => {
@@ -224,8 +225,8 @@ const parseMatch = (texts) => {
   const first = skip(texts, ['1er'], '2ème');
   const second = skip(texts, ['2ème'], 'Marqueur');
   const marker = skip(texts, ['Marqueur'], 'Marq.Ass.');
-  const assistant = skip(texts, ['Marq.Ass.'], 'R.Salle');
-  const local = skip(texts, ['R.Salle'], 'Juges');
+  //const assistant = skip(texts, ['Marq.Ass.'], 'R.Salle');
+  //const local = skip(texts, ['R.Salle'], 'Juges');
 
   const setLicence = (player) => (player.licence !== '0' ? player : { ...player, licence: player.number });
 
@@ -261,8 +262,8 @@ const parseMatch = (texts) => {
       first: create(first, ['name', 'league', 'licence']),
       second: create(second, ['name', 'league', 'licence']),
       marker: create(marker, ['name', 'league', 'licence']),
-      assistant: create(assistant, ['name', 'league', 'licence']),
-      local: create(local, ['name', 'league', 'licence']),
+      //assistant: create(assistant, ['name', 'league', 'licence']),
+      //local: create(local, ['name', 'league', 'licence']),
     },
     sets,
   };

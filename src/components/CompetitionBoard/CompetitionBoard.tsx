@@ -64,7 +64,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
     const matchs = getGlobalTeamStats(selected).matchs.filter(
       (match: Match) => match.teamA === team || match.teamB === team,
     );
-    const pool = matchs.length > 0 ? selected.pools[matchs[0].day].teams : [];
+    const pool = matchs.length > 0 && selected.pools.length > 0 ? selected.pools[matchs[0].day].teams : [];
     const host = pool.length === 3 ? pool[0].name : '';
 
     if (selected && matchs.length === 0) {
