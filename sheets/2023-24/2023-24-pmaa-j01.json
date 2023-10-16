@@ -1,0 +1,476 @@
+{
+  "PMAA003": {
+    "day": "01",
+    "match": "PMAA003",
+    "description": "PMA - CHAMPIONNAT PRE NATIONAL MASCULIN POULE A",
+    "date": "Samedi 30 Septembre 2023 à 18h00",
+    "teamA": {
+      "name": "US CAGNES VOLLEY-BALL",
+      "players": [
+        {
+          "number": "02",
+          "name": "BAYER MARC",
+          "licence": "02"
+        },
+        {
+          "number": "03",
+          "name": "BOUDARA JONAS",
+          "licence": "1808884"
+        },
+        {
+          "number": "10",
+          "name": "AMADIEU OLIVIER",
+          "licence": "10"
+        },
+        {
+          "number": "11",
+          "name": "ALBERTINI DELTEIL SANDRO",
+          "licence": "1906758"
+        },
+        {
+          "number": "12",
+          "name": "FEUILLEDET COLIN",
+          "licence": "12"
+        },
+        {
+          "number": "13",
+          "name": "DESCHODT JOACHIM",
+          "licence": "1964874"
+        },
+        {
+          "number": "14",
+          "name": "CHABAS TOM",
+          "licence": "1929903"
+        },
+        {
+          "number": "15",
+          "name": "HASBROUCK SIMON",
+          "licence": "2212703"
+        },
+        {
+          "number": "18",
+          "name": "NAKOV MARTIN",
+          "licence": "18"
+        },
+        {
+          "number": "19",
+          "name": "GHIBAUDO MAXENCE",
+          "licence": "19"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "14",
+          "name": "CHABAS TOM",
+          "licence": "1929903"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "BALENSI RAOUL",
+          "licence": "303107"
+        }
+      ]
+    },
+    "teamB": {
+      "name": "AS CANNES VOLLEY-BALL",
+      "players": [
+        {
+          "number": "01",
+          "name": "GRIGUER DERRIEN AXEL",
+          "licence": "2052969"
+        },
+        {
+          "number": "03",
+          "name": "DELAVEAU FAVRE SAM",
+          "licence": "2191218"
+        },
+        {
+          "number": "04",
+          "name": "RIBIER CERDAN MATHEO",
+          "licence": "04"
+        },
+        {
+          "number": "06",
+          "name": "MONNIER GUILLAUME",
+          "licence": "06"
+        },
+        {
+          "number": "09",
+          "name": "KADLEC MAXIME",
+          "licence": "09"
+        },
+        {
+          "number": "11",
+          "name": "BOSCHELLI NATHAN",
+          "licence": "2091829"
+        },
+        {
+          "number": "12",
+          "name": "MAERTEN HUGO",
+          "licence": "2303292"
+        },
+        {
+          "number": "14",
+          "name": "ROUSSELIN NATHAN",
+          "licence": "14"
+        },
+        {
+          "number": "15",
+          "name": "LASSERRE MATHEO",
+          "licence": "15"
+        },
+        {
+          "number": "16",
+          "name": "MAZOYER YLAN",
+          "licence": "2187891"
+        },
+        {
+          "number": "17",
+          "name": "VELEMIR STEFAN",
+          "licence": "2488044"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "14",
+          "name": "ROUSSELIN NATHAN",
+          "licence": "14"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "JOKANOVIC RAJKO",
+          "licence": "1650342"
+        }
+      ]
+    },
+    "approbation": {
+      "first": {
+        "name": "CHAMOT DAMIEN",
+        "league": "PAC",
+        "licence": "2159641"
+      },
+      "second": {
+        "name": "LIMACHER LIONEL",
+        "league": "PAC",
+        "licence": "1657109"
+      },
+      "marker": {
+        "name": "LAMY STEPHANE",
+        "league": "PAC",
+        "licence": "862771"
+      }
+    },
+    "sets": [
+      {
+        "positionA": [
+          {
+            "player": "19"
+          },
+          {
+            "player": "11"
+          },
+          {
+            "player": "02"
+          },
+          {
+            "player": "10"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "13"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "17"
+          },
+          {
+            "player": "01"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "04"
+          },
+          {
+            "player": "03"
+          },
+          {
+            "player": "16",
+            "substitute": "06",
+            "scoreIn": "14:15",
+            "scoreOut": "18:21"
+          }
+        ],
+        "pointsA": [
+          0,
+          2,
+          5,
+          6,
+          10,
+          11,
+          16,
+          17,
+          21,
+          23,
+          24,
+          25
+        ],
+        "pointsB": [
+          -1,
+          7,
+          9,
+          10,
+          11,
+          13,
+          14,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "11",
+            "substitute": "03",
+            "scoreIn": "15:12",
+            "scoreOut": "16:20"
+          },
+          {
+            "player": "13"
+          },
+          {
+            "player": "10"
+          },
+          {
+            "player": "15",
+            "substitute": "18",
+            "scoreIn": "15:12",
+            "scoreOut": "16:20"
+          },
+          {
+            "player": "02"
+          },
+          {
+            "player": "19"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "01",
+            "substitute": "16",
+            "scoreIn": "20:19",
+            "scoreOut": "22:22"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "04"
+          },
+          {
+            "player": "03",
+            "substitute": "11",
+            "scoreIn": "20:19",
+            "scoreOut": "22:22"
+          },
+          {
+            "player": "06"
+          },
+          {
+            "player": "17"
+          }
+        ],
+        "pointsA": [
+          -1,
+          1,
+          3,
+          4,
+          9,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          19,
+          22,
+          23
+        ],
+        "pointsB": [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          11,
+          12,
+          17,
+          20,
+          21,
+          23,
+          25
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "19"
+          },
+          {
+            "player": "11"
+          },
+          {
+            "player": "13"
+          },
+          {
+            "player": "10"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "02"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "17",
+            "substitute": "15",
+            "scoreIn": "5:17"
+          },
+          {
+            "player": "01",
+            "substitute": "12",
+            "scoreIn": "2:11"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "04"
+          },
+          {
+            "player": "03",
+            "substitute": "11",
+            "scoreIn": "2:11"
+          },
+          {
+            "player": "06",
+            "substitute": "16",
+            "scoreIn": "2:10"
+          }
+        ],
+        "pointsA": [
+          1,
+          5,
+          11,
+          13,
+          18,
+          19,
+          21,
+          23,
+          24,
+          25
+        ],
+        "pointsB": [
+          -1,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "11"
+          },
+          {
+            "player": "13"
+          },
+          {
+            "player": "10"
+          },
+          {
+            "player": "15",
+            "substitute": "03",
+            "scoreIn": "10:10"
+          },
+          {
+            "player": "02"
+          },
+          {
+            "player": "19"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "01",
+            "substitute": "11",
+            "scoreIn": "15:21"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "04"
+          },
+          {
+            "player": "03"
+          },
+          {
+            "player": "06",
+            "substitute": "16",
+            "scoreIn": "15:22"
+          },
+          {
+            "player": "17"
+          }
+        ],
+        "pointsA": [
+          -1,
+          1,
+          5,
+          6,
+          8,
+          9,
+          11,
+          12,
+          16,
+          24,
+          25
+        ],
+        "pointsB": [
+          0,
+          2,
+          4,
+          7,
+          8,
+          10,
+          12,
+          14,
+          15,
+          17
+        ]
+      }
+    ]
+  }
+}
