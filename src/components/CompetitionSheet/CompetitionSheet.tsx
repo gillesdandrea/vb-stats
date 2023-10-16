@@ -104,7 +104,8 @@ const Player = ({
 };
 
 const CompetitionSheet = ({ competition, day, singleDay, qualified, className }: Props) => {
-  const teamId = '0060036'; // PGVB
+  //const teamId = '0060036'; // PGVB
+  const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
   const team = competition.teams.get(teamId);
 
   const Tom = '2309489';
@@ -120,8 +121,11 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
   const AlexF = '2194387';
   const Maxim = '2119743';
 
+  const DornicM = '2128747'; // 14 setter PAYS D'AIX VENELLES V.B. 2
+  const NataliaB = '2193754'; // 11 setter PAYS D'AIX VENELLES V.B. 2
+
   const usheets: Sheet[] = team?.sheets || [];
-  const setters = [Maxim, Mady, Aless, Nathan];
+  const setters = [Maxim, Mady, Aless, Nathan, DornicM, NataliaB];
 
   // const sheets = filterMatchSetSheets(usheets, acceptSetWon(false));
   // const sheets = filterMatchSetSheets(usheets, acceptMatchs(['MMA022']));

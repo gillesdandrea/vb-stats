@@ -119,7 +119,7 @@ const Shell = () => {
           items={[
             { key: 'board', label: 'Board' },
             { key: 'graph', label: 'Graph' },
-            { key: 'sheet', label: 'Sheet' },
+            //{ key: 'sheet', label: 'Sheet' },
           ]}
           tabBarExtraContent={
             <Space size={'middle'}>
@@ -189,7 +189,7 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {competition && tab === 'sheet' && (
+        {/*competition && tab === 'sheet' && (
           <CompetitionSheet
             // className={tab === 'graph' ? '' : 'no-display'}
             competition={competition}
@@ -197,7 +197,7 @@ const Shell = () => {
             singleDay={singleDay}
             qualified={qualified}
           />
-        )}
+        )*/}
       </Layout.Content>
     </Layout>
   );

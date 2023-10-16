@@ -64,12 +64,7 @@ export const createCompetitionCollection = (data: DataCollection, sheets: SheetC
   seasons.forEach((season) => {
     collection[season] = {};
     Object.keys(data[season]).forEach(async (category) => {
-      const competition = createCompetition(
-        'Coupe de France Volley-Ball',
-        season,
-        category,
-        sheets?.[season]?.[category],
-      );
+      const competition = createCompetition('Volley-Ball Stats', season, category, sheets?.[season]?.[category]);
       if (data[season][category].length > 0) {
         processCompetition(competition, data[season][category]);
         collection[season][category] = competition;

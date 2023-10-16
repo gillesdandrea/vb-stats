@@ -10,6 +10,8 @@ import PDFParser from 'pdf2json';
 // [ ] Sanctions, remarques (petite finale régionale)
 // [ ] scores
 
+// const PREFIX = './public/sheets/2022-23/2022-23-cdfm18m';
+const PREFIX = './public/sheets/2023-24/2023-24-2fa';
 const days = {};
 
 const addMatch = (match) => {
@@ -292,11 +294,8 @@ const parsePDF = async (filePath, last) => {
       setTimeout(() => {
         // console.log(JSON.stringify(days, null, 2));
         Object.keys(days).forEach((key) => {
-          console.log(path.resolve(`./public/sheets/2022-23/2022-23-cdfm18m-j${key}.json`));
-          writeFileSync(
-            path.resolve(`./public/sheets/2022-23/2022-23-cdfm18m-j${key}.json`),
-            JSON.stringify(days[key], null, 2),
-          );
+          console.log(path.resolve(`${PREFIX}-j${key}.json`));
+          writeFileSync(path.resolve(`${PREFIX}-j${key}.json`), JSON.stringify(days[key], null, 2));
         });
       }, 2000);
     }
