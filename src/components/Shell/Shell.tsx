@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Layout, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, Tabs } from 'antd';
 
@@ -11,7 +11,19 @@ import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 
 import './Shell.scss';
 
+const parseQueryParameters = (url: string): Record<string, string> => {
+  const regex = /[?&]([^=#]+)=([^&#]*)/g;
+  const params: Record<string, string> = {};
+  let match;
+  while ((match = regex.exec(url))) {
+    params[match[1]] = match[2];
+  }
+  return params;
+};
+
 const Shell = () => {
+  const params = parseQueryParameters(window.location.search);
+
   const {
     isLoading,
     isError,
@@ -21,24 +33,34 @@ const Shell = () => {
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
     const data = await fetchData();
     const seasons = Object.keys(data);
-    const season = seasons[0];
+    const season = params.season ?? seasons[0];
     setSeason(season);
     const categories = Object.keys(data[season]);
-    const category = categories[0];
+    const category = params.category ?? categories[0];
     setCategory(category);
     const competitionCollection = createCompetitionCollection(data);
     const competition = competitionCollection[season][category];
-    setDay(competition.dayCount);
+    const day: number = Number.parseInt(params.day);
+    setDay(Number.isNaN(day) ? competition.dayCount : day);
     return competitionCollection;
   });
 
-  const [season, setSeason] = useState<string>();
-  const [category, setCategory] = useState<string>();
-  const [day, setDay] = useState<number>(1);
-  const [singleDay, setSingleDay] = useState<boolean>(false); // OVERALL - J0x
-  const [qualified, setQualified] = useState<boolean>(true); // ALL TEAMS - QUALIFIED
+  const pday: number = Number.parseInt(params.day);
+  const [season, setSeason] = useState<string>(params.season);
+  const [category, setCategory] = useState<string>(params.category);
+  const [day, setDay] = useState<number>(Number.isNaN(pday) ? 1 : pday);
+  const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
+  const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
 
-  const [tab, setTab] = useState<string>('board');
+  const [tab, setTab] = useState<string>(params.tab ?? 'board');
+
+  useEffect(() => {
+    window.history.replaceState(
+      {},
+      '',
+      `/vb-stats?tab=${tab}&season=${season}&category=${category}&day=${day}&singleDay=${!!singleDay}&qualified=${!!qualified}`,
+    );
+  }, [tab, season, category, day, singleDay, qualified]);
 
   const handleTabChange = (key: string) => {
     if (key === 'graph' && !qualified) {
@@ -71,7 +93,7 @@ const Shell = () => {
   }
 
   const seasons = Object.keys(competitions ?? {});
-  const categories = Object.keys(competitions && season ? competitions[season] : {});
+  const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
   const competition = competitions && season && category ? competitions[season][category] : undefined;
   const days = competition
     ? Array(competition.dayCount)
@@ -90,7 +112,7 @@ const Shell = () => {
       <Layout.Header>
         <Tabs
           size="large"
-          defaultActiveKey="board"
+          activeKey={tab}
           onChange={handleTabChange}
           items={[
             { key: 'board', label: 'Board' },
