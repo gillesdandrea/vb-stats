@@ -1,6 +1,6 @@
 import { Match, Sheet, Team } from './model';
 import {
-  CSSheetLicence,
+  CSheetLicence,
   CSStats,
   CSheetMatch,
   CSheetPoint,
@@ -193,15 +193,16 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
   assert((isA ? setA : setB) === (team === match.teamA ? match.setA : match.setB));
   assert((isA ? setB : setA) === (team === match.teamA ? match.setB : match.setA));
   const sheet: Sheet = {
+    id: smatch.match,
     isA: team === match.teamA,
-    match,
+    steam,
     smatch: smatch,
     csmatch,
   };
   return sheet;
 };
 
-const checkLicence = (licences: CSSheetLicence, whitelic: string[] = [], blacklic: string[] = []): boolean => {
+const checkLicence = (licences: CSheetLicence, whitelic: string[] = [], blacklic: string[] = []): boolean => {
   const condition = (licence: string) => licences.licences.has(licence);
   return (blacklic.length === 0 || !blacklic.some(condition)) && (whitelic.length === 0 || whitelic.every(condition));
 };
@@ -227,7 +228,7 @@ export const acceptMatchWon =
 export const acceptMatchs =
   (matchids: string[]) =>
   (sheet: Sheet, csmatch: CSheetMatch, csset: CSheetSet): boolean => {
-    return matchids.some((matchid) => matchid.toLowerCase() === sheet.match.id.toLowerCase());
+    return matchids.some((matchid) => matchid.toLowerCase() === sheet.id.toLowerCase());
   };
 
 export const acceptSetWon =
@@ -243,7 +244,7 @@ export const filterMatchSetSheets = (sheets: Sheet[], accept: MatchSetAcceptor):
 };
 
 export const filterMatchSetSheet = (sheet: Sheet, accept: MatchSetAcceptor): Sheet | undefined => {
-  const { isA, match, smatch, csmatch } = sheet;
+  const { isA, steam, smatch, csmatch } = sheet;
   const sets = csmatch.sets.filter((set) => accept(sheet, csmatch, set));
   if (sets.length > 0) {
     const fcsm: CSheetMatch = {
@@ -253,8 +254,9 @@ export const filterMatchSetSheet = (sheet: Sheet, accept: MatchSetAcceptor): She
       licences: csmatch.licences,
     };
     return {
+      id: smatch.match,
       isA,
-      match,
+      steam,
       smatch,
       csmatch: fcsm,
     };
@@ -338,7 +340,7 @@ export const filterPointSheets = (sheets: Sheet[], accept: PointAcceptor): Sheet
 };
 
 export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | undefined => {
-  const { isA, match, smatch, csmatch } = sheet;
+  const { isA, steam, smatch, csmatch } = sheet;
   const fcsm: CSheetMatch = {
     isA,
     count: csmatch.count,
@@ -363,8 +365,9 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
   });
   return fcsm.sets.length > 0
     ? {
+        id: smatch.match,
         isA,
-        match,
+        steam,
         smatch,
         csmatch: fcsm,
       }
@@ -481,7 +484,7 @@ export const addCSheetStat = (
   blacklic: string[] = [],
   accept: (csmatch: CSheetMatch, set: CSheetSet, point: CSheetPoint) => boolean = () => true,
 ): CSheetStat => {
-  const check = (licences: CSSheetLicence) => checkLicence(licences, whitelic, blacklic);
+  const check = (licences: CSheetLicence) => checkLicence(licences, whitelic, blacklic);
 
   const { csmatch } = sheet;
   stat.matchs++;

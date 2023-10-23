@@ -9,17 +9,17 @@ export enum Roles {
   MB2 = 5, // middle blocker
 }
 
-export interface CSSheetLicence {
+export interface CSheetLicence {
   licences: Set<string>;
 }
 
-export interface CSheetMatch extends CSSheetLicence {
+export interface CSheetMatch extends CSheetLicence {
   isA: boolean;
   count: number;
   sets: CSheetSet[];
 }
 
-export interface CSheetSet extends CSSheetLicence {
+export interface CSheetSet extends CSheetLicence {
   setA: number;
   setB: number;
   count: number;
@@ -28,7 +28,7 @@ export interface CSheetSet extends CSSheetLicence {
   points: CSheetPoint[];
 }
 
-export interface CSheetPoint extends CSSheetLicence {
+export interface CSheetPoint extends CSheetLicence {
   scoreA: number;
   scoreB: number;
   count: number;

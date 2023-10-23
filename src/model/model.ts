@@ -1,7 +1,7 @@
 import { Rating } from 'ts-trueskill';
 
 import { Department } from './geography';
-import { CSheetMatch, SheetMap, SheetMatch } from './sheet';
+import { CSheetMatch, SheetMap, SheetMatch, SheetTeam } from './sheet';
 
 // each set updates ts-ranking vs each match
 export const SET_RANKING = true;
@@ -105,8 +105,9 @@ export interface Match {
   readonly victory: Victory;
 }
 export interface Sheet {
+  id: string;
   isA: boolean;
-  match: Match;
+  steam: SheetTeam;
   smatch: SheetMatch;
   csmatch: CSheetMatch;
 }
