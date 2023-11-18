@@ -64,7 +64,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
     const matchs = getGlobalTeamStats(selected).matchs.filter(
       (match: Match) => match.teamA === team || match.teamB === team,
     );
-    const pool = matchs.length > 0 ? selected.pools[matchs[0].day].teams : [];
+    const pool = matchs.length > 0 && selected.pools.length > 0 ? selected.pools[matchs[0].day].teams : [];
     const host = pool.length === 3 ? pool[0].name : '';
 
     if (selected && matchs.length === 0) {
@@ -190,8 +190,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           return '-';
         }
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
+        const isCDF = team.pools.length > 0;
         return `${Math.round((stats.points * 2 * dayCount) / stats.matchCount)}${
-          2 * dayCount !== stats.matchCount ? '*' : ''
+          (isCDF ? 2 : 1) * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
       sorter: rankingSorter(day, !singleDay),

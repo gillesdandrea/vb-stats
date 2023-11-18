@@ -4,10 +4,11 @@ import { Layout, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, T
 
 import { useQuery } from 'react-query';
 import { CompetitionCollection } from '../../model/model';
-import { createCompetitionCollection, fetchData } from '../../utils/fetch-utils';
+import { createCompetitionCollection, fetchData, fetchSheets } from '../../utils/fetch-utils';
 
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
+import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
 
 import './Shell.scss';
 
@@ -32,15 +33,17 @@ const Shell = () => {
     refetch,
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
     const data = await fetchData();
+    const sheets = await fetchSheets();
     const seasons = Object.keys(data);
     const season = params.season ?? seasons[0];
     setSeason(season);
     const categories = Object.keys(data[season]);
     const category = params.category ?? categories[0];
     setCategory(category);
-    const competitionCollection = createCompetitionCollection(data);
+    const competitionCollection = createCompetitionCollection(data, sheets);
     const competition = competitionCollection[season][category];
     const day: number = Number.parseInt(params.day);
+    setDayCount(competition.dayCount);
     setDay(Number.isNaN(day) ? competition.dayCount : day);
     return competitionCollection;
   });
@@ -48,6 +51,7 @@ const Shell = () => {
   const pday: number = Number.parseInt(params.day);
   const [season, setSeason] = useState<string>(params.season);
   const [category, setCategory] = useState<string>(params.category);
+  const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 1 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
@@ -58,9 +62,11 @@ const Shell = () => {
     window.history.replaceState(
       {},
       '',
-      `/vb-stats?tab=${tab}&season=${season}&category=${category}&day=${day}&singleDay=${!!singleDay}&qualified=${!!qualified}`,
+      `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
+        day ? `&day=${day === dayCount ? 'last' : day}` : ''
+      }&singleDay=${!!singleDay}&qualified=${!!qualified}`,
     );
-  }, [tab, season, category, day, singleDay, qualified]);
+  }, [tab, season, category, dayCount, day, singleDay, qualified]);
 
   const handleTabChange = (key: string) => {
     if (key === 'graph' && !qualified) {
@@ -94,12 +100,20 @@ const Shell = () => {
 
   const seasons = Object.keys(competitions ?? {});
   const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
-  const competition = competitions && season && category ? competitions[season][category] : undefined;
+  const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
   const days = competition
     ? Array(competition.dayCount)
         .fill(0)
         .map((_, index) => index + 1)
     : [];
+
+  if (competition && competition.dayCount !== dayCount) {
+    setDayCount(competition.dayCount);
+    if (params.day === 'last' && day !== competition.dayCount) {
+      setDay(competition.dayCount);
+      return <div />;
+    }
+  }
 
   if (competition && day > competition.dayCount) {
     setDay(competition.dayCount);
@@ -117,6 +131,7 @@ const Shell = () => {
           items={[
             { key: 'board', label: 'Board' },
             { key: 'graph', label: 'Graph' },
+            //{ key: 'sheet', label: 'Sheet' },
           ]}
           tabBarExtraContent={
             <Space size={'middle'}>
@@ -186,6 +201,15 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
+        {/*competition && tab === 'sheet' && (
+          <CompetitionSheet
+            // className={tab === 'graph' ? '' : 'no-display'}
+            competition={competition}
+            day={day}
+            singleDay={singleDay}
+            qualified={qualified}
+          />
+        )*/}
       </Layout.Content>
     </Layout>
   );

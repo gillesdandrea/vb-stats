@@ -3,6 +3,7 @@ import { Rating, TrueSkill, rate_1vs1, winProbability } from 'ts-trueskill';
 import { getDepartment } from './geography';
 import { Competition, Match, Pool, Stats, Team } from './model';
 import { Sorting, rankingSorter, ratingSorter } from './model-sorters';
+import { SheetMap } from './sheet';
 
 // mu, sigma, beta, tau, drawProbability
 // this.mu = mu ?? 25;
@@ -24,7 +25,7 @@ export const getWinProbability = (teamA: Team, teamB: Team, day: number): number
   return winProbability([getTeamRating(teamA, day)], [getTeamRating(teamB, day)], ts);
 };
 
-export const createCompetition = (name: string, season: string, category: string): Competition => {
+export const createCompetition = (name: string, season: string, category: string, sheets: SheetMap[]): Competition => {
   const competition = {
     name,
     season,
@@ -32,6 +33,7 @@ export const createCompetition = (name: string, season: string, category: string
     teams: new Map<string, Team>(),
     matchs: [],
     days: [],
+    sheets,
     dayCount: 0,
     lastDay: 0,
   };
@@ -76,6 +78,7 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
     gstats: [createStats(rating)],
     dstats: [],
     pools: [],
+    sheets: [],
     dayCount: 0,
     lastDay: 0,
   };

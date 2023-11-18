@@ -22,6 +22,7 @@ import {
   rateMatch,
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
+import { createSheet } from './sheet-helpers';
 
 export const createMatch = (competition: Competition, data: any): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
@@ -137,6 +138,16 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
     }
   }
 
+  if (competition.sheets) {
+    const sheetMatch = competition.sheets[match.day - 1]?.[match.id];
+    if (sheetMatch) {
+      const sheetA = createSheet(teamA, match, sheetMatch);
+      teamA.sheets.push(sheetA);
+      const sheetB = createSheet(teamB, match, sheetMatch);
+      teamB.sheets.push(sheetB);
+    }
+  }
+
   competition.matchs.push(match); // = [...competition.matchs, match];
   competition.days[day].matchs.push(match); // idem
   // dstats and gstats are already inited
@@ -150,25 +161,30 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
 };
 
 export const processCompetition = (competition: Competition, datas: any[][]) => {
+  // @ts-ignore
+  const isCDF = datas.length > 0 && datas[0][0]['Entit�'] === 'ACJEUNES';
+
   // reorder matchs based on results of the first matchs
-  datas
-    .filter((data) => data)
-    .forEach((data: any[]) => {
-      const poolCount = data.length / 3;
-      for (let i = 0; i < poolCount; i++) {
-        const m1 = data[3 * i];
-        const m2 = data[3 * i + 1];
-        const m3 = data[3 * i + 2];
-        const [ssetA, ssetB] = m1.Set ? m1.Set.split('/') : ['0', '0'];
-        const setA = ssetA === 'F' ? 0 : Number(ssetA);
-        const setB = ssetB === 'F' ? 0 : Number(ssetB);
-        const winner = setA > setB ? m1.EQA_no : m1.EQB_no;
-        if (winner !== m2.EQA_no && winner !== m2.EQB_no) {
-          data[3 * i + 1] = m3;
-          data[3 * i + 2] = m2;
+  if (isCDF) {
+    datas
+      .filter((data: any) => data)
+      .forEach((data: any[]) => {
+        const poolCount = data.length / 3;
+        for (let i = 0; i < poolCount; i++) {
+          const m1 = data[3 * i];
+          const m2 = data[3 * i + 1];
+          const m3 = data[3 * i + 2];
+          const [ssetA, ssetB] = m1.Set ? m1.Set.split('/') : ['0', '0'];
+          const setA = ssetA === 'F' ? 0 : Number(ssetA);
+          const setB = ssetB === 'F' ? 0 : Number(ssetB);
+          const winner = setA > setB ? m1.EQA_no : m1.EQB_no;
+          if (winner !== m2.EQA_no && winner !== m2.EQB_no) {
+            data[3 * i + 1] = m3;
+            data[3 * i + 2] = m2;
+          }
         }
-      }
-    });
+      });
+  }
 
   datas
     .filter((data) => data)
@@ -186,32 +202,46 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       // lastDays are updated when adding a played match
 
       // process day
-      const poolCount = data.length / 3;
-      for (let i = 0; i < poolCount; i++) {
-        const m1 = data[3 * i];
-        const m2 = data[3 * i + 1];
-        // const m3 = data[3 * i + 2];
-
-        // find pool;
-        const teamA = getTeam(competition, m1.EQA_no, m1.EQA_nom);
-        const teamB = getTeam(competition, m1.EQB_no, m1.EQB_nom);
-        const teamC =
-          m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
-            ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
-            : getTeam(competition, m2.EQA_no, m2.EQA_nom);
-        const pool: Pool = {
-          name: m1.Match.substring(1, 3),
-          teams: [teamA, teamB, teamC],
-        };
-        dayCompetition.pools.set(pool.name, pool);
-        [teamA, teamB, teamC].forEach((team: Team) => {
-          dayCompetition.teams.push(team);
-          team.dayCount = day;
-          team.pools[day] = pool;
-          // enforce stats creation
-          getGlobalTeamStats(team, day);
-          getDayTeamStats(team, day);
+      if (!isCDF) {
+        data.forEach((match: any) => {
+          const teamA = getTeam(competition, match.EQA_no, match.EQA_nom);
+          const teamB = getTeam(competition, match.EQB_no, match.EQB_nom);
+          [teamA, teamB].forEach((team: Team) => {
+            dayCompetition.teams.push(team);
+            team.dayCount = day;
+            // enforce stats creation
+            getGlobalTeamStats(team, day);
+            getDayTeamStats(team, day);
+          });
         });
+      } else {
+        const poolCount = data.length / 3;
+        for (let i = 0; i < poolCount; i++) {
+          const m1 = data[3 * i];
+          const m2 = data[3 * i + 1];
+          // const m3 = data[3 * i + 2];
+
+          // find pool;
+          const teamA = getTeam(competition, m1.EQA_no, m1.EQA_nom);
+          const teamB = getTeam(competition, m1.EQB_no, m1.EQB_nom);
+          const teamC =
+            m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
+              ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
+              : getTeam(competition, m2.EQA_no, m2.EQA_nom);
+          const pool: Pool = {
+            name: m1.Match.substring(1, 3),
+            teams: [teamA, teamB, teamC],
+          };
+          dayCompetition.pools.set(pool.name, pool);
+          [teamA, teamB, teamC].forEach((team: Team) => {
+            dayCompetition.teams.push(team);
+            team.dayCount = day;
+            team.pools[day] = pool;
+            // enforce stats creation
+            getGlobalTeamStats(team, day);
+            getDayTeamStats(team, day);
+          });
+        }
       }
 
       // process matchs
@@ -248,7 +278,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
         const teams = [...competition.days[day].teams];
         teams.sort(rankingSorter(day - 1, false));
         teams.forEach((team: Team, index: number) => {
-          if (team.pools[day].ranking === undefined) {
+          if (team.pools.length > 0 && team.pools[day].ranking === undefined) {
             team.pools[day].ranking = index + 1;
           }
         });

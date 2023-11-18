@@ -1,0 +1,721 @@
+{
+  "MMG007": {
+    "day": "03",
+    "match": "MMG007",
+    "description": "MMG - COUPE DE FRANCE M15 MASCULIN POULE G",
+    "date": "Dimanche 04 Décembre 2022 à 11h00",
+    "teamA": {
+      "name": "PAYS DE GRASSE VOLLEY-BALL",
+      "players": [
+        {
+          "number": "01",
+          "name": "DESTRUEL GABRIEL",
+          "licence": "2186825"
+        },
+        {
+          "number": "04",
+          "name": "BENARROCHE ALCÉE",
+          "licence": "2506545"
+        },
+        {
+          "number": "05",
+          "name": "BOSCHELLI NATHAN",
+          "licence": "2091829"
+        },
+        {
+          "number": "07",
+          "name": "LIMOUZY ANTONIN",
+          "licence": "2212762"
+        },
+        {
+          "number": "09",
+          "name": "MIRANDA SOREN",
+          "licence": "2243354"
+        },
+        {
+          "number": "11",
+          "name": "D'ANDREA TOM",
+          "licence": "2309489"
+        },
+        {
+          "number": "15",
+          "name": "GATTI ALESSANDRO",
+          "licence": "2227629"
+        },
+        {
+          "number": "16",
+          "name": "GUIHARD LOIC",
+          "licence": "2596850"
+        },
+        {
+          "number": "17",
+          "name": "GIRAUDO ADRIEN",
+          "licence": "2499328"
+        },
+        {
+          "number": "19",
+          "name": "DELAVEAU FAVRE SAM",
+          "licence": "2191218"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "04",
+          "name": "BENARROCHE ALCÉE",
+          "licence": "2506545"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "HAUDEGOND MATHIEU",
+          "licence": "2454401"
+        },
+        {
+          "number": "EB",
+          "name": "INAL KARIM",
+          "licence": "1183306"
+        }
+      ]
+    },
+    "teamB": {
+      "name": "NICE VOLLEY-BALL",
+      "players": [
+        {
+          "number": "01",
+          "name": "FORESTIER GABRIEL",
+          "licence": "2305446"
+        },
+        {
+          "number": "02",
+          "name": "FUZIER YANN",
+          "licence": "2360610"
+        },
+        {
+          "number": "03",
+          "name": "BOTTON BENJAMIN",
+          "licence": "2504593"
+        },
+        {
+          "number": "04",
+          "name": "BUCHAILLARD MATHIEU",
+          "licence": "2514216"
+        },
+        {
+          "number": "05",
+          "name": "TANASOV ION",
+          "licence": "2198843"
+        },
+        {
+          "number": "06",
+          "name": "FAUVET LESCLINGAND CAMILLE",
+          "licence": "2144324"
+        },
+        {
+          "number": "07",
+          "name": "JACQUEROT KAIBOUCHE LOIC",
+          "licence": "2193378"
+        },
+        {
+          "number": "08",
+          "name": "LIZÉ GEORGES",
+          "licence": "2503578"
+        },
+        {
+          "number": "09",
+          "name": "FOFANA CLÉMENT",
+          "licence": "2502340"
+        },
+        {
+          "number": "10",
+          "name": "AGIUS DUNCAN",
+          "licence": "2541686"
+        },
+        {
+          "number": "12",
+          "name": "GHOUL YOUSSEF",
+          "licence": "2603152"
+        },
+        {
+          "number": "14",
+          "name": "VIVIEN ZEIN",
+          "licence": "2187013"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "14",
+          "name": "VIVIEN ZEIN",
+          "licence": "2187013"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "TROCELLIER FABIEN",
+          "licence": "2048049"
+        }
+      ]
+    },
+    "approbation": {
+      "first": {
+        "name": "RUBIN THOMAS",
+        "league": "PAC",
+        "licence": "1680189"
+      },
+      "second": {},
+      "marker": {
+        "name": "CECCHETTI CORINNE",
+        "league": "PAC",
+        "licence": "1834204"
+      },
+      "assistant": {},
+      "local": {
+        "name": "BOSCHELLI CEDRIC",
+        "league": "PAC",
+        "licence": "2284400"
+      }
+    },
+    "sets": [
+      {
+        "positionA": [
+          {
+            "player": "05"
+          },
+          {
+            "player": "16",
+            "substitute": "09",
+            "scoreIn": "23:23"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "07"
+          },
+          {
+            "player": "17",
+            "substitute": "01",
+            "scoreIn": "18:16",
+            "scoreOut": "19:17"
+          },
+          {
+            "player": "19"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "12",
+            "substitute": "07",
+            "scoreIn": "18:20",
+            "scoreOut": "25:25"
+          },
+          {
+            "player": "06"
+          },
+          {
+            "player": "03"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "08",
+            "substitute": "02",
+            "scoreIn": "27:27"
+          },
+          {
+            "player": "05",
+            "substitute": "10",
+            "scoreIn": "3:10"
+          }
+        ],
+        "pointsA": [
+          0,
+          1,
+          7,
+          10,
+          11,
+          12,
+          13,
+          14,
+          16,
+          17,
+          19,
+          20,
+          22,
+          24,
+          25,
+          26,
+          29
+        ],
+        "pointsB": [
+          -1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          12,
+          15,
+          16,
+          17,
+          18,
+          23,
+          24,
+          25,
+          27
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "09"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "07"
+          },
+          {
+            "player": "17"
+          },
+          {
+            "player": "19",
+            "substitute": "11",
+            "scoreIn": "11:6"
+          },
+          {
+            "player": "05"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "06"
+          },
+          {
+            "player": "03"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "08",
+            "substitute": "02",
+            "scoreIn": "16:19"
+          },
+          {
+            "player": "10",
+            "substitute": "05",
+            "scoreIn": "3:8"
+          },
+          {
+            "player": "12",
+            "substitute": "07",
+            "scoreIn": "3:10"
+          }
+        ],
+        "pointsA": [
+          -1,
+          2,
+          4,
+          10,
+          12,
+          13,
+          14,
+          18,
+          19,
+          20,
+          23,
+          25
+        ],
+        "pointsB": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          10,
+          13,
+          15,
+          16,
+          17,
+          18
+        ]
+      }
+    ]
+  },
+  "MMG009": {
+    "day": "03",
+    "match": "MMG009",
+    "description": "MMG - COUPE DE FRANCE M15 MASCULIN POULE G",
+    "date": "Dimanche 04 Décembre 2022",
+    "teamA": {
+      "name": "PAYS DE GRASSE VOLLEY-BALL",
+      "players": [
+        {
+          "number": "01",
+          "name": "DESTRUEL GABRIEL",
+          "licence": "2186825"
+        },
+        {
+          "number": "04",
+          "name": "BENARROCHE ALCÉE",
+          "licence": "2506545"
+        },
+        {
+          "number": "05",
+          "name": "BOSCHELLI NATHAN",
+          "licence": "2091829"
+        },
+        {
+          "number": "07",
+          "name": "LIMOUZY ANTONIN",
+          "licence": "2212762"
+        },
+        {
+          "number": "09",
+          "name": "MIRANDA SOREN",
+          "licence": "2243354"
+        },
+        {
+          "number": "11",
+          "name": "D'ANDREA TOM",
+          "licence": "2309489"
+        },
+        {
+          "number": "15",
+          "name": "GATTI ALESSANDRO",
+          "licence": "2227629"
+        },
+        {
+          "number": "16",
+          "name": "GUIHARD LOIC",
+          "licence": "2596850"
+        },
+        {
+          "number": "17",
+          "name": "GIRAUDO ADRIEN",
+          "licence": "2499328"
+        },
+        {
+          "number": "19",
+          "name": "DELAVEAU FAVRE SAM",
+          "licence": "2191218"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "04",
+          "name": "BENARROCHE ALCÉE",
+          "licence": "2506545"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "HAUDEGOND MATHIEU",
+          "licence": "2454401"
+        },
+        {
+          "number": "EB",
+          "name": "INAL KARIM",
+          "licence": "1183306"
+        }
+      ]
+    },
+    "teamB": {
+      "name": "VITROLLES SPORTS VOLLEY-BALL",
+      "players": [
+        {
+          "number": "01",
+          "name": "MILLANCOURT JULIEN",
+          "licence": "2069061"
+        },
+        {
+          "number": "04",
+          "name": "CANONGE MAE",
+          "licence": "2248649"
+        },
+        {
+          "number": "05",
+          "name": "WIMMER BAPTISTE",
+          "licence": "2065990"
+        },
+        {
+          "number": "07",
+          "name": "EL FAYACH RAYAN",
+          "licence": "2528945"
+        },
+        {
+          "number": "10",
+          "name": "DOURIN LIAM",
+          "licence": "1967624"
+        },
+        {
+          "number": "12",
+          "name": "MARTINO GAUCHI NOA",
+          "licence": "2241190"
+        },
+        {
+          "number": "13",
+          "name": "POTTIER REIGNER GABRIEL",
+          "licence": "2243753"
+        },
+        {
+          "number": "19",
+          "name": "LAMBRIGOT FABIEN",
+          "licence": "2308484"
+        },
+        {
+          "number": "20",
+          "name": "ROCHE MILO",
+          "licence": "2594350"
+        }
+      ],
+      "liberos": [
+        {
+          "number": "04",
+          "name": "CANONGE MAE",
+          "licence": "2248649"
+        }
+      ],
+      "officials": [
+        {
+          "number": "EA",
+          "name": "CUESTA GILLES",
+          "licence": "1486302"
+        }
+      ]
+    },
+    "approbation": {
+      "first": {
+        "name": "RUBIN THOMAS",
+        "league": "PAC",
+        "licence": "1680189"
+      },
+      "second": {},
+      "marker": {
+        "name": "CECCHETTI CORINNE",
+        "league": "PAC",
+        "licence": "1834204"
+      },
+      "assistant": {},
+      "local": {
+        "name": "BOSCHELLI CEDRIC",
+        "league": "PAC",
+        "licence": "2284400"
+      }
+    },
+    "sets": [
+      {
+        "positionA": [
+          {
+            "player": "05"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "07"
+          },
+          {
+            "player": "16"
+          },
+          {
+            "player": "11"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "07"
+          },
+          {
+            "player": "05"
+          },
+          {
+            "player": "12"
+          },
+          {
+            "player": "01"
+          },
+          {
+            "player": "10"
+          },
+          {
+            "player": "13"
+          }
+        ],
+        "pointsA": [
+          1,
+          2,
+          3,
+          6,
+          9,
+          11,
+          12,
+          13,
+          19,
+          21,
+          23,
+          25
+        ],
+        "pointsB": [
+          -1,
+          1,
+          4,
+          7,
+          8,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "09"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "07"
+          },
+          {
+            "player": "17",
+            "substitute": "01",
+            "scoreIn": "14:22",
+            "scoreOut": "15:23"
+          },
+          {
+            "player": "11",
+            "substitute": "19",
+            "scoreIn": "9:18"
+          },
+          {
+            "player": "05"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "05"
+          },
+          {
+            "player": "12"
+          },
+          {
+            "player": "01"
+          },
+          {
+            "player": "19"
+          },
+          {
+            "player": "13"
+          },
+          {
+            "player": "20"
+          }
+        ],
+        "pointsA": [
+          -1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          9,
+          12,
+          13,
+          15,
+          18
+        ],
+        "pointsB": [
+          1,
+          2,
+          6,
+          9,
+          10,
+          15,
+          18,
+          21,
+          22,
+          23,
+          25
+        ]
+      },
+      {
+        "positionA": [
+          {
+            "player": "16"
+          },
+          {
+            "player": "15"
+          },
+          {
+            "player": "07"
+          },
+          {
+            "player": "09"
+          },
+          {
+            "player": "19"
+          },
+          {
+            "player": "05"
+          }
+        ],
+        "positionB": [
+          {
+            "player": "05"
+          },
+          {
+            "player": "12"
+          },
+          {
+            "player": "01"
+          },
+          {
+            "player": "19"
+          },
+          {
+            "player": "13"
+          },
+          {
+            "player": "20"
+          }
+        ],
+        "pointsA": [
+          -1,
+          1,
+          6,
+          8,
+          11,
+          14,
+          16,
+          17
+        ],
+        "pointsB": [
+          0,
+          4,
+          6,
+          10,
+          11,
+          15,
+          17,
+          19
+        ]
+      }
+    ]
+  }
+}
