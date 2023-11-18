@@ -90,10 +90,10 @@ const renderTeam = ({
               {team.department.num_dep} - {team.department.region_name}
             </div>
             <div>{getTrophies(competition, team)}</div>
-            <small>
+            <div className="small-text">
               <div>
-                ranking: {ranking} / {competition.days[day].teams.length} {delta} | points:{' '}
-                {Math.round((stats.points * 2 * dayCount) / stats.matchCount)}
+                ranking: {ranking} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
+                {Math.round((stats.points * 2 * dayCount) / stats.matchCount)} / {6 * dayCount}
                 {2 * dayCount !== stats.matchCount ? '*' : ''}
               </div>
               <div>
@@ -103,7 +103,7 @@ const renderTeam = ({
               <div>
                 rating: {stats.rating.mu.toFixed(3)} | {opposition}
               </div>
-            </small>
+            </div>
           </div>
         </div>
 
