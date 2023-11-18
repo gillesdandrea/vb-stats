@@ -1,23 +1,12 @@
 import cx from 'classnames';
 
-import { Competition, Sheet } from '../../model/model';
-import {
-  acceptEveryPoint,
-  acceptLicences,
-  acceptMatchWon,
-  acceptMatchs,
-  acceptPosition,
-  acceptRole,
-  acceptServe,
-  acceptSetWon,
-  acceptSomePoint,
-  calcCSStats,
-  filterMatchSetSheets,
-  filterPointSheets,
-  notPoint,
-} from '../../model/sheet-helpers';
+import { InboxOutlined } from '@ant-design/icons';
+import { message, Upload } from 'antd';
 
-import { CSStats, CSheetStat, Roles } from '../../model/sheet';
+import { Competition, Sheet, Team } from '../../model/model';
+import { acceptLicences, calcCSStats, filterPointSheets } from '../../model/sheet-helpers';
+
+import { CSheetStat, CSStats } from '../../model/sheet';
 import './CompetitionSheet.scss';
 
 interface Props {
@@ -104,10 +93,16 @@ const Player = ({
 };
 
 const CompetitionSheet = ({ competition, day, singleDay, qualified, className }: Props) => {
-  //const teamId = '0060036'; // PGVB
-  const teamId = '0060007'; // AS Cannes
-  //const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
-  const team = competition.teams.get(teamId);
+  // const teamId = '0060036'; // PGVB
+  // const teamId = '0060007'; // AS Cannes
+  // const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
+  // const team = competition.teams.get(teamId);
+  let team: Team | undefined;
+  competition.teams.forEach((t) => {
+    if (!team || team.sheets.length < t.sheets.length) {
+      team = t;
+    }
+  });
 
   const Tom = '2309489';
   const Anto = '2212762';
@@ -131,7 +126,7 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
 
   const usheets: Sheet[] = team?.sheets || [];
   // const setters = [Maxim, Mady, Aless, Nathan];
-  const setters = [AxelGD, MatteoC, Nathan, Arman];
+  const setters = [AxelGD, MatteoC, Nathan, Arman, DornicM, NataliaB];
   // const setters = [DornicM, NataliaB];
 
   // const sheets = filterMatchSetSheets(usheets, acceptSetWon(false));
@@ -220,10 +215,64 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
 
   // console.log('rendering CompetitionSheet');
   // console.log(sheets);
+
   return (
     <div className={cx('vb-sheet', className)}>
+      {/*}
+      <Upload.Dragger
+        name={'file'}
+        multiple
+        action={(file) => {
+          return new Promise((resolve, reject) => {
+            //            const ajaxResponseWasFine = true;
+
+            //            setTimeout(() => {
+            //              if (ajaxResponseWasFine) {
+            const reader = new FileReader();
+
+            reader.addEventListener(
+              'load',
+              () => {
+                const result = reader.result?.toString() || '';
+                console.log(atob(result.slice(result.indexOf('base64,'))));
+                resolve(result);
+              },
+              false,
+            );
+
+            if (file) {
+              reader.readAsDataURL(file);
+            }
+            //              } else {
+            //                reject('error');
+            //              }
+            //            }, 1000);
+          });
+        }}
+        onChange={(info) => {
+          const { status } = info.file;
+          if (status !== 'uploading') {
+            console.log(info.file, info.fileList);
+          }
+          if (status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully.`);
+          } else if (status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          }
+        }}
+        onDrop={(e) => {
+          console.log('Dropped files', e.dataTransfer.files);
+        }}
+      >
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Click or drag PDF match sheets to this area to upload</p>
+        <p className="ant-upload-hint">Support for a single or bulk upload of PDF volleyball match sheets.</p>
+      </Upload.Dragger>
+      */}
       <h2>
-        Stats CDF {competition.category} {competition.season}
+        Stats {competition.category} {competition.season}
       </h2>
       <Spacer />
       <div>
@@ -236,8 +285,9 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
       </div>
       <div>Entre () le nombre de fois où la position a eu lieu (séries de services ou réceptions).</div>
       <Spacer />
+      <div>Team: {team?.name}</div>
       <div>
-        Matchs: {sheets.map((sheet) => sheet.match.id).join(', ')} ({sheets.length})
+        Matchs: {sheets.map((sheet) => sheet.id).join(', ')} ({sheets.length})
       </div>
       <Spacer />
       <Spacer />
@@ -246,12 +296,15 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
         <div>{summary(csstats)}</div>
         <Spacer />
         {sheets.map((sheet) => (
-          <>
-            <div>Match {sheet.match.id}:</div>
+          <div key={sheet.id}>
+            <div>
+              Match {sheet.id}: {sheet.smatch.teamA.name} vs. {sheet.smatch.teamB.name}
+            </div>
             <div>{summary(calcCSStats(setters, [sheet]))}</div>
             <Spacer />
-          </>
+          </div>
         ))}
+        {/*
         <div>Axel:</div>
         <div>{summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([AxelGD], []))))}</div>
         <Spacer />
