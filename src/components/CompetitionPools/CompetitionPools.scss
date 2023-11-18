@@ -1,0 +1,66 @@
+.vb-pools {
+  // background: white;
+  margin: 1.5rem;
+
+  /*
+  .ant-card {
+    display: flex;
+
+    .ant-card-head {
+      margin-bottom: unset;
+      border-right: 1px solid #303030;
+      border-bottom: unset;
+    }
+  }
+  */
+  .ant-card {
+    .ant-card-body {
+      display: flex;
+      padding: unset;
+
+      .vb-card-left {
+        display: flex;
+        padding: 16px;
+        border-right: 1px solid #303030;
+      }
+
+      .vb-card-right {
+        width: 100%;
+
+        .vb-card-row {
+          padding: 8px 16px 8px 16px;
+          &:not(:last-child) {
+            border-bottom: 1px solid #303030;
+          }
+
+          .title {
+            font-size: 1rem;
+            // overflow-x: hidden;
+            // white-space: nowrap;
+            // text-overflow: ellipsis;
+          }
+
+          .strikethrough {
+            text-decoration: line-through;
+          }
+
+          .vb-card-content {
+            display: flex;
+            // flex-direction: column;
+
+            .vb-card-text {
+              .subtitle {
+                margin-left: 1.5rem;
+              }
+            }
+
+            .vb-card-chart {
+              margin-top: auto;
+              margin-left: auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}

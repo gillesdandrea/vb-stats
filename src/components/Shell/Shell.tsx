@@ -11,6 +11,7 @@ import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
 
 import './Shell.scss';
+import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
 const parseQueryParameters = (url: string): Record<string, string> => {
   const regex = /[?&]([^=#]+)=([^&#]*)/g;
@@ -130,6 +131,7 @@ const Shell = () => {
           onChange={handleTabChange}
           items={[
             { key: 'board', label: 'Board' },
+            { key: 'pools', label: 'Pools' },
             { key: 'graph', label: 'Graph' },
             //{ key: 'sheet', label: 'Sheet' },
           ]}
@@ -186,6 +188,15 @@ const Shell = () => {
         {competition && tab === 'board' && (
           <CompetitionBoard
             // className={tab === 'board' ? '' : 'no-display'}
+            competition={competition}
+            day={day}
+            singleDay={singleDay}
+            qualified={qualified}
+          />
+        )}
+        {competition && tab === 'pools' && (
+          <CompetitionPools
+            // className={tab === 'pools' ? '' : 'no-display'}
             competition={competition}
             day={day}
             singleDay={singleDay}

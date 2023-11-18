@@ -4,6 +4,7 @@
   "homepage": "https://gillesdandrea.github.io/vb-stats",
   "private": true,
   "dependencies": {
+    "@ant-design/colors": "^7.0.0",
     "@ant-design/icons": "^5.2.6",
     "@babel/core": "^7.23.3",
     "@babel/plugin-syntax-flow": "^7.23.3",
