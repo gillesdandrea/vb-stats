@@ -110,6 +110,19 @@
               .vb-card-text {
                 .subtitle {
                   margin-left: 1.5rem;
+
+                  .trophies {
+                    display: flex;
+                    flex-direction: row;
+
+                    .trophy {
+                      font-size: 0.75rem;
+                      text-wrap: nowrap;
+                      white-space: nowrap;
+                      width: 2.75rem;
+                      text-align: left;
+                    }
+                  }
                 }
 
                 .small-text {

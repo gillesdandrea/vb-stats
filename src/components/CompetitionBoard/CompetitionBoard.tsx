@@ -92,13 +92,15 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
   }
   const trophies =
     rankings.length > 0
-      ? rankings.map((rank, index) => (
-          <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
-            competition,
-            team,
-            index + 1,
-          )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
-        ))
+      ? rankings
+          .filter((rank) => rank > 0)
+          .map((rank, index) => (
+            <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
+              competition,
+              team,
+              index + 1,
+            )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
+          ))
       : null;
   return <div className="trophies">{trophies}</div>;
 };

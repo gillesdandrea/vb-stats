@@ -6,7 +6,7 @@ import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 
-import { getTrophies } from '../../model/graph';
+import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
 import { Competition, Match, Pool, Team } from '../../model/model';
 import {
   getDayRanking,

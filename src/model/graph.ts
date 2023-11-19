@@ -38,6 +38,7 @@ export const getTrophies = (competition: Competition, team: Team): string => {
   const trophies =
     rankings.length > 0
       ? rankings
+          .filter((rank) => rank > 0)
           .map(
             (rank, index) =>
               `J${index + 1}${getDayDistance(competition, team, index + 1)}${firsts[index] === 2 ? '*' : ''}${
