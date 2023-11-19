@@ -8,10 +8,9 @@ import { createCompetitionCollection, fetchData, fetchSheets } from '../../utils
 
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
-import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
+import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
 import './Shell.scss';
-import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
 const parseQueryParameters = (url: string): Record<string, string> => {
   const regex = /[?&]([^=#]+)=([^&#]*)/g;
@@ -57,7 +56,7 @@ const Shell = () => {
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
 
-  const [tab, setTab] = useState<string>(params.tab ?? 'board');
+  const [tab, setTab] = useState<string>(params.tab ?? 'pools');
 
   useEffect(() => {
     window.history.replaceState(
@@ -130,8 +129,8 @@ const Shell = () => {
           activeKey={tab}
           onChange={handleTabChange}
           items={[
-            { key: 'board', label: 'Board' },
             { key: 'pools', label: 'Pools' },
+            { key: 'board', label: 'Board' },
             { key: 'graph', label: 'Graph' },
             //{ key: 'sheet', label: 'Sheet' },
           ]}
@@ -143,6 +142,7 @@ const Shell = () => {
                 unCheckedChildren="OVERALL"
                 checked={singleDay}
                 onChange={setOverall}
+                disabled={tab === 'pools'}
                 size="small"
               />
               <Switch
@@ -150,7 +150,7 @@ const Shell = () => {
                 unCheckedChildren="ALL TEAMS"
                 checked={qualified}
                 onChange={setQualified}
-                disabled={singleDay || tab === 'graph'}
+                disabled={singleDay || tab === 'pools' || tab === 'graph'}
                 size="small"
               />
               <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} value={day} buttonStyle="solid">
@@ -160,7 +160,7 @@ const Shell = () => {
                   </Radio.Button>
                 ))}
               </Radio.Group>
-              <Radio.Group
+              {/* <Radio.Group
                 onChange={(e: RadioChangeEvent) => setCategory(e.target.value)}
                 value={category}
                 buttonStyle="solid"
@@ -170,7 +170,15 @@ const Shell = () => {
                     {category}
                   </Radio.Button>
                 ))}
-              </Radio.Group>
+              </Radio.Group> */}
+              <Select
+                value={category}
+                onChange={setCategory}
+                options={categories.map((category) => ({
+                  value: category,
+                  label: category,
+                }))}
+              />
               <Select
                 value={season}
                 onChange={setSeason}

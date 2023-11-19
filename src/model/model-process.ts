@@ -228,15 +228,20 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
               ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
               : getTeam(competition, m2.EQA_no, m2.EQA_nom);
-          const pool: Pool = {
-            name: m1.Match.substring(1, 3),
-            teams: [teamA, teamB, teamC],
-          };
-          dayCompetition.pools.set(pool.name, pool);
+          const poolName = m1.Match.substring(1, 3);
+          let pool: Pool | undefined = dayCompetition.pools.get(poolName);
+          if (!pool) {
+            pool = {
+              name: poolName,
+              teams: [teamA, teamB, teamC],
+              matchs: [],
+            };
+            dayCompetition.pools.set(pool.name, pool);
+          }
           [teamA, teamB, teamC].forEach((team: Team) => {
             dayCompetition.teams.push(team);
             team.dayCount = day;
-            team.pools[day] = pool;
+            team.pools[day] = pool as Pool;
             // enforce stats creation
             getGlobalTeamStats(team, day);
             getDayTeamStats(team, day);
@@ -247,6 +252,9 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       // process matchs
       data.forEach((line: any) => {
         const match = createMatch(competition, line);
+        if (isCDF) {
+          match.teamA.pools[day].matchs.push(match);
+        }
         addCompetitionMatch(competition, match);
         addMatchMeta(match);
       });

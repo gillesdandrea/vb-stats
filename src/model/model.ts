@@ -24,6 +24,7 @@ export interface Competition {
 export interface Pool {
   readonly name: string;
   readonly teams: Team[];
+  readonly matchs: Match[];
   ranking?: number;
 }
 

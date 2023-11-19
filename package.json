@@ -27,6 +27,7 @@
     "d3-graphviz": "^5.2.0",
     "d3-selection": "^3.0.0",
     "graphviz-react": "^1.2.5",
+    "lodash": "^4.17.21",
     "papaparse": "^5.4.1",
     "rc-resize-observer": "^1.4.0",
     "react": "^18.2.0",
@@ -67,6 +68,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.201",
     "gh-pages": "^6.0.0",
     "pdf2json": "^3.0.4",
     "ts-node": "^10.9.1"

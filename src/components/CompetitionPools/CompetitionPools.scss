@@ -1,66 +1,156 @@
 .vb-pools {
-  // background: white;
-  margin: 1.5rem;
+  overflow-y: scroll;
+  height: calc(100vh - 4rem);
+  padding: 1rem 1rem;
 
-  /*
-  .ant-card {
-    display: flex;
-
-    .ant-card-head {
-      margin-bottom: unset;
-      border-right: 1px solid #303030;
-      border-bottom: unset;
-    }
+  .vb-search {
+    max-width: 36rem;
+    margin-left: auto;
+    padding-bottom: 1rem;
   }
-  */
+
   .ant-card {
     .ant-card-body {
       display: flex;
+      flex-direction: column;
       padding: unset;
 
-      .vb-card-left {
+      .vb-card-footer {
         display: flex;
-        padding: 16px;
-        border-right: 1px solid #303030;
+        flex-direction: column;
+        padding: 0.5rem 1rem 0.25rem;
+        border-top: 1px solid #303030;
+
+        .vb-match {
+          display: flex;
+          font-size: 0.75rem;
+
+          .vb-team-a,
+          .vb-team-b {
+            flex-basis: 100%;
+            overflow-x: hidden;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .vb-team-a {
+            text-align: right;
+          }
+
+          .vb-score {
+            margin-right: 0.5rem;
+            margin-left: 0.5rem;
+            text-align: center;
+            text-wrap: nowrap;
+            white-space: nowrap;
+          }
+
+          .vb-match-lost {
+            color: gray;
+          }
+        }
+
+        .vb-score-details {
+          position: relative;
+          top: -0.25rem;
+          font-size: 0.6875rem;
+          text-align: center;
+          text-wrap: nowrap;
+          white-space: nowrap;
+        }
       }
 
-      .vb-card-right {
-        width: 100%;
+      .vb-card-body {
+        display: flex;
+        overflow-x: hidden;
 
-        .vb-card-row {
-          padding: 8px 16px 8px 16px;
-          &:not(:last-child) {
-            border-bottom: 1px solid #303030;
+        .vb-card-left {
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          padding: 0.5rem;
+          border-right: 1px solid #303030;
+
+          .vb-legend {
+            transform-origin: 0 0;
+            position: absolute;
+            bottom: -0.5rem;
+            left: 1rem;
+            transform: rotate(-90deg);
+            width: 10rem;
+            color: gray;
           }
+        }
 
-          .title {
-            font-size: 1rem;
-            // overflow-x: hidden;
-            // white-space: nowrap;
-            // text-overflow: ellipsis;
-          }
+        .vb-card-right {
+          width: 100%;
+          // text-wrap: nowrap;
+          // white-space: nowrap;
 
-          .strikethrough {
-            text-decoration: line-through;
-          }
-
-          .vb-card-content {
-            display: flex;
-            // flex-direction: column;
-
-            .vb-card-text {
-              .subtitle {
-                margin-left: 1.5rem;
-              }
-              .small-text {
-                font-size: 0.75rem;
-              }
+          .vb-card-row {
+            position: relative;
+            padding: 0.5rem;
+            &:not(:last-child) {
+              border-bottom: 1px solid #303030;
             }
 
-            .vb-card-chart {
-              margin-top: auto;
-              margin-left: auto;
+            .title {
+              font-size: 1rem;
             }
+
+            .strikethrough {
+              text-decoration: line-through;
+            }
+
+            .vb-card-content {
+              // flex-direction: column;
+              display: flex;
+
+              .vb-card-text {
+                .subtitle {
+                  margin-left: 1.5rem;
+                }
+
+                .small-text {
+                  font-size: 0.75rem;
+                }
+              }
+
+              .vb-card-chart {
+                position: absolute;
+                bottom: 0.5rem;
+                right: 0.5rem;
+
+                .ant-progress-inner {
+                  backdrop-filter: blur(15px) grayscale(0.5) opacity(0.8);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .vb-info-card {
+        .vb-info-header {
+          padding: 0.5rem;
+          font-size: 0.8rem;
+
+          .vb-info-scroll {
+            height: 22.85rem;
+            overflow-y: scroll;
+          }
+        }
+
+        .vb-info-charts-panel {
+          padding: 0.5rem;
+          border-top: 1px solid #303030;
+          display: flex;
+          justify-content: space-evenly;
+          gap: 1rem;
+
+          .vb-info-chart {
+            text-align: center;
           }
         }
       }
