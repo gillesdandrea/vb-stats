@@ -1,4 +1,4 @@
-import { Rating, TrueSkill, rate_1vs1, winProbability } from 'ts-trueskill';
+import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
 import { Competition, Match, Pool, Stats, Team } from './model';

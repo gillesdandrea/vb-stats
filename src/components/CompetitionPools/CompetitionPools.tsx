@@ -47,7 +47,7 @@ const getStats = ({
   stats: Stats;
 }): Stats => {
   const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
-  pool.teams.map((team, index) => {
+  pool.teams.forEach((team, index) => {
     const rank = orders[index];
     const dayRanking = getDayRanking(competition, team, day);
     // const eliminated = dayRanking === 3;
@@ -250,6 +250,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
           if (team.name.toLocaleLowerCase().includes(token)) return true;
           const local = `${team.department.num_dep} ${team.department.dep_name} ${team.department.region_name}`;
           if (local.toLocaleLowerCase().includes(token)) return true;
+          return false;
         })
       );
     }),

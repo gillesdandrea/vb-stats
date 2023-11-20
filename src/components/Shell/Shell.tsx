@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
-import { Layout, Menu, MenuProps, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, Tabs } from 'antd';
+import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
 
 import { useQuery } from 'react-query';
 import { CompetitionCollection } from '../../model/model';
@@ -11,8 +11,8 @@ import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
-import { ReactComponent as VBStatsLogo } from './vb-stats-logo.svg';
 import './Shell.scss';
+import { ReactComponent as VBStatsLogo } from './vb-stats-logo.svg';
 
 const Checked = ({ checked }: { checked?: boolean }) =>
   checked ? <CheckOutlined /> : <span role="img" aria-label="none" className="anticon ant-menu-item-icon" />;
@@ -139,14 +139,12 @@ const Shell = () => {
   if (competition && competition.dayCount !== dayCount) {
     setDayCount(competition.dayCount);
     if (params.day === 'last' && day !== competition.dayCount) {
-      console.log(competition.dayCount);
       setDay(competition.dayCount);
       return <div />;
     }
   }
 
   if (competition && day > competition.dayCount) {
-    console.log(competition.dayCount);
     setDay(competition.dayCount);
     return <div />;
   }
@@ -165,7 +163,7 @@ const Shell = () => {
       }
     } else {
       // sub menu
-      switch (e.keyPath[e.keyPath.length - 1]) {
+      switch (e.keyPath[1]) {
         case 'day':
           const nday = Number.parseInt(e.key);
           if (Number.isInteger(nday)) {
