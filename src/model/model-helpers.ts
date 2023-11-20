@@ -14,9 +14,16 @@ import { SheetMap } from './sheet';
 // const sigma = mu / 3;
 // const ts = new TrueSkill(mu, sigma, sigma / 2, sigma / 100, 0);
 const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
+const TIGHT_FACTOR = 0.5;
+const MIN_DELTA = 0.0001;
 
-export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating): [Rating, Rating] =>
-  rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
+export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false): [Rating, Rating] => {
+  // return rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
+  const ranks = [0, 1];
+  const weights = [[1], [tightScore ? TIGHT_FACTOR : 1]];
+  const teams = ts.rate([[ratingWinner], [ratingLoser]], ranks, weights, MIN_DELTA);
+  return [teams[0][0] as Rating, teams[1][0] as Rating];
+};
 
 export const rateWinPropability = (ratingWinner: Rating, ratingLoser: Rating): number =>
   winProbability([ratingWinner], [ratingLoser], ts);

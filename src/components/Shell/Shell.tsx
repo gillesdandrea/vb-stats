@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { Layout, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, Tabs } from 'antd';
+import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
+import { Layout, Menu, MenuProps, Radio, RadioChangeEvent, Result, Select, Space, Spin, Switch, Tabs } from 'antd';
 
 import { useQuery } from 'react-query';
 import { CompetitionCollection } from '../../model/model';
@@ -10,7 +11,11 @@ import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
+import { ReactComponent as VBStatsLogo } from './vb-stats-logo.svg';
 import './Shell.scss';
+
+const Checked = ({ checked }: { checked?: boolean }) =>
+  checked ? <CheckOutlined /> : <span role="img" aria-label="none" className="anticon ant-menu-item-icon" />;
 
 const parseQueryParameters = (url: string): Record<string, string> => {
   const regex = /[?&]([^=#]+)=([^&#]*)/g;
@@ -20,6 +25,26 @@ const parseQueryParameters = (url: string): Record<string, string> => {
     params[match[1]] = match[2];
   }
   return params;
+};
+
+type MenuItem = Required<MenuProps>['items'][number];
+
+const getItem = (
+  label: React.ReactNode,
+  key?: React.Key | null,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: 'group',
+  disabled?: boolean,
+): MenuItem => {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+    disabled,
+  } as MenuItem;
 };
 
 const Shell = () => {
@@ -120,11 +145,129 @@ const Shell = () => {
     return <div />;
   }
 
+  const onClick: MenuProps['onClick'] = (e) => {
+    if (e.keyPath.length === 1) {
+      // main menu
+      setTab(e.key);
+      if (e.key === 'graph' && !qualified) {
+        setQualified(true);
+      }
+    } else {
+      // sub menu
+      switch (e.keyPath[e.keyPath.length - 1]) {
+        case 'day':
+          const nday = Number.parseInt(e.key);
+          if (Number.isInteger(nday)) {
+            setDay(nday);
+          } else {
+            switch (e.key) {
+              case 'qualified':
+                setQualified(true);
+                setSingleDay(false);
+                break;
+              case 'overall':
+                setQualified(false);
+                setSingleDay(false);
+                break;
+              case 'single-day':
+                setQualified(true);
+                setSingleDay(true);
+                break;
+            }
+          }
+          break;
+        case 'category':
+          setCategory(e.key);
+          break;
+        case 'season':
+          setSeason(e.key);
+          break;
+      }
+    }
+  };
+
+  const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
+  const items: MenuItem[] = [
+    getItem('Pools', 'pools'),
+    getItem('Board', 'board'),
+    getItem('Graph', 'graph'),
+    getItem(`J${day}`, 'day', <CalendarOutlined />, [
+      getItem(
+        'Day',
+        'day',
+        <CalendarOutlined />,
+        days.map((cday) => getItem(`J${cday}`, cday, cday === day ? <CalendarOutlined /> : <Checked />)),
+        'group',
+      ),
+      getItem(
+        'Options',
+        'options',
+        <SettingOutlined />,
+        [
+          getItem(
+            `Selected day (J${day})`,
+            'single-day',
+            <Checked checked={singleDay} />,
+            undefined,
+            undefined,
+            tab === 'pools',
+          ),
+          getItem(
+            'Qualified teams',
+            'qualified',
+            <Checked checked={!singleDay && qualified} />,
+            undefined,
+            undefined,
+            tab === 'pools',
+          ),
+          getItem(
+            'All teams',
+            'overall',
+            <Checked checked={!singleDay && !qualified} />,
+            undefined,
+            undefined,
+            tab === 'pools' || tab === 'graph',
+          ),
+        ],
+        'group',
+      ),
+    ]),
+    getItem(
+      `${isCDF ? 'CDF ' : ''}${category}`,
+      'category',
+      undefined, // <TeamOutlined />,
+      categories.map((ccategory) =>
+        getItem(ccategory, ccategory, ccategory === category ? <TeamOutlined /> : <Checked />),
+      ),
+    ),
+    getItem(
+      season,
+      'season',
+      undefined, // <CalendarOutlined />,
+      seasons.map((cseason) => getItem(cseason, cseason, cseason === season ? <CalendarOutlined /> : <Checked />)),
+    ),
+    // getItem(undefined, 'settings', <SettingOutlined />, [
+    //   getItem('Qualified teams', 'qualified', <Checked checked={qualified} />),
+    //   getItem('All teams', 'overall', <Checked checked={!singleDay && !qualified} />),
+    //   getItem(`Selected day (J${day})`, 'single-day', <Checked checked={singleDay} />),
+    // ]),
+  ];
+
   // console.log('rendering Shell');
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout className="vb-shell">
+      <VBStatsLogo className="vb-stats-logo" style={{ width: '4rem', height: '4rem' }} />
       <Layout.Header>
-        <Tabs
+        <Menu
+          onClick={onClick}
+          defaultSelectedKeys={[tab]}
+          selectedKeys={[tab]}
+          mode="horizontal"
+          items={items}
+          overflowedIndicator={<MenuOutlined />}
+          triggerSubMenuAction="click"
+        />
+        {/* <Tabs
           size="large"
           activeKey={tab}
           onChange={handleTabChange}
@@ -170,7 +313,7 @@ const Shell = () => {
                     {category}
                   </Radio.Button>
                 ))}
-              </Radio.Group> */}
+              </Radio.Group> * /}
               <Select
                 value={category}
                 onChange={setCategory}
@@ -190,7 +333,7 @@ const Shell = () => {
               <span style={{ fontSize: '2rem' }}>🏐</span>
             </Space>
           }
-        />
+        /> */}
       </Layout.Header>
       <Layout.Content>
         {competition && tab === 'board' && (

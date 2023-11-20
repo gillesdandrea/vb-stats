@@ -78,12 +78,13 @@ export const updateRating = (match: Match, statsA: Stats, statsB: Stats) => {
   // update rating
   if (SET_RANKING) {
     match.score.forEach((set) => {
+      const deltaScore = Math.abs(set.scoreA - set.scoreB);
       if (set.scoreA > set.scoreB) {
-        const [newAR, newBR] = rateMatch(statsA.rating, statsB.rating);
+        const [newAR, newBR] = rateMatch(statsA.rating, statsB.rating, deltaScore <= 2);
         statsA.rating = newAR;
         statsB.rating = newBR;
       } else {
-        const [newBR, newAR] = rateMatch(statsB.rating, statsA.rating);
+        const [newBR, newAR] = rateMatch(statsB.rating, statsA.rating, deltaScore <= 2);
         statsA.rating = newAR;
         statsB.rating = newBR;
       }
