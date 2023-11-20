@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
-import { Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
+import { Affix, Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
 import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
@@ -263,9 +263,11 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
 
   return (
     <div className={cx('vb-pools', className)}>
-      <div className="vb-search">
-        <Search placeholder="Filter teams..." allowClear onChange={debouncedSearchHandler} />
-      </div>
+      <Affix offsetTop={81}>
+        <div className="vb-search">
+          <Search placeholder="Filter teams..." allowClear onChange={debouncedSearchHandler} />
+        </div>
+      </Affix>
       <Row gutter={[24, 24]}>
         {tokens.length > 0 ? null : (
           <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={8} key={'stats'}>
