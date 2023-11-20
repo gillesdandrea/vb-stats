@@ -50,6 +50,7 @@ const getItem = (
 const Shell = () => {
   const params = parseQueryParameters(window.location.search);
 
+  const [fetched, setFetched] = useState<boolean>(false);
   const {
     isLoading,
     isError,
@@ -70,6 +71,7 @@ const Shell = () => {
     const day: number = Number.parseInt(params.day);
     setDayCount(competition.dayCount);
     setDay(Number.isNaN(day) ? competition.dayCount : day);
+    setFetched(true);
     return competitionCollection;
   });
 
@@ -77,21 +79,23 @@ const Shell = () => {
   const [season, setSeason] = useState<string>(params.season);
   const [category, setCategory] = useState<string>(params.category);
   const [dayCount, setDayCount] = useState<number>(-1);
-  const [day, setDay] = useState<number>(Number.isNaN(pday) ? 1 : pday);
+  const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
 
   useEffect(() => {
-    window.history.replaceState(
-      {},
-      '',
-      `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
-        day ? `&day=${day === dayCount ? 'last' : day}` : ''
-      }&singleDay=${!!singleDay}&qualified=${!!qualified}`,
-    );
-  }, [tab, season, category, dayCount, day, singleDay, qualified]);
+    if (day > 0 && fetched) {
+      window.history.replaceState(
+        {},
+        '',
+        `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
+          day ? `&day=${day === dayCount ? 'last' : day}` : ''
+        }&singleDay=${!!singleDay}&qualified=${!!qualified}`,
+      );
+    }
+  }, [fetched, tab, season, category, dayCount, day, singleDay, qualified]);
 
   // const handleTabChange = (key: string) => {
   //   if (key === 'graph' && !qualified) {
@@ -107,7 +111,7 @@ const Shell = () => {
   //   }
   // };
 
-  if (isLoading) {
+  if (isLoading || day === 0) {
     return (
       <Spin size="large">
         <Layout style={{ height: '100vh' }} />
@@ -135,12 +139,14 @@ const Shell = () => {
   if (competition && competition.dayCount !== dayCount) {
     setDayCount(competition.dayCount);
     if (params.day === 'last' && day !== competition.dayCount) {
+      console.log(competition.dayCount);
       setDay(competition.dayCount);
       return <div />;
     }
   }
 
   if (competition && day > competition.dayCount) {
+    console.log(competition.dayCount);
     setDay(competition.dayCount);
     return <div />;
   }

@@ -275,12 +275,12 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
               <div className="vb-info-card">
                 <div className="vb-info-header">
                   <h2>
-                    🏐 {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}{' '}
-                    prédictions
+                    🏐 {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`} -
+                    VB Stats
                   </h2>
                   <div className="vb-info-scroll">
                     <p>
-                      Bienvenue dans la page de prédictions de la Coupe de France Volley-Ball {competition.category}{' '}
+                      Bienvenue dans la page de pronostics de la Coupe de France Volley-Ball {competition.category}{' '}
                       {competition.season}.
                     </p>
                     <p>
