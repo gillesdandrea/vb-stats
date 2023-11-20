@@ -276,7 +276,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
                 <div className="vb-info-header">
                   <h2>
                     🏐 {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}{' '}
-                    Prédictions
+                    prédictions
                   </h2>
                   <div className="vb-info-scroll">
                     <p>
@@ -298,7 +298,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
                       du Vaucluse (84) et celles d'Occitanie.
                     </p>
                     <p>
-                      La barre de menu permet d'afficher le classement (<i>Board</i>), le graphe des matchs (
+                      La barre de menu permet aussi d'afficher le classement (<i>Board</i>), le graphe des matchs (
                       <i>Graph</i>) mais aussi de changer de journée, de catégorie ou de saison.
                     </p>
                     <p>
@@ -309,9 +309,9 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
                       <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
                     </p>
                     <p>
-                      Enfin, ci-dessous on vous dit combien de fois on a raison (
-                      <i style={{ color: green[6] }}>Favorite wins</i>), quand on se trompe et qu'un favori est éliminé
-                      (<i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu'on estimait perdant sort vainqueur
+                      Enfin, ci-dessous on vous dit combien de fois TrueSkill™ a raison (
+                      <i style={{ color: green[6] }}>Favorite wins</i>), quand il se trompe et qu'un favori est éliminé
+                      (<i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu'il estimait perdant sort vainqueur
                       (<i style={{ color: gold[6] }}>Outsider wins</i>) 😉
                     </p>
                   </div>

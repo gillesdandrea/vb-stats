@@ -93,19 +93,19 @@ const Shell = () => {
     );
   }, [tab, season, category, dayCount, day, singleDay, qualified]);
 
-  const handleTabChange = (key: string) => {
-    if (key === 'graph' && !qualified) {
-      setQualified(true);
-    }
-    setTab(key);
-  };
+  // const handleTabChange = (key: string) => {
+  //   if (key === 'graph' && !qualified) {
+  //     setQualified(true);
+  //   }
+  //   setTab(key);
+  // };
 
-  const setOverall = (toggle: boolean) => {
-    setSingleDay(toggle);
-    if (toggle && !qualified) {
-      setQualified(true);
-    }
-  };
+  // const setOverall = (toggle: boolean) => {
+  //   setSingleDay(toggle);
+  //   if (toggle && !qualified) {
+  //     setQualified(true);
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -142,6 +142,11 @@ const Shell = () => {
 
   if (competition && day > competition.dayCount) {
     setDay(competition.dayCount);
+    return <div />;
+  }
+
+  if (!categories.includes(category)) {
+    setCategory(categories[0]);
     return <div />;
   }
 
