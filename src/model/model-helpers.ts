@@ -14,7 +14,7 @@ import { SheetMap } from './sheet';
 // const sigma = mu / 3;
 // const ts = new TrueSkill(mu, sigma, sigma / 2, sigma / 100, 0);
 const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
-const TIGHT_FACTOR = 0.5;
+const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
 const MIN_DELTA = 0.0001;
 
 export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false): [Rating, Rating] => {
