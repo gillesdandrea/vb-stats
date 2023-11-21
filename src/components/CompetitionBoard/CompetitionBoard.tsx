@@ -92,13 +92,15 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
   }
   const trophies =
     rankings.length > 0
-      ? rankings.map((rank, index) => (
-          <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
-            competition,
-            team,
-            index + 1,
-          )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
-        ))
+      ? rankings
+          .filter((rank, index) => index < team.lastDay)
+          .map((rank, index) => (
+            <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
+              competition,
+              team,
+              index + 1,
+            )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
+          ))
       : null;
   return <div className="trophies">{trophies}</div>;
 };
@@ -294,15 +296,13 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) => (!isTeamInCourse(competition, team, day) ? 'table-row-disabled' : '')}
+        rowClassName={(team: Team, index) =>
+          cx({
+            'table-row-disabled': !isTeamInCourse(competition, team, day),
+            'ant-table-row-selected': selectedKeys.includes(team.id),
+          })
+        }
         rowKey={(team: Team) => team.id}
-        rowSelection={{
-          type: 'radio',
-          selectedRowKeys: selectedKeys,
-          onChange: (selectedRowKeys: React.Key[], selectedRows: Team[]) => {
-            setSelectedKeys(selectedRowKeys);
-          },
-        }}
         onRow={(team: Team) => ({
           onClick: () => {
             if (selectedKeys.includes(team.id)) {

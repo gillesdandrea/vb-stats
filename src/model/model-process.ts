@@ -45,6 +45,11 @@ export const createMatch = (competition: Competition, data: any): Match => {
   const unplayed = score.length === 0;
   const winner = unplayed ? undefined : setA > setB ? teamA : teamB;
   const ratio = unplayed ? 0 : winner === teamA ? totalA / (totalB || 1) : totalB / (totalA || 1);
+  const winProbability = getWinProbability(teamA, teamB, day);
+  const predicted =
+    !winner || winProbability === 0.5
+      ? undefined
+      : (winner === teamA && winProbability > 0.5) || (winner === teamB && winProbability < 0.5);
   const match: Match = {
     id: data.Match,
     day,
@@ -60,7 +65,8 @@ export const createMatch = (competition: Competition, data: any): Match => {
     score,
     ratingA: getTeamRating(teamA, day),
     ratingB: getTeamRating(teamB, day),
-    winProbability: getWinProbability(teamA, teamB, day),
+    winProbability,
+    predicted,
     victory: unplayed
       ? Victory.Unplayed
       : Math.abs(setA - setB) < 2
@@ -78,12 +84,13 @@ export const updateRating = (match: Match, statsA: Stats, statsB: Stats) => {
   // update rating
   if (SET_RANKING) {
     match.score.forEach((set) => {
+      const deltaScore = Math.abs(set.scoreA - set.scoreB);
       if (set.scoreA > set.scoreB) {
-        const [newAR, newBR] = rateMatch(statsA.rating, statsB.rating);
+        const [newAR, newBR] = rateMatch(statsA.rating, statsB.rating, deltaScore <= 2);
         statsA.rating = newAR;
         statsB.rating = newBR;
       } else {
-        const [newBR, newAR] = rateMatch(statsB.rating, statsA.rating);
+        const [newBR, newAR] = rateMatch(statsB.rating, statsA.rating, deltaScore <= 2);
         statsA.rating = newAR;
         statsB.rating = newBR;
       }
@@ -228,15 +235,20 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
               ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
               : getTeam(competition, m2.EQA_no, m2.EQA_nom);
-          const pool: Pool = {
-            name: m1.Match.substring(1, 3),
-            teams: [teamA, teamB, teamC],
-          };
-          dayCompetition.pools.set(pool.name, pool);
+          const poolName = m1.Match.substring(1, 3);
+          let pool: Pool | undefined = dayCompetition.pools.get(poolName);
+          if (!pool) {
+            pool = {
+              name: poolName,
+              teams: [teamA, teamB, teamC],
+              matchs: [],
+            };
+            dayCompetition.pools.set(pool.name, pool);
+          }
           [teamA, teamB, teamC].forEach((team: Team) => {
             dayCompetition.teams.push(team);
             team.dayCount = day;
-            team.pools[day] = pool;
+            team.pools[day] = pool as Pool;
             // enforce stats creation
             getGlobalTeamStats(team, day);
             getDayTeamStats(team, day);
@@ -247,6 +259,9 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       // process matchs
       data.forEach((line: any) => {
         const match = createMatch(competition, line);
+        if (isCDF) {
+          match.teamA.pools[day].matchs.push(match);
+        }
         addCompetitionMatch(competition, match);
         addMatchMeta(match);
       });

@@ -1,4 +1,4 @@
-import { Rating, TrueSkill, rate_1vs1, winProbability } from 'ts-trueskill';
+import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
 import { Competition, Match, Pool, Stats, Team } from './model';
@@ -14,15 +14,22 @@ import { SheetMap } from './sheet';
 // const sigma = mu / 3;
 // const ts = new TrueSkill(mu, sigma, sigma / 2, sigma / 100, 0);
 const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
+const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
+const MIN_DELTA = 0.0001;
 
-export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating): [Rating, Rating] =>
-  rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
+export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false): [Rating, Rating] => {
+  // return rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
+  const ranks = [0, 1];
+  const weights = [[1], [tightScore ? TIGHT_FACTOR : 1]];
+  const teams = ts.rate([[ratingWinner], [ratingLoser]], ranks, weights, MIN_DELTA);
+  return [teams[0][0] as Rating, teams[1][0] as Rating];
+};
 
 export const rateWinPropability = (ratingWinner: Rating, ratingLoser: Rating): number =>
   winProbability([ratingWinner], [ratingLoser], ts);
 
 export const getWinProbability = (teamA: Team, teamB: Team, day: number): number => {
-  return winProbability([getTeamRating(teamA, day)], [getTeamRating(teamB, day)], ts);
+  return day === 1 ? 0.5 : winProbability([getTeamRating(teamA, day - 1)], [getTeamRating(teamB, day - 1)], ts);
 };
 
 export const createCompetition = (name: string, season: string, category: string, sheets: SheetMap[]): Competition => {
@@ -143,12 +150,53 @@ export const poolId2Name = (id: string): string => {
   return '' + ((id.charCodeAt(0) - 'X'.charCodeAt(0)) * 35 + chars.indexOf(id.charAt(1)));
 };
 
+export const getPoolProbabilities = (competition: Competition, pool: Pool, day: number): number[][] => {
+  if (day === 1) {
+    return [
+      [1 / 3.0, 1 / 3.0, 1 / 3.0],
+      [0, 0, 0],
+    ];
+  }
+  const pt0 =
+    getWinProbability(pool.teams[0], pool.teams[1], day) * getWinProbability(pool.teams[0], pool.teams[2], day);
+  const pt1 =
+    getWinProbability(pool.teams[1], pool.teams[0], day) * getWinProbability(pool.teams[1], pool.teams[2], day);
+  const pt2 =
+    getWinProbability(pool.teams[2], pool.teams[0], day) * getWinProbability(pool.teams[2], pool.teams[1], day);
+  const total = pt0 + pt1 + pt2;
+  const probabilities = [pt0 / total, pt1 / total, pt2 / total];
+  // const orders = [1, 2, 3].sort((a, b) => {
+  //   const pa = probabilities[a - 1];
+  //   const pb = probabilities[b - 1];
+  //   return pa < pb ? -1 : 1;
+  // });
+  // hack to make sorting works...
+  const orders = [0, 1, 2];
+  const swap = (a: number, b: number) => {
+    if (probabilities[orders[a]] < probabilities[orders[b]]) {
+      const oa = orders[a];
+      orders[a] = orders[b];
+      orders[b] = oa;
+    }
+  };
+  swap(0, 1);
+  swap(1, 2);
+  swap(0, 1);
+  if (probabilities[orders[0]] < probabilities[orders[1]]) throw new Error('0-1');
+  if (probabilities[orders[1]] < probabilities[orders[2]]) throw new Error('1-2');
+  const index: number[] = [];
+  index[orders[0]] = 1;
+  index[orders[1]] = 2;
+  index[orders[2]] = 3;
+  return [probabilities, index];
+};
+
 export const getMatchPool = (competition: Competition, match: Match): Pool | undefined => {
   return competition.days[match.day].pools.get(match.id.substring(1, 3));
 };
 
 export const getDayRanking = (competition: Competition, team: Team, day: number) => {
-  return team.ranking.pools[day] ?? 0;
+  return day > competition.lastDay ? 0 : team.ranking.pools[day] ?? 0;
 };
 
 export const getFirstCountInPreviousDay = (competition: Competition, team: Team, day: number): number => {
