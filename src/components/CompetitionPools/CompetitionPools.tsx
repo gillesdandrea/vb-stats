@@ -213,6 +213,7 @@ const renderPool = ({ competition, pool, day }: { competition: Competition; pool
               {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
               &nbsp;
               <Tag>J{day}</Tag>
+              <small>{pool.matchs[0].date}</small>
             </div>
           </div>
           <div className="vb-card-right">
