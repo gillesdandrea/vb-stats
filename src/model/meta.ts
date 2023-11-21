@@ -7,6 +7,7 @@ export interface MetaStats {
   expected: number;
   predicted: number;
   played: number;
+  skipped: number;
 }
 
 const createMeta = (low: number, high: number): MetaStats => {
@@ -16,11 +17,11 @@ const createMeta = (low: number, high: number): MetaStats => {
     expected: 0,
     predicted: 0,
     played: 0,
+    skipped: 0,
   };
 };
 
-// TODO attach this to each Competition
-const globalMeta = createMeta(0, 100);
+let globalMeta = createMeta(0, 100);
 
 const metas = [
   createMeta(50, 60),
@@ -41,14 +42,24 @@ const metas = [
   // createMeta(95, 100),
 ];
 
+export const resetMeta = () => {
+  globalMeta = createMeta(0, 100);
+};
+
 export const addMatchMeta = (match: Match) => {
   if (!match.winner) {
     return;
   }
+  if (match.predicted === undefined) {
+    globalMeta.skipped++;
+    return;
+  }
 
-  const proba = match.winner === match.teamA ? match.winProbability : 1 - match.winProbability;
-  const predicted = proba >= 0.5;
-  const slot = predicted ? proba : 1 - proba;
+  // const proba = match.winner === match.teamA ? match.winProbability : 1 - match.winProbability;
+  // const predicted = proba >= 0.5;
+  // const slot = predicted ? proba : 1 - proba;
+  const predicted = match.predicted;
+  const slot = match.winProbability >= 0.5 ? match.winProbability : 1 - match.winProbability;
   const meta: MetaStats | undefined = metas.find((meta) => meta.low <= slot && slot < meta.high);
   if (meta) {
     meta.played++;
@@ -60,7 +71,7 @@ export const addMatchMeta = (match: Match) => {
       globalMeta.predicted++;
     }
   } else {
-    // console.log('Cannot find a meta stat for match', match);
+    console.log('Cannot find a meta stat for match', match);
   }
 };
 
@@ -68,12 +79,13 @@ export const metaToString = (): string => {
   return `Globally expected: ${((100 * globalMeta.expected) / globalMeta.played).toFixed(1)}% predicted: ${(
     (100 * globalMeta.predicted) /
     globalMeta.played
-  ).toFixed(1)}% (${globalMeta.predicted}/${globalMeta.played})\n${metas
+  ).toFixed(1)}% (${globalMeta.predicted}/${globalMeta.played}), skipped ${globalMeta.skipped}.\n${metas
     .map(
       (meta) =>
-        `Range: ${100 * meta.low}-${100 * meta.high}% | expected: ${((100 * meta.expected) / meta.played).toFixed(
-          1,
-        )}% | predicted: ${((100 * meta.predicted) / meta.played).toFixed(1)}% (${meta.predicted}/${
+        `Range: ${(100 * meta.low).toFixed(0)}-${(100 * meta.high).toFixed(0)}% | expected: ${(
+          (100 * meta.expected) /
+          meta.played
+        ).toFixed(1)}% | predicted: ${((100 * meta.predicted) / meta.played).toFixed(1)}% (${meta.predicted}/${
           meta.played
         }) | proportion: ${((100 * meta.played) / globalMeta.played).toFixed(1)}%`,
     )
