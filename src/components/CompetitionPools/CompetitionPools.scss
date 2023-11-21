@@ -53,15 +53,42 @@
           .vb-match-lost {
             color: gray;
           }
+
+          .vb-match-unpredicted {
+            color: #a61d24; // #d32029;
+            &.vb-match-tight {
+              color: #e8b339;
+            }
+          }
         }
 
         .vb-score-details {
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
           position: relative;
-          top: -0.25rem;
+          top: -0.125rem;
           font-size: 0.6875rem;
           text-align: center;
           text-wrap: nowrap;
           white-space: nowrap;
+
+          .vb-score-sets {
+            flex-basis: 100%;
+            text-align: right;
+
+            .vb-tag {
+              border: 1px solid #303030;
+              border-radius: 4px;
+              padding-left: 0.25rem;
+              padding-right: 0.25rem;
+            }
+          }
+
+          .vb-score-points {
+            flex-basis: 100%;
+            text-align: left;
+          }
         }
       }
 
@@ -149,13 +176,31 @@
       }
 
       .vb-info-card {
+        .vb-stats-icon {
+          opacity: 0.75;
+          position: absolute;
+          top: 0rem;
+          left: 0;
+        }
+
         .vb-info-header {
           padding: 0.5rem;
           font-size: 0.8rem;
 
-          .vb-info-scroll {
-            height: 22.25rem; // 19rem
-            overflow-y: scroll;
+          h2 {
+            margin-left: 2.5rem;
+          }
+
+          .vb-reference {
+            font-size: 0.6875rem;
+            margin-bottom: 0.25rem;
+          }
+
+          @media (min-width: 992px) {
+            .vb-info-scroll {
+              height: 22.25rem; // 19rem
+              overflow-y: scroll;
+            }
           }
         }
 

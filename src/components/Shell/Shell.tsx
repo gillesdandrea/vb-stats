@@ -11,8 +11,8 @@ import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
+import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './Shell.scss';
-import { ReactComponent as VBStatsLogo } from './vb-stats-logo.svg';
 
 const Checked = ({ checked }: { checked?: boolean }) =>
   checked ? <CheckOutlined /> : <span role="img" aria-label="none" className="anticon ant-menu-item-icon" />;

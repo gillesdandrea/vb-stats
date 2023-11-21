@@ -93,7 +93,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
   const trophies =
     rankings.length > 0
       ? rankings
-          .filter((rank) => rank > 0)
+          .filter((rank, index) => index < team.lastDay)
           .map((rank, index) => (
             <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
               competition,

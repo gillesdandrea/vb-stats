@@ -17,6 +17,7 @@ import {
   poolId2Name,
 } from '../../model/model-helpers';
 
+import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './CompetitionPools.scss';
 
 interface Props {
@@ -162,8 +163,14 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
         >
           {match.teamA.name}
         </div>
-        <div className={cx('vb-score', { 'vb-match-lost': !match.winner && match.winProbability < 0.5 })}>
-          {match.winner ? `${match.setA} - ${match.setB}` : `${(100 * match.winProbability).toFixed(1)}%`}
+        <div
+          className={cx('vb-score', {
+            'vb-match-lost': match.winProbability < 0.5 || match.winner === match.teamB,
+            'vb-match-unpredicted': match.predicted === false,
+            'vb-match-tight': Math.abs(match.winProbability - 0.5) < 0.05,
+          })}
+        >
+          {/*match.winner ? `${match.setA} - ${match.setB}` :*/ `${(100 * match.winProbability).toFixed(1)}%`}
         </div>
         <div
           className={cx('vb-team-b', {
@@ -175,7 +182,14 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
       </div>
       {match.winner ? (
         <div className="vb-score-details">
-          {match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}
+          <div className="vb-score-sets">
+            <span className="vb-tag">
+              {match.setA} - {match.setB}
+            </span>
+          </div>
+          <div className="vb-score-points">
+            {match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}
+          </div>
         </div>
       ) : null}
     </div>
@@ -275,9 +289,10 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
             <Card>
               <div className="vb-info-card">
                 <div className="vb-info-header">
+                  <VBStatsLogo className="vb-stats-icon" style={{ width: '3rem', height: '3rem' }} />
                   <h2>
-                    🏐 {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`} -
-                    VB Stats
+                    VB Stats -{' '}
+                    {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
                   </h2>
                   <div className="vb-info-scroll">
                     <p>
@@ -303,18 +318,36 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
                       <i>Graph</i>) mais aussi de changer de journée, de catégorie ou de saison.
                     </p>
                     <p>
-                      Toutes les données utilisée viennent du site de la{' '}
+                      Toutes les données utilisées viennent du site de la{' '}
                       <a href="http://www.ffvb.org/index.php?lvlid=124&dsgtypid=38&artid=1095&pos=2">FFVB</a>. N'hésitez
                       pas à m'envoyer un message sur insta{' '}
                       <a href="https://www.instagram.com/gillesdandrea">@gillesdandrea</a> ou sur le compte ami{' '}
                       <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
                     </p>
                     <p>
-                      Enfin, ci-dessous on vous dit combien de fois TrueSkill™ a raison (
+                      Enfin, les statistiques ci-dessous vous disent combien de fois TrueSkill™ a raison (
                       <i style={{ color: green[6] }}>Favorite wins</i>), quand il se trompe et qu'un favori est éliminé
                       (<i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu'il estimait perdant sort vainqueur
                       (<i style={{ color: gold[6] }}>Outsider wins</i>) 😉
                     </p>
+                    <h3>Références</h3>
+                    <div className="vb-reference">
+                      C. Stewart, M. Mazel, B. Sadler (2022).{' '}
+                      <a href="https://scholar.smu.edu/cgi/viewcontent.cgi?article=1227&context=datasciencereview">
+                        Application of Probabilistic Ranking Systems on Women’s Junior Division Beach Volleyball.
+                        <i>SMU Data Science Review, Vol. 6, No. 2.</i>
+                      </a>
+                    </div>
+                    <div className="vb-reference">
+                      T. Minka, R. Cleven, Y. Zaykov (2018).{' '}
+                      <a href="https://www.microsoft.com/en-us/research/uploads/prod/2018/03/trueskill2.pdf">
+                        TrueSkill 2: An improved Bayesian skill rating system
+                      </a>
+                    </div>
+                    <div className="vb-reference">
+                      J. Moser (2010).{' '}
+                      <a href="https://www.moserware.com/2010/03/computing-your-skill.html">Computing Your skill.</a>
+                    </div>
                   </div>
                 </div>
                 <div className="vb-info-charts-panel">

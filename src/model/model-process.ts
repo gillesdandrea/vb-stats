@@ -45,6 +45,11 @@ export const createMatch = (competition: Competition, data: any): Match => {
   const unplayed = score.length === 0;
   const winner = unplayed ? undefined : setA > setB ? teamA : teamB;
   const ratio = unplayed ? 0 : winner === teamA ? totalA / (totalB || 1) : totalB / (totalA || 1);
+  const winProbability = getWinProbability(teamA, teamB, day);
+  const predicted =
+    !winner || winProbability === 0.5
+      ? undefined
+      : (winner === teamA && winProbability > 0.5) || (winner === teamB && winProbability < 0.5);
   const match: Match = {
     id: data.Match,
     day,
@@ -60,7 +65,8 @@ export const createMatch = (competition: Competition, data: any): Match => {
     score,
     ratingA: getTeamRating(teamA, day),
     ratingB: getTeamRating(teamB, day),
-    winProbability: getWinProbability(teamA, teamB, day),
+    winProbability,
+    predicted,
     victory: unplayed
       ? Victory.Unplayed
       : Math.abs(setA - setB) < 2

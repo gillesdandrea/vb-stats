@@ -103,6 +103,7 @@ export interface Match {
   readonly ratingA: Rating; // before match
   readonly ratingB: Rating; // before match
   readonly winProbability: number;
+  readonly predicted?: boolean;
   readonly victory: Victory;
 }
 export interface Sheet {
