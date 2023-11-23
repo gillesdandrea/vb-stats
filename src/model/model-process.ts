@@ -1,4 +1,3 @@
-import { addMatchMeta } from './meta';
 import {
   Competition,
   CompetitionDay,
@@ -263,7 +262,6 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           match.teamA.pools[day].matchs.push(match);
         }
         addCompetitionMatch(competition, match);
-        addMatchMeta(match);
       });
 
       // compute ranking

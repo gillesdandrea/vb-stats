@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Papa from 'papaparse';
-import { metaToString } from '../model/meta';
 import { CompetitionCollection, SheetCollection } from '../model/model';
 import { createCompetition } from '../model/model-helpers';
 import { processCompetition } from '../model/model-process';
+import { createMetaStats, metaAddMatch, metaToString } from '../model/meta';
 
 // season / category / competition days | matchs data
 type DataCollection = Record<string, Record<string, string[][]>>;
@@ -59,6 +59,7 @@ export const fetchSheets = async (): Promise<SheetCollection> => {
 };
 
 export const createCompetitionCollection = (data: DataCollection, sheets: SheetCollection): CompetitionCollection => {
+  const meta = createMetaStats();
   const collection: CompetitionCollection = {};
   const seasons = Object.keys(data);
   seasons.forEach((season) => {
@@ -67,6 +68,7 @@ export const createCompetitionCollection = (data: DataCollection, sheets: SheetC
       const competition = createCompetition('Volley-Ball Stats', season, category, sheets?.[season]?.[category]);
       if (data[season][category].length > 0) {
         processCompetition(competition, data[season][category]);
+        competition.matchs.forEach((match) => metaAddMatch(meta, match));
         collection[season][category] = competition;
         console.log(
           `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.dayCount} day(s).`,
@@ -74,6 +76,6 @@ export const createCompetitionCollection = (data: DataCollection, sheets: SheetC
       }
     });
   });
-  console.log(metaToString());
+  console.log(metaToString(meta));
   return collection;
 };

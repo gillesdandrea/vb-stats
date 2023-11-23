@@ -4,7 +4,6 @@ import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOut
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
 import { useQuery } from 'react-query';
 
-import { resetMeta } from '../../model/meta';
 import { CompetitionCollection } from '../../model/model';
 import { createCompetitionCollection, fetchData, fetchSheets } from '../../utils/fetch-utils';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
@@ -58,7 +57,6 @@ const Shell = () => {
     error,
     refetch,
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
-    resetMeta();
     const data = await fetchData();
     const sheets = await fetchSheets();
     const seasons = Object.keys(data);
