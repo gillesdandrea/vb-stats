@@ -63,7 +63,7 @@ const Shell = () => {
     const season = params.season ?? seasons[0];
     setSeason(season);
     const categories = Object.keys(data[season]);
-    const category = params.category ?? categories[0];
+    const category = params.category ?? 'M15M'; // categories[0];
     setCategory(category);
     const competitionCollection = createCompetitionCollection(data, sheets);
     const competition = competitionCollection[season][category];
@@ -129,22 +129,23 @@ const Shell = () => {
   const seasons = Object.keys(competitions ?? {});
   const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
   const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
+  const lastDay = !competition ? 0 : competition.lastDay + (competition.lastDay < competition.dayCount ? 1 : 0);
   const days = competition
-    ? Array(competition.dayCount)
+    ? Array(lastDay)
         .fill(0)
         .map((_, index) => index + 1)
     : [];
 
-  if (competition && competition.dayCount !== dayCount) {
-    setDayCount(competition.dayCount);
-    if (params.day === 'last' && day !== competition.dayCount) {
-      setDay(competition.dayCount);
+  if (competition && lastDay !== dayCount) {
+    setDayCount(lastDay);
+    if (params.day === 'last' && day !== lastDay) {
+      setDay(lastDay);
       return <div />;
     }
   }
 
-  if (competition && day > competition.dayCount) {
-    setDay(competition.dayCount);
+  if (competition && day > lastDay) {
+    setDay(lastDay);
     return <div />;
   }
 
@@ -220,23 +221,25 @@ const Shell = () => {
             undefined,
             tab === 'pools',
           ),
+          !isCDF
+            ? null
+            : getItem(
+                'Qualified teams',
+                'qualified',
+                <Checked checked={!singleDay && qualified} />,
+                undefined,
+                undefined,
+                tab === 'pools',
+              ),
           getItem(
-            'Qualified teams',
-            'qualified',
-            <Checked checked={!singleDay && qualified} />,
-            undefined,
-            undefined,
-            tab === 'pools',
-          ),
-          getItem(
-            'All teams',
+            isCDF ? 'All teams' : 'All days',
             'overall',
-            <Checked checked={!singleDay && !qualified} />,
+            <Checked checked={isCDF ? !singleDay && !qualified : !singleDay} />,
             undefined,
             undefined,
             tab === 'pools' || tab === 'graph',
           ),
-        ],
+        ].filter(Boolean),
         'group',
       ),
     ]),

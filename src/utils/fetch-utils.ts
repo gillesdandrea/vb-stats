@@ -68,11 +68,11 @@ export const createCompetitionCollection = (data: DataCollection, sheets: SheetC
       const competition = createCompetition('Volley-Ball Stats', season, category, sheets?.[season]?.[category]);
       if (data[season][category].length > 0) {
         processCompetition(competition, data[season][category]);
-        competition.matchs.forEach((match) => metaAddMatch(meta, match));
         collection[season][category] = competition;
         console.log(
-          `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.dayCount} day(s).`,
+          `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.lastDay}/${competition.dayCount} day(s).`,
         );
+        competition.matchs.forEach((match) => metaAddMatch(meta, match));
       }
     });
   });

@@ -47,10 +47,11 @@ const medals = [' -', '🥇', '🥈', '🥉'];
 
 const getMatch = (match: Match, selected: Team) => {
   const proba = 100 * (selected === match.teamA ? match.winProbability : 1 - match.winProbability);
+  const probaText = `${proba.toFixed(1)}%`;
   if (match.teamA === selected) {
-    return `${match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',')} (${proba.toFixed(1)}%)`;
+    return `${match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',')} (${probaText})`;
   }
-  return `${match.score.map((set: Score) => `${set.scoreB}-${set.scoreA}`).join(', ')} (${proba.toFixed(1)}%)`;
+  return `${match.score.map((set: Score) => `${set.scoreB}-${set.scoreA}`).join(', ')} ((${probaText}))`;
 };
 
 export const getTrophies = (competition: Competition, team: Team, selected?: Team) => {
@@ -65,7 +66,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
       (match: Match) => match.teamA === team || match.teamB === team,
     );
     const pool = matchs.length > 0 && selected.pools.length > 0 ? selected.pools[matchs[0].day].teams : [];
-    const host = pool.length === 3 ? pool[0].name : '';
+    const host = pool.length === 3 ? pool[0].name : undefined;
 
     if (selected && matchs.length === 0) {
       return `(${(getWinProbability(selected, team, competition.dayCount) * 100).toFixed(1)}%)`;
@@ -86,7 +87,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
         )}
         &nbsp;
         {getMatch(match, selected)}
-        {` ${match.date} @${host}`}
+        {` ${match.date} ${host ? `@{$host}` : team === match.teamA ? '' : '✈️'}`}
       </div>
     ));
   }
@@ -193,8 +194,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         }
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
         const isCDF = team.pools.length > 0;
-        return `${Math.round((stats.points * 2 * dayCount) / stats.matchCount)}${
-          (isCDF ? 2 : 1) * dayCount !== stats.matchCount ? '*' : ''
+        const coef = isCDF ? 2 : 1;
+        return `${Math.round((stats.points * coef * dayCount) / stats.matchCount)}${
+          coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
       sorter: rankingSorter(day, !singleDay),
