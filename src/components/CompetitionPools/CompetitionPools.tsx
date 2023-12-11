@@ -221,8 +221,42 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
   }, []);
 
   const cday = competition.days[day];
-  if (!cday || !cday.pools || cday.pools.size === 0) {
+  if (!cday) {
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+  }
+  if (!cday || !cday.pools || cday.pools.size === 0) {
+    return (
+      <div className={cx('vb-pools', className)}>
+        <div className="vb-championship">
+          {competition.days.map((cday) => {
+            return (
+              <>
+                <div>
+                  {cday.matchs.map((match) => {
+                    const qa = 1 + (1 - match.winProbability) / match.winProbability;
+                    const qb = 1 + match.winProbability / (1 - match.winProbability);
+                    return (
+                      <div style={{ display: 'flex' }}>
+                        <div style={{ width: '2rem' }}>{`J${cday.day}`}</div>
+                        <div style={{ width: '6rem' }}>{match.date}</div>
+                        <div style={{ width: '4rem', color: match.predicted === false ? 'red' : '' }}>{`${(
+                          100 * match.winProbability
+                        ).toFixed(1)}%`}</div>
+                        <div style={{ width: '6rem' }}>{`${qa.toFixed(2)} - ${qb.toFixed(2)}`}</div>
+                        <div style={{ width: '1.5rem' }}>|</div>
+                        <div style={{ width: '3rem' }}>{`${match.setA} - ${match.setB}`}</div>
+                        <div>{`${match.teamA.name} - ${match.teamB.name}`}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <br />
+              </>
+            );
+          })}
+        </div>
+      </div>
+    );
   }
   const pools = Array.from(cday.pools.values()).filter((pool: Pool) =>
     pool.teams.some((team: Team) => {

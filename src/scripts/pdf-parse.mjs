@@ -11,8 +11,8 @@ import PDFParser from 'pdf2json';
 // [ ] scores
 
 // const PREFIX = './public/sheets/2022-23/2022-23-cdfm18m';
-//const PREFIX = './public/sheets/2023-24/2023-24-2fa';
-const PREFIX = './public/sheets/2023-24/2023-24-pmaa';
+const PREFIX = './public/sheets/2023-24/2023-24-2fa';
+// const PREFIX = './public/sheets/2023-24/2023-24-pmaa';
 const days = {};
 
 const addMatch = (match) => {

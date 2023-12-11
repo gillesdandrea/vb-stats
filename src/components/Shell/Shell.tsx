@@ -58,7 +58,7 @@ const Shell = () => {
     refetch,
   } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
     const data = await fetchData();
-    const sheets = await fetchSheets();
+    const sheets = {}; // = await fetchSheets();
     const seasons = Object.keys(data);
     const season = params.season ?? seasons[0];
     setSeason(season);
