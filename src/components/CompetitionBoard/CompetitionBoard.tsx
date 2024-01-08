@@ -87,7 +87,7 @@ export const getTrophies = (competition: Competition, team: Team, selected?: Tea
         )}
         &nbsp;
         {getMatch(match, selected)}
-        {` ${match.date} ${host ? `@{$host}` : team === match.teamA ? '' : '✈️'}`}
+        {` ${match.date} ${host ? `@${host}` : team === match.teamA ? '' : '✈️'}`}
       </div>
     ));
   }
