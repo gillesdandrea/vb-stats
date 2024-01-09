@@ -1,16 +1,24 @@
 .vb-board {
-  margin: 1rem 1rem;
+  margin: 1rem 0;
+
+  .ant-table {
+    background-color: transparent;
+  }
 
   .ant-table.ant-table-small {
     font-size: 12px;
   }
 
   .ant-table-body {
-    height: calc(100vh - 9.5rem);
+    height: calc(100vh - 9rem);
   }
 
   .table-row-disabled {
     color: #444444;
+  }
+
+  .ant-table-cell {
+    background-color: #141414;
   }
 
   .trophies {

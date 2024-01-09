@@ -218,7 +218,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
     return () => {
       debouncedSearchHandler.cancel();
     };
-  }, []);
+  });
 
   const cday = competition.days[day];
   if (!cday) {
