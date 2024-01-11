@@ -64,27 +64,27 @@
               }
             }
           }
+        }
 
-          .vb-card-footer {
-            display: flex;
-            flex-direction: column;
-            // padding: 0.5rem 1rem 0.25rem;
-            // border-top: 1px solid #303030;
+        .vb-card-footer {
+          display: flex;
+          flex-direction: column;
+          // padding: 0.5rem 1rem 0.25rem;
+          // border-top: 1px solid #303030;
 
-            .vb-card-split {
-              border-top: 1px solid #303030;
+          .vb-card-split {
+            border-top: 1px solid #303030;
 
-              .medal {
-                font-size: 1.25rem;
-              }
+            .medal {
+              font-size: 1.25rem;
             }
+          }
 
-            .vb-tag {
-              border: 1px solid #303030;
-              border-radius: 4px;
-              padding-left: 0.25rem;
-              padding-right: 0.25rem;
-            }
+          .vb-tag {
+            border: 1px solid #303030;
+            border-radius: 4px;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
           }
         }
       }
