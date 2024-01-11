@@ -19,6 +19,8 @@ interface Stats {
   predicted: number;
   unpredicted: number;
   outsiders: number;
+  right: number; // predicted match count
+  total: number; // predictable match count
 }
 
 const updateStats = ({
@@ -44,17 +46,24 @@ const updateStats = ({
     if (unpredicted) stats.unpredicted++;
     if (outsider) stats.outsiders++;
   });
+  pool.matchs.forEach((match) => {
+    if (match.predicted === true) stats.right++;
+    if (match.predicted !== undefined) stats.total++;
+  });
   return stats;
 };
 
 const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
-  const { green, gold, red } = presetDarkPalettes;
+  const chartSize = 70;
+  const { blue, green, gold, red } = presetDarkPalettes;
   const cday = competition.days[day];
   const pools = Array.from(cday.pools.values());
   const stats: Stats = {
     predicted: 0,
     unpredicted: 0,
     outsiders: 0,
+    right: 0,
+    total: 0,
   };
   pools.forEach((pool: Pool) => updateStats({ competition, pool, day, stats }));
 
@@ -124,7 +133,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             type="dashboard"
             percent={(100 * stats.predicted) / pools.length}
             format={(percent) => `${percent?.toFixed(0)}%`}
-            size={88}
+            size={chartSize}
             strokeColor={green[6]}
             strokeWidth={8}
           />
@@ -135,7 +144,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             type="dashboard"
             percent={(100 * stats.outsiders) / pools.length}
             format={(percent) => `${percent?.toFixed(0)}%`}
-            size={88}
+            size={chartSize}
             strokeColor={gold[6]}
             strokeWidth={8}
           />
@@ -146,11 +155,22 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             type="dashboard"
             percent={(100 * stats.unpredicted) / pools.length}
             format={(percent) => `${percent?.toFixed(0)}%`}
-            size={88}
+            size={chartSize}
             strokeColor={red[5]}
             strokeWidth={8}
           />
           <div>Favorite out</div>
+        </div>
+        <div className="vb-info-chart">
+          <Progress
+            type="dashboard"
+            percent={(100 * stats.right) / stats.total}
+            format={(percent) => `${percent?.toFixed(0)}%`}
+            size={chartSize}
+            strokeColor={blue[5]}
+            strokeWidth={8}
+          />
+          <div>Predictions</div>
         </div>
       </div>
     </div>

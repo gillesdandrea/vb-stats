@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
+import { ChangeEventHandler, useEffect, useMemo } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
 import { Affix, Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce';
 
 import { Competition, Match, Pool, Team } from '../../model/model';
 import {
+  filterTeam,
   getDayRanking,
   getPoolProbabilities,
   getTeamOpposition,
@@ -25,6 +26,8 @@ interface Props {
   day: number;
   singleDay: boolean;
   qualified: boolean;
+  tokens: string[];
+  setTokens: (tokens: string[]) => void;
   className?: string | string[];
 }
 
@@ -138,7 +141,7 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
             'vb-match-tight': Math.abs(match.winProbability - 0.5) < 0.05,
           })}
         >
-          {/*match.winner ? `${match.setA} - ${match.setB}` :*/ `${(100 * match.winProbability).toFixed(1)}%`}
+          {`${(100 * match.winProbability).toFixed(1)}%`}
         </div>
         <div
           className={cx('vb-team-b', {
@@ -202,8 +205,7 @@ const renderPool = ({ competition, pool, day }: { competition: Competition; pool
   );
 };
 
-const CompetitionPools = ({ competition, day, singleDay, qualified, className }: Props) => {
-  const [tokens, setTokens] = useState<string[]>([]);
+const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
       event.target.value
@@ -225,6 +227,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
   }
   if (!cday || !cday.pools || cday.pools.size === 0) {
+    // temporary display data for championship
     return (
       <div className={cx('vb-pools', className)}>
         <div className="vb-championship">
@@ -259,24 +262,19 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, className }:
     );
   }
   const pools = Array.from(cday.pools.values()).filter((pool: Pool) =>
-    pool.teams.some((team: Team) => {
-      return (
-        tokens.length === 0 ||
-        tokens.some((token) => {
-          if (team.name.toLocaleLowerCase().includes(token)) return true;
-          const local = `${team.department.num_dep} ${team.department.dep_name} ${team.department.region_name}`;
-          if (local.toLocaleLowerCase().includes(token)) return true;
-          return false;
-        })
-      );
-    }),
+    pool.teams.some((team: Team) => filterTeam(team, tokens)),
   );
 
   return (
     <div className={cx('vb-pools', className)}>
       <Affix offsetTop={81}>
         <div className="vb-search">
-          <Search placeholder="Filter teams..." allowClear onChange={debouncedSearchHandler} />
+          <Search
+            defaultValue={tokens.join(' ')}
+            placeholder="Filter teams..."
+            allowClear
+            onChange={debouncedSearchHandler}
+          />
         </div>
       </Affix>
       <Row gutter={[24, 24]}>

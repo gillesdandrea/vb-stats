@@ -17,6 +17,16 @@ const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
 const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
 const MIN_DELTA = 0.0001;
 
+export const filterTeam = (team: Team, tokens: string[]) =>
+  tokens.length === 0 ||
+  tokens.some((token) => {
+    const rtoken = token.replaceAll('_', ' ');
+    if (team.name.toLocaleLowerCase().includes(rtoken)) return true;
+    const local = `${team.department.num_dep} ${team.department.dep_name} ${team.department.region_name}`;
+    if (local.toLocaleLowerCase().includes(rtoken)) return true;
+    return false;
+  });
+
 export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false): [Rating, Rating] => {
   // return rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
   const ranks = [0, 1];
@@ -261,9 +271,10 @@ export const getBoard = (
 export const getTeamOpposition = (
   competition: Competition,
   team: Team,
-  day: number = competition.dayCount,
+  mday: number = competition.dayCount,
   global = true,
 ): [number, number] => {
+  const day = Math.min(team.dayCount, mday);
   const stats = getTeamStats(team, day, global);
   const [mean, stdev] = stats.difficulty;
   if (mean < 0 && stdev < 0) {
