@@ -92,8 +92,9 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             et celles d'Occitanie.
           </p>
           <p>
-            La barre de menu permet aussi d'afficher le classement (<i>Board</i>), le graphe des matchs (<i>Graph</i>)
-            mais aussi de changer de journée, de catégorie ou de saison.
+            La barre de menu permet aussi d'afficher, le parcours des équipes (<i>Teams</i>), le classement (
+            <i>Board</i>), le graphe des matchs (<i>Graph</i>) mais aussi de changer de journée, de catégorie ou de
+            saison.
           </p>
           <p>
             Toutes les données utilisées viennent du site de la{' '}
@@ -105,7 +106,8 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             Enfin, les statistiques ci-dessous vous disent combien de fois TrueSkill™ a raison (
             <i style={{ color: green[6] }}>Favorite wins</i>), quand il se trompe et qu'un favori est éliminé (
             <i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu'il estimait perdant sort vainqueur (
-            <i style={{ color: gold[6] }}>Outsider wins</i>) 😉
+            <i style={{ color: gold[6] }}>Outsider wins</i>) ainsi que les matchs prédits (
+            <i style={{ color: blue[5] }}>Predictions</i>) 😉
           </p>
           <h3>Références</h3>
           <div className="vb-reference">

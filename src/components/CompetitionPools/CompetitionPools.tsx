@@ -51,7 +51,7 @@ const renderTeam = ({
   const stats = getTeamStats(team, day);
   const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
   const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
-  const [mean, stdev] = getTeamOpposition(competition, team, day, false);
+  const [mean, stdev] = getTeamOpposition(competition, team, day, true);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
   const dayRanking = getDayRanking(competition, team, day);
   const eliminated = dayRanking === 3;

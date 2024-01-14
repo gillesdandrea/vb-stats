@@ -185,7 +185,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       render: (team: Team) => {
         const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
         // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
-        return `${(100 * mean).toFixed(1)}%`;
+        return isNaN(mean) ? '-' : `${(100 * mean).toFixed(1)}%`;
       },
       sorter: (a: Team, b: Team) => {
         const [amean, astdev] = getTeamOpposition(competition, a, day, !singleDay);
