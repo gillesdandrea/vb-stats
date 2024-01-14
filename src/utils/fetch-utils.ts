@@ -59,6 +59,7 @@ export const fetchSheets = async (): Promise<SheetCollection> => {
 };
 
 export const createCompetitionCollection = (data: DataCollection, sheets: SheetCollection): CompetitionCollection => {
+  const now = Date.now();
   const meta = createMetaStats();
   const collection: CompetitionCollection = {};
   const seasons = Object.keys(data);
@@ -77,5 +78,6 @@ export const createCompetitionCollection = (data: DataCollection, sheets: SheetC
     });
   });
   console.log(metaToString(meta));
+  console.log('Processed in', Date.now() - now, 'ms.');
   return collection;
 };

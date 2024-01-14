@@ -123,6 +123,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'right',
       width: 40,
       render: (team: Team, item, index) => {
+        if (singleDay) {
+          const dranking = getDayRanking(competition, team, day);
+          if (dranking === 0) {
+            return '-';
+          }
+        }
         const ranking = getTeamRanking(team, day, singleDay, qualified);
         return ranking ?? '-';
       },
@@ -135,10 +141,16 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'left',
       width: 40,
       render: (team: Team, item, index) => {
-        const ranking = getTeamRanking(team, day, singleDay, qualified);
         if (day === 1) {
           return '';
         }
+        if (singleDay) {
+          const dranking = getDayRanking(competition, team, day);
+          if (dranking === 0) {
+            return '';
+          }
+        }
+        const ranking = getTeamRanking(team, day, singleDay, qualified);
         const previous = getTeamRanking(team, day - 1, singleDay, qualified);
         const delta = previous
           ? ranking === previous

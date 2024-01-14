@@ -18,6 +18,7 @@ import {
   getTeamMatch,
   getTeamRating,
   getWinProbability,
+  isTeamInCourse,
   rateMatch,
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
@@ -132,16 +133,15 @@ export const addTeamMatch = (team: Team, stats: Stats, match: Match) => {
 export const addCompetitionMatch = (competition: Competition, match: Match) => {
   const { teamA, teamB, winner, day } = match;
 
-  if (winner) {
-    if (competition.lastDay < day) {
-      competition.lastDay = day;
-    }
-    if (match.teamA.lastDay < day) {
-      match.teamA.lastDay = day;
-    }
-    if (match.teamB.lastDay < day) {
-      match.teamB.lastDay = day;
-    }
+  const lastDay = winner ? day : day - 1; // because some teams may skip a tour
+  if (competition.lastDay < lastDay) {
+    competition.lastDay = lastDay;
+  }
+  if (match.teamA.lastDay < lastDay) {
+    match.teamA.lastDay = lastDay;
+  }
+  if (match.teamB.lastDay < lastDay) {
+    match.teamB.lastDay = lastDay;
   }
 
   if (competition.sheets) {
@@ -234,6 +234,15 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             });
           });
         } else {
+          const teams: Set<Team> = new Set();
+          Array.from(competition.teams.values())
+            .filter((team) => isTeamInCourse(competition, team, day))
+            .forEach((team) => {
+              // capture all teams even if exempt of a tour
+              teams.add(team);
+              team.dayCount = day;
+            });
+
           const poolCount = data.length / 3;
           for (let i = 0; i < poolCount; i++) {
             const m1 = data[3 * i];
@@ -258,7 +267,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
               dayCompetition.pools.set(pool.name, pool);
             }
             [teamA, teamB, teamC].forEach((team: Team) => {
-              dayCompetition.teams.push(team);
+              teams.add(team);
               team.dayCount = day;
               team.pools[day] = pool as Pool;
               // enforce stats creation
@@ -266,6 +275,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
               getDayTeamStats(team, day);
             });
           }
+          dayCompetition.teams.push(...Array.from(teams.values()));
         }
 
         // process matchs
@@ -304,7 +314,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           const teams = [...competition.days[day].teams];
           teams.sort(rankingSorter(day - 1, false));
           teams.forEach((team: Team, index: number) => {
-            if (team.pools.length > 0 && team.pools[day].ranking === undefined) {
+            if (team.pools.length > 0 && team.pools[day] && team.pools[day].ranking === undefined) {
               team.pools[day].ranking = index + 1;
             }
           });

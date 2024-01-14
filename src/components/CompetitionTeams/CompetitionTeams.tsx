@@ -226,8 +226,8 @@ const renderCard = ({ competition, team, day }: { competition: Competition; team
 
 const CompetitionTeams = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
   const allTeams = useMemo(
-    () => getBoard(competition, Sorting.POINTS, day, singleDay, tokens.length === 0 ? qualified : false),
-    [competition, day, singleDay, qualified, tokens],
+    () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
+    [competition, day, singleDay, qualified],
   );
 
   // const [tokens, setTokens] = useState<string[]>([]);

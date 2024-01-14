@@ -26,8 +26,8 @@ export const rankingSorter =
   (a: Team, b: Team) => {
     const astats = getTeamStats(a, day, global);
     const bstats = getTeamStats(b, day, global);
-    const apoints = astats.matchCount === 0 ? -1 : (astats.points * 2 * Math.min(day, a.lastDay)) / astats.matchCount;
-    const bpoints = bstats.matchCount === 0 ? -1 : (bstats.points * 2 * Math.min(day, b.lastDay)) / bstats.matchCount;
+    const apoints = astats.matchCount === 0 ? -1 : (astats.points * 2 * Math.min(day, a.dayCount)) / astats.matchCount;
+    const bpoints = bstats.matchCount === 0 ? -1 : (bstats.points * 2 * Math.min(day, b.dayCount)) / bstats.matchCount;
     return apoints === bpoints ? setSorter(day, global)(a, b) : bpoints - apoints;
   };
 

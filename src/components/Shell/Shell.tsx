@@ -158,6 +158,10 @@ const Shell = () => {
     if (e.keyPath.length === 1 || e.keyPath[1] === 'tab') {
       // main menu
       setTab(e.key);
+      if (e.key === 'teams' && singleDay) {
+        setQualified(true);
+        setSingleDay(false);
+      }
       if (e.key === 'graph' && !qualified) {
         setQualified(true);
       }
@@ -248,7 +252,7 @@ const Shell = () => {
               <Checked checked={singleDay} />,
               undefined,
               undefined,
-              tab === 'pools',
+              tab === 'pools' || tab === 'teams',
             ),
             !isCDF
               ? null
