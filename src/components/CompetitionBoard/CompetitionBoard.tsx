@@ -270,7 +270,13 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'right',
       width: smallWidth,
       ellipsis: true,
-      render: (team: Team) => (day >= 1 ? team.ranking.days[day - 1] : ''),
+      render: (team: Team) => {
+        const dranking = getDayRanking(competition, team, day - 1);
+        if (dranking === 0) {
+          return '';
+        }
+        return day >= 1 ? team.ranking.days[day - 1] : '';
+      },
       // sorter: day > 1 ? rankingSorter(day - 1, false) : undefined,
       sorter: previousPoolSorter(day, !singleDay),
       showSorterTooltip: false,
