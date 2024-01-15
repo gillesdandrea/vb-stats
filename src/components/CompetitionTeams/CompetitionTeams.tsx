@@ -1,8 +1,7 @@
-import { ChangeEventHandler, useEffect, useMemo } from 'react';
+import { ChangeEventHandler, useEffect, useMemo, useRef } from 'react';
 
-import { gray } from '@ant-design/colors';
 import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
-import { Affix, Avatar, Card, Col, Collapse, CollapseProps, Empty, Row } from 'antd';
+import { Avatar, Card, Col, Collapse, CollapseProps, Empty, Row } from 'antd';
 import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
@@ -20,6 +19,7 @@ import {
 } from '../../model/model-helpers';
 import { Sorting } from '../../model/model-sorters';
 import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
+import Headroom from '../Headroom/Headroom';
 
 import './CompetitionTeams.scss';
 
@@ -225,6 +225,8 @@ const renderCard = ({ competition, team, day }: { competition: Competition; team
 };
 
 const CompetitionTeams = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const allTeams = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
     [competition, day, singleDay, qualified],
@@ -254,17 +256,15 @@ const CompetitionTeams = ({ competition, day, singleDay, qualified, tokens, setT
   const teams = allTeams.filter((team: Team) => filterTeam(team, tokens));
 
   return (
-    <div className={cx('vb-teams', className)}>
-      <Affix offsetTop={81}>
-        <div className="vb-search">
-          <Search
-            defaultValue={tokens.join(' ')}
-            placeholder="Filter teams..."
-            allowClear
-            onChange={debouncedSearchHandler}
-          />
-        </div>
-      </Affix>
+    <div ref={scrollRef} className={cx('vb-teams', className)}>
+      <Headroom scrollRef={scrollRef} className="vb-search">
+        <Search
+          defaultValue={tokens.join(' ')}
+          placeholder="Filter teams..."
+          allowClear
+          onChange={debouncedSearchHandler}
+        />
+      </Headroom>
       <Row gutter={[24, 24]}>
         {teams.length === 0 ? (
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ margin: 'auto' }} />

@@ -1,7 +1,7 @@
-import { ChangeEventHandler, useEffect, useMemo } from 'react';
+import { ChangeEventHandler, useEffect, useMemo, useRef } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
-import { Affix, Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
+import { Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
 import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
@@ -19,6 +19,7 @@ import {
 import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
 import Help from '../Help/Help';
 
+import Headroom from '../Headroom/Headroom';
 import './CompetitionPools.scss';
 
 interface Props {
@@ -206,6 +207,8 @@ const renderPool = ({ competition, pool, day }: { competition: Competition; pool
 };
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
       event.target.value
@@ -266,17 +269,15 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
   );
 
   return (
-    <div className={cx('vb-pools', className)}>
-      <Affix offsetTop={81}>
-        <div className="vb-search">
-          <Search
-            defaultValue={tokens.join(' ')}
-            placeholder="Filter teams..."
-            allowClear
-            onChange={debouncedSearchHandler}
-          />
-        </div>
-      </Affix>
+    <div ref={scrollRef} className={cx('vb-pools', className)}>
+      <Headroom scrollRef={scrollRef} className="vb-search">
+        <Search
+          defaultValue={tokens.join(' ')}
+          placeholder="Filter teams..."
+          allowClear
+          onChange={debouncedSearchHandler}
+        />
+      </Headroom>
       <Row gutter={[24, 24]}>
         {tokens.length > 0 ? null : (
           <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={8} key={'stats'}>
