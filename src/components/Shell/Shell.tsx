@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useWindowSize } from 'react-use';
 
 import { CompetitionCollection } from '../../model/model';
@@ -68,22 +68,26 @@ const Shell = () => {
     data: competitions,
     error,
     refetch,
-  } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
-    const data = await fetchData();
-    const sheets = {}; // = await fetchSheets();
-    const seasons = Object.keys(data);
-    const season = params.season ?? seasons[0];
-    setSeason(season);
-    // const categories = Object.keys(data[season]);
-    const category = params.category ?? 'M15M'; // categories[0];
-    setCategory(category);
-    const competitionCollection = createCompetitionCollection(data, sheets);
-    const competition = competitionCollection[season][category];
-    const day: number = Number.parseInt(params.day);
-    setDayCount(competition.dayCount);
-    setDay(Number.isNaN(day) ? competition.dayCount : day);
-    setFetched(true);
-    return competitionCollection;
+  } = useQuery<CompetitionCollection, Error>({
+    queryKey: ['vbstats-cdf'],
+    queryFn: async () => {
+      const data = await fetchData();
+      const sheets = {}; // = await fetchSheets();
+      const seasons = Object.keys(data);
+      const season = params.season ?? seasons[0];
+      setSeason(season);
+      // const categories = Object.keys(data[season]);
+      const category = params.category ?? 'M15M'; // categories[0];
+      setCategory(category);
+      const competitionCollection = createCompetitionCollection(data, sheets);
+      const competition = competitionCollection[season][category];
+      const day: number = Number.parseInt(params.day);
+      setDayCount(competition.dayCount);
+      setDay(Number.isNaN(day) ? competition.dayCount : day);
+      setFetched(true);
+      return competitionCollection;
+    },
+    staleTime: Infinity,
   });
 
   const pday: number = Number.parseInt(params.day);
