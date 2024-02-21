@@ -207,118 +207,120 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       // return [data];
     })
     .forEach((daydata: any[][]) => {
-      daydata.forEach((data: any[]) => {
-        // add new day
-        const day = Number(data[0].Jo);
-        const dayCompetition: CompetitionDay = {
-          day,
-          teams: [],
-          matchs: [],
-          pools: new Map(),
-        };
-        competition.dayCount = day;
-        competition.days[day] = dayCompetition;
-        // lastDays are updated when adding a played match
+      daydata
+        .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
+        .forEach((data: any[]) => {
+          // add new day
+          const day = Number(data[0].Jo);
+          const dayCompetition: CompetitionDay = {
+            day,
+            teams: [],
+            matchs: [],
+            pools: new Map(),
+          };
+          competition.dayCount = day;
+          competition.days[day] = dayCompetition;
+          // lastDays are updated when adding a played match
 
-        // process day
-        if (!isCDF) {
-          data.forEach((match: any) => {
-            const teamA = getTeam(competition, match.EQA_no, match.EQA_nom);
-            const teamB = getTeam(competition, match.EQB_no, match.EQB_nom);
-            [teamA, teamB].forEach((team: Team) => {
-              dayCompetition.teams.push(team);
-              team.dayCount = day;
-              // enforce stats creation
-              getGlobalTeamStats(team, day);
-              getDayTeamStats(team, day);
+          // process day
+          if (!isCDF) {
+            data.forEach((match: any) => {
+              const teamA = getTeam(competition, match.EQA_no, match.EQA_nom);
+              const teamB = getTeam(competition, match.EQB_no, match.EQB_nom);
+              [teamA, teamB].forEach((team: Team) => {
+                dayCompetition.teams.push(team);
+                team.dayCount = day;
+                // enforce stats creation
+                getGlobalTeamStats(team, day);
+                getDayTeamStats(team, day);
+              });
             });
-          });
-        } else {
-          const teams: Set<Team> = new Set();
-          Array.from(competition.teams.values())
-            .filter((team) => isTeamInCourse(competition, team, day))
-            .forEach((team) => {
-              // capture all teams even if exempt of a tour
-              teams.add(team);
-              team.dayCount = day;
-            });
+          } else {
+            const teams: Set<Team> = new Set();
+            Array.from(competition.teams.values())
+              .filter((team) => isTeamInCourse(competition, team, day))
+              .forEach((team) => {
+                // capture all teams even if exempt of a tour
+                teams.add(team);
+                team.dayCount = day;
+              });
 
-          const poolCount = data.length / 3;
-          for (let i = 0; i < poolCount; i++) {
-            const m1 = data[3 * i];
-            const m2 = data[3 * i + 1];
-            // const m3 = data[3 * i + 2];
+            const poolCount = data.length / 3;
+            for (let i = 0; i < poolCount; i++) {
+              const m1 = data[3 * i];
+              const m2 = data[3 * i + 1];
+              // const m3 = data[3 * i + 2];
 
-            // find pool;
-            const teamA = getTeam(competition, m1.EQA_no, m1.EQA_nom);
-            const teamB = getTeam(competition, m1.EQB_no, m1.EQB_nom);
-            const teamC =
-              m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
-                ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
-                : getTeam(competition, m2.EQA_no, m2.EQA_nom);
-            const poolName = m1.Match.substring(1, 3);
-            let pool: Pool | undefined = dayCompetition.pools.get(poolName);
-            if (!pool) {
-              pool = {
-                name: poolName,
-                teams: [teamA, teamB, teamC],
-                matchs: [],
-              };
-              dayCompetition.pools.set(pool.name, pool);
+              // find pool;
+              const teamA = getTeam(competition, m1.EQA_no, m1.EQA_nom);
+              const teamB = getTeam(competition, m1.EQB_no, m1.EQB_nom);
+              const teamC =
+                m2.EQA_no === m1.EQA_no || m2.EQA_no === m1.EQB_no
+                  ? getTeam(competition, m2.EQB_no, m2.EQB_nom)
+                  : getTeam(competition, m2.EQA_no, m2.EQA_nom);
+              const poolName = m1.Match.substring(1, 3);
+              let pool: Pool | undefined = dayCompetition.pools.get(poolName);
+              if (!pool) {
+                pool = {
+                  name: poolName,
+                  teams: [teamA, teamB, teamC],
+                  matchs: [],
+                };
+                dayCompetition.pools.set(pool.name, pool);
+              }
+              [teamA, teamB, teamC].forEach((team: Team) => {
+                teams.add(team);
+                team.dayCount = day;
+                team.pools[day] = pool as Pool;
+                // enforce stats creation
+                getGlobalTeamStats(team, day);
+                getDayTeamStats(team, day);
+              });
             }
-            [teamA, teamB, teamC].forEach((team: Team) => {
-              teams.add(team);
-              team.dayCount = day;
-              team.pools[day] = pool as Pool;
-              // enforce stats creation
-              getGlobalTeamStats(team, day);
-              getDayTeamStats(team, day);
-            });
+            dayCompetition.teams.push(...Array.from(teams.values()));
           }
-          dayCompetition.teams.push(...Array.from(teams.values()));
-        }
 
-        // process matchs
-        data.forEach((line: any) => {
-          const match = createMatch(competition, line);
-          if (isCDF) {
-            match.teamA.pools[day].matchs.push(match);
-          }
-          addCompetitionMatch(competition, match);
-        });
+          // process matchs
+          data.forEach((line: any) => {
+            const match = createMatch(competition, line);
+            if (isCDF) {
+              match.teamA.pools[day].matchs.push(match);
+            }
+            addCompetitionMatch(competition, match);
+          });
 
-        // compute ranking
-        const teams = Array.from(competition.teams.values());
-        teams.sort(rankingSorter(day, true));
-        teams.forEach((team, index) => {
-          team.ranking.globals[day] = index + 1;
-        });
-        const dteams = [...competition.days[day].teams];
-        dteams.sort(rankingSorter(day, false));
-        dteams.forEach((team, index) => {
-          team.ranking.days[day] = index + 1;
-        });
-        const running = [...competition.days[day].teams];
-        running.sort(rankingSorter(day, true));
-        running.forEach((team, index) => {
-          team.ranking.qualifieds[day] = index + 1;
-        });
-        competition.days[day].pools.forEach((pool: Pool) => {
-          const teams = [...pool.teams];
-          teams.sort(rankingSorter(day, false));
+          // compute ranking
+          const teams = Array.from(competition.teams.values());
+          teams.sort(rankingSorter(day, true));
           teams.forEach((team, index) => {
-            team.ranking.pools[day] = index + 1;
+            team.ranking.globals[day] = index + 1;
           });
+          const dteams = [...competition.days[day].teams];
+          dteams.sort(rankingSorter(day, false));
+          dteams.forEach((team, index) => {
+            team.ranking.days[day] = index + 1;
+          });
+          const running = [...competition.days[day].teams];
+          running.sort(rankingSorter(day, true));
+          running.forEach((team, index) => {
+            team.ranking.qualifieds[day] = index + 1;
+          });
+          competition.days[day].pools.forEach((pool: Pool) => {
+            const teams = [...pool.teams];
+            teams.sort(rankingSorter(day, false));
+            teams.forEach((team, index) => {
+              team.ranking.pools[day] = index + 1;
+            });
+          });
+          if (day > 1) {
+            const teams = [...competition.days[day].teams];
+            teams.sort(rankingSorter(day - 1, false));
+            teams.forEach((team: Team, index: number) => {
+              if (team.pools.length > 0 && team.pools[day] && team.pools[day].ranking === undefined) {
+                team.pools[day].ranking = index + 1;
+              }
+            });
+          }
         });
-        if (day > 1) {
-          const teams = [...competition.days[day].teams];
-          teams.sort(rankingSorter(day - 1, false));
-          teams.forEach((team: Team, index: number) => {
-            if (team.pools.length > 0 && team.pools[day] && team.pools[day].ranking === undefined) {
-              team.pools[day].ranking = index + 1;
-            }
-          });
-        }
-      });
     });
 };

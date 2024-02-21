@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
-import { useQuery } from '@tanstack/react-query';
 import { useWindowSize } from 'react-use';
 
-import { CompetitionCollection } from '../../model/model';
-import { createCompetitionCollection, fetchData } from '../../utils/fetch-utils';
+import {
+  categories,
+  defaultCategory,
+  defaultSeason,
+  seasons as iseasons,
+  seasonToNumber,
+  seasonToString,
+} from '../../model/model';
+import { useCompetition } from '../../utils/fetch-utils';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
@@ -16,6 +22,8 @@ import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './Shell.scss';
 
 const BREAKPOINT = 512; // 576
+
+const seasons = iseasons.map(seasonToString);
 
 const tabNames: Record<string, string> = {
   pools: 'Pools',
@@ -61,38 +69,9 @@ const Shell = () => {
   const params = parseQueryParameters(window.location.search);
   const { width, height } = useWindowSize();
 
-  const [fetched, setFetched] = useState<boolean>(false);
-  const {
-    isLoading,
-    isError,
-    data: competitions,
-    error,
-    refetch,
-  } = useQuery<CompetitionCollection, Error>({
-    queryKey: ['vbstats-cdf'],
-    queryFn: async () => {
-      const data = await fetchData();
-      const sheets = {}; // = await fetchSheets();
-      const seasons = Object.keys(data);
-      const season = params.season ?? seasons[0];
-      setSeason(season);
-      // const categories = Object.keys(data[season]);
-      const category = params.category ?? 'M15M'; // categories[0];
-      setCategory(category);
-      const competitionCollection = createCompetitionCollection(data, sheets);
-      const competition = competitionCollection[season][category];
-      const day: number = Number.parseInt(params.day);
-      setDayCount(competition.dayCount);
-      setDay(Number.isNaN(day) ? competition.dayCount : day);
-      setFetched(true);
-      return competitionCollection;
-    },
-    staleTime: Infinity,
-  });
-
   const pday: number = Number.parseInt(params.day);
-  const [season, setSeason] = useState<string>(params.season);
-  const [category, setCategory] = useState<string>(params.category);
+  const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
+  const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
@@ -100,6 +79,9 @@ const Shell = () => {
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
   const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
+
+  const { isLoading, isError, data: competition, error } = useCompetition(seasonToNumber(season), category);
+  const fetched = !!competition;
 
   useEffect(() => {
     if (day > 0 && fetched) {
@@ -114,7 +96,7 @@ const Shell = () => {
     }
   }, [fetched, tab, season, category, dayCount, day, singleDay, qualified, tokens]);
 
-  if (isLoading || day === 0) {
+  if (isLoading) {
     return (
       <Spin size="large">
         <Layout style={{ height: '100vh' }} />
@@ -130,9 +112,9 @@ const Shell = () => {
     );
   }
 
-  const seasons = Object.keys(competitions ?? {});
-  const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
-  const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
+  // const seasons = Object.keys(competitions ?? {});
+  // const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
+  // const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
   const lastDay = !competition ? 0 : competition.lastDay + (competition.lastDay < competition.dayCount ? 1 : 0);
   const days = competition
     ? Array(lastDay)
@@ -148,7 +130,7 @@ const Shell = () => {
     }
   }
 
-  if (competition && day > lastDay) {
+  if (competition && (day < 1 || day > lastDay)) {
     setDay(lastDay);
     return <div />;
   }
