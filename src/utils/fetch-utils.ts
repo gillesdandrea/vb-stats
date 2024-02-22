@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Papa from 'papaparse';
 import { createMetaStats, metaAddMatch, metaToString } from '../model/meta';
@@ -6,7 +6,7 @@ import { Competition, SheetCollection, getResourceName } from '../model/model';
 import { createCompetition } from '../model/model-helpers';
 import { processCompetition } from '../model/model-process';
 
-export const useCompetition = (season: number, category: string) => {
+export const useCompetition = (season: number, category: string): UseQueryResult<Competition, Error> => {
   const resource = getResourceName(season, category);
   return useQuery<Competition, Error>({
     queryKey: [resource],

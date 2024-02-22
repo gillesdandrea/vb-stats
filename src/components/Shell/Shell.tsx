@@ -8,6 +8,7 @@ import {
   categories,
   defaultCategory,
   defaultSeason,
+  getResourceName,
   seasons as iseasons,
   seasonToNumber,
   seasonToString,
@@ -107,7 +108,16 @@ const Shell = () => {
   if (isError) {
     return (
       <Layout style={{ height: '100vh' }}>
-        <Result status="error" title="Failed to load data..." subTitle={String(error)} />
+        <Result
+          status="error"
+          title="Failed to load data..."
+          subTitle={
+            <>
+              <div>{getResourceName(seasonToNumber(season), category)}</div>
+              <div>{String(error)}</div>
+            </>
+          }
+        />
       </Layout>
     );
   }
