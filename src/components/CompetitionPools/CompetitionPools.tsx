@@ -1,7 +1,8 @@
-import { ChangeEventHandler, useEffect, useMemo, useRef } from 'react';
+import { ChangeEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
-import { Avatar, Card, Col, Empty, Progress, Row, Tag } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Avatar, Card, Col, Empty, Modal, Progress, Row, Tag } from 'antd';
 import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
@@ -17,9 +18,11 @@ import {
   poolId2Name,
 } from '../../model/model-helpers';
 import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
-import Help from '../Help/Help';
-
 import Headroom from '../Headroom/Headroom';
+import Help from '../Help/Help';
+import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
+import TeamInfo from '../TeamInfo/TeamInfo';
+
 import './CompetitionPools.scss';
 
 interface Props {
@@ -40,12 +43,14 @@ const renderTeam = ({
   day,
   probability,
   rank,
+  setModalTeam,
 }: {
   competition: Competition;
   team: Team;
   day: number;
   probability: number;
   rank: number;
+  setModalTeam: (team: Team | null) => void;
 }) => {
   // console.log(presetDarkPalettes);
   const { blue, green, gold, red } = presetDarkPalettes;
@@ -90,6 +95,9 @@ const renderTeam = ({
         {medals[dayRanking]}
         &nbsp;
         <span className={eliminated ? 'strikethrough' : ''}>{team.name}</span>
+        <a className="vb-team-link" onClick={() => setModalTeam(team)}>
+          <InfoCircleOutlined />
+        </a>
       </div>
 
       <div className="vb-card-content">
@@ -160,7 +168,8 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
             </span>
           </div>
           <div className="vb-score-points">
-            {match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}
+            <span>{match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}</span>
+            <MatchSheetLink competition={competition} match={match} />
           </div>
         </div>
       ) : null}
@@ -168,7 +177,17 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
   );
 };
 
-const renderPool = ({ competition, pool, day }: { competition: Competition; pool: Pool; day: number }) => {
+const renderPool = ({
+  competition,
+  pool,
+  day,
+  setModalTeam,
+}: {
+  competition: Competition;
+  pool: Pool;
+  day: number;
+  setModalTeam: (team: Team | null) => void;
+}) => {
   const { gold, volcano } = presetDarkPalettes;
   const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
   const firstCount = pool.teams.filter((team) => team.ranking.pools[day - 1] === 1).length;
@@ -196,6 +215,7 @@ const renderPool = ({ competition, pool, day }: { competition: Competition; pool
                 day,
                 probability: Math.round(100 * probabilities[index]),
                 rank: orders[index],
+                setModalTeam,
               }),
             )}
           </div>
@@ -208,6 +228,7 @@ const renderPool = ({ competition, pool, day }: { competition: Competition; pool
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [modalTeam, setModalTeam] = useState<Team | null>(null);
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
@@ -290,10 +311,28 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ margin: 'auto' }} />
         ) : (
           pools.map((pool: Pool) => {
-            return pool ? renderPool({ competition, pool, day }) : null;
+            return pool ? renderPool({ competition, pool, day, setModalTeam }) : null;
           })
         )}
       </Row>
+      <Modal
+        className="vb-modal-team-info"
+        title=""
+        footer={null}
+        open={!!modalTeam}
+        onOk={() => {}}
+        onCancel={() => setModalTeam(null)}
+      >
+        {modalTeam && (
+          <TeamInfo
+            competition={competition}
+            team={modalTeam}
+            day={day}
+            displayRanking={false}
+            setModalTeam={setModalTeam}
+          />
+        )}
+      </Modal>
     </div>
   );
 };
