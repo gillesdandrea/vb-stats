@@ -87,7 +87,7 @@ const renderMatchs = (
   competition: Competition,
   matchs: Match[],
   day: number,
-  setModalTeam?: (team: Team | null) => void,
+  pushModalTeam?: (team: Team) => void,
 ) => {
   const items: CollapseProps['items'] = matchs.map((match) => {
     const { teamB } = match;
@@ -146,14 +146,8 @@ const renderMatchs = (
               <span>
                 {teamB.name} ({teamB.department.num_dep})
               </span>
-              {setModalTeam && (
-                <a
-                  className="vb-team-link"
-                  onClick={() => {
-                    setModalTeam(null);
-                    setTimeout(() => setModalTeam(teamB), 150);
-                  }}
-                >
+              {pushModalTeam && (
+                <a className="vb-team-link" onClick={() => pushModalTeam(teamB)}>
                   <InfoCircleOutlined />
                 </a>
               )}
@@ -192,10 +186,10 @@ interface TeamInfoProps {
   team: Team;
   day: number;
   displayRanking?: boolean;
-  setModalTeam?: (team: Team | null) => void;
+  pushModalTeam?: (team: Team) => void;
 }
 
-const TeamInfo = ({ competition, team, day, displayRanking = true, setModalTeam }: TeamInfoProps) => {
+const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam }: TeamInfoProps) => {
   return (
     <Card className="vb-team-info">
       <div className="vb-card">
@@ -205,7 +199,7 @@ const TeamInfo = ({ competition, team, day, displayRanking = true, setModalTeam 
             team,
             day,
             displayRanking,
-            setModalTeam,
+            pushModalTeam,
           })}
         </div>
         <div className="vb-card-footer">
@@ -224,7 +218,7 @@ const TeamInfo = ({ competition, team, day, displayRanking = true, setModalTeam 
                       .filter((match) => match.teamA === team || match.teamB === team)
                       .map((match) => getTeamMatch(team, match)),
                     day,
-                    setModalTeam,
+                    pushModalTeam,
                   )}
                 </div>
               </div>

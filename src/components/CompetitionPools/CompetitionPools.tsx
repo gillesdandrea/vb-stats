@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -43,14 +43,14 @@ const renderTeam = ({
   day,
   probability,
   rank,
-  setModalTeam,
+  pushModalTeam,
 }: {
   competition: Competition;
   team: Team;
   day: number;
   probability: number;
   rank: number;
-  setModalTeam: (team: Team | null) => void;
+  pushModalTeam: (team: Team) => void;
 }) => {
   // console.log(presetDarkPalettes);
   const { blue, green, gold, red } = presetDarkPalettes;
@@ -95,7 +95,7 @@ const renderTeam = ({
         {medals[dayRanking]}
         &nbsp;
         <span className={eliminated ? 'strikethrough' : ''}>{team.name}</span>
-        <a className="vb-team-link" onClick={() => setModalTeam(team)}>
+        <a className="vb-team-link" onClick={() => pushModalTeam(team)}>
           <InfoCircleOutlined />
         </a>
       </div>
@@ -181,12 +181,12 @@ const renderPool = ({
   competition,
   pool,
   day,
-  setModalTeam,
+  pushModalTeam,
 }: {
   competition: Competition;
   pool: Pool;
   day: number;
-  setModalTeam: (team: Team | null) => void;
+  pushModalTeam: (team: Team) => void;
 }) => {
   const { gold, volcano } = presetDarkPalettes;
   const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
@@ -215,7 +215,7 @@ const renderPool = ({
                 day,
                 probability: Math.round(100 * probabilities[index]),
                 rank: orders[index],
-                setModalTeam,
+                pushModalTeam,
               }),
             )}
           </div>
@@ -229,6 +229,32 @@ const renderPool = ({
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [modalTeam, setModalTeam] = useState<Team | null>(null);
+  const [modalTeams, setModalTeams] = useState<Team[]>([]);
+
+  const pushModalTeam = useCallback(
+    (newModalTeam: Team) => {
+      setModalTeams((modalTeams) => [newModalTeam, ...modalTeams]);
+      if (modalTeam) {
+        setModalTeam(null);
+        setTimeout(() => setModalTeam(newModalTeam), 150);
+      } else {
+        setModalTeam(newModalTeam);
+      }
+    },
+    [modalTeam],
+  );
+  const popModalTeam = useCallback(() => {
+    const [team, ...teams] = modalTeams;
+    if (team) {
+      setModalTeams(teams);
+    }
+    const newModalTeam = teams.length > 1 ? teams[0] : null;
+    setModalTeam(null);
+    if (newModalTeam) {
+      setTimeout(() => setModalTeam(newModalTeam), 150);
+    }
+    return team;
+  }, [modalTeams]);
 
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
@@ -311,7 +337,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ margin: 'auto' }} />
         ) : (
           pools.map((pool: Pool) => {
-            return pool ? renderPool({ competition, pool, day, setModalTeam }) : null;
+            return pool ? renderPool({ competition, pool, day, pushModalTeam }) : null;
           })
         )}
       </Row>
@@ -321,7 +347,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
         footer={null}
         open={!!modalTeam}
         onOk={() => {}}
-        onCancel={() => setModalTeam(null)}
+        onCancel={() => popModalTeam()}
       >
         {modalTeam && (
           <TeamInfo
@@ -329,7 +355,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
             team={modalTeam}
             day={day}
             displayRanking={false}
-            setModalTeam={setModalTeam}
+            pushModalTeam={pushModalTeam}
           />
         )}
       </Modal>
