@@ -2,17 +2,36 @@ import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
-import { useQuery } from 'react-query';
+import { useWindowSize } from 'react-use';
 
-import { resetMeta } from '../../model/meta';
-import { CompetitionCollection } from '../../model/model';
-import { createCompetitionCollection, fetchData, fetchSheets } from '../../utils/fetch-utils';
+import {
+  categories,
+  defaultCategory,
+  defaultSeason,
+  getResourceName,
+  seasons as iseasons,
+  seasonToNumber,
+  seasonToString,
+} from '../../model/model';
+import useCompetition from '../../utils/useCompetition';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
+import CompetitionTeams from '../CompetitionTeams/CompetitionTeams';
 
 import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './Shell.scss';
+
+const BREAKPOINT = 512; // 576
+
+const seasons = iseasons.map(seasonToString);
+
+const tabNames: Record<string, string> = {
+  pools: 'Pools',
+  teams: 'Teams',
+  board: 'Board',
+  graph: 'Graph',
+};
 
 const Checked = ({ checked }: { checked?: boolean }) =>
   checked ? <CheckOutlined /> : <span role="img" aria-label="none" className="anticon ant-menu-item-icon" />;
@@ -49,70 +68,36 @@ const getItem = (
 
 const Shell = () => {
   const params = parseQueryParameters(window.location.search);
-
-  const [fetched, setFetched] = useState<boolean>(false);
-  const {
-    isLoading,
-    isError,
-    data: competitions,
-    error,
-    refetch,
-  } = useQuery<CompetitionCollection, Error>(['vbstats-cdf'], async () => {
-    resetMeta();
-    const data = await fetchData();
-    const sheets = await fetchSheets();
-    const seasons = Object.keys(data);
-    const season = params.season ?? seasons[0];
-    setSeason(season);
-    const categories = Object.keys(data[season]);
-    const category = params.category ?? categories[0];
-    setCategory(category);
-    const competitionCollection = createCompetitionCollection(data, sheets);
-    const competition = competitionCollection[season][category];
-    const day: number = Number.parseInt(params.day);
-    setDayCount(competition.dayCount);
-    setDay(Number.isNaN(day) ? competition.dayCount : day);
-    setFetched(true);
-    return competitionCollection;
-  });
+  const { width, height } = useWindowSize();
 
   const pday: number = Number.parseInt(params.day);
-  const [season, setSeason] = useState<string>(params.season);
-  const [category, setCategory] = useState<string>(params.category);
+  const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
+  const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
+  const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
+
+  const { isLoading, isError, data: competition, error } = useCompetition(seasonToNumber(season), category);
+  const fetched = !!competition;
 
   useEffect(() => {
     if (day > 0 && fetched) {
+      const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
       window.history.replaceState(
         {},
         '',
         `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
           day ? `&day=${day === dayCount ? 'last' : day}` : ''
-        }&singleDay=${!!singleDay}&qualified=${!!qualified}`,
+        }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`,
       );
     }
-  }, [fetched, tab, season, category, dayCount, day, singleDay, qualified]);
+  }, [fetched, tab, season, category, dayCount, day, singleDay, qualified, tokens]);
 
-  // const handleTabChange = (key: string) => {
-  //   if (key === 'graph' && !qualified) {
-  //     setQualified(true);
-  //   }
-  //   setTab(key);
-  // };
-
-  // const setOverall = (toggle: boolean) => {
-  //   setSingleDay(toggle);
-  //   if (toggle && !qualified) {
-  //     setQualified(true);
-  //   }
-  // };
-
-  if (isLoading || day === 0) {
+  if (isLoading) {
     return (
       <Spin size="large">
         <Layout style={{ height: '100vh' }} />
@@ -123,30 +108,40 @@ const Shell = () => {
   if (isError) {
     return (
       <Layout style={{ height: '100vh' }}>
-        <Result status="error" title="Failed to load data..." subTitle={String(error)} />
+        <Result
+          status="error"
+          title="Failed to load data..."
+          subTitle={
+            <>
+              <div>{getResourceName(seasonToNumber(season), category)}</div>
+              <div>{String(error)}</div>
+            </>
+          }
+        />
       </Layout>
     );
   }
 
-  const seasons = Object.keys(competitions ?? {});
-  const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
-  const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
+  // const seasons = Object.keys(competitions ?? {});
+  // const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
+  // const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
+  const lastDay = !competition ? 0 : competition.lastDay + (competition.lastDay < competition.dayCount ? 1 : 0);
   const days = competition
-    ? Array(competition.dayCount)
+    ? Array(lastDay)
         .fill(0)
         .map((_, index) => index + 1)
     : [];
 
-  if (competition && competition.dayCount !== dayCount) {
-    setDayCount(competition.dayCount);
-    if (params.day === 'last' && day !== competition.dayCount) {
-      setDay(competition.dayCount);
+  if (competition && lastDay !== dayCount) {
+    setDayCount(lastDay);
+    if (params.day === 'last' && day !== lastDay) {
+      setDay(lastDay);
       return <div />;
     }
   }
 
-  if (competition && day > competition.dayCount) {
-    setDay(competition.dayCount);
+  if (competition && (day < 1 || day > lastDay)) {
+    setDay(lastDay);
     return <div />;
   }
 
@@ -156,9 +151,13 @@ const Shell = () => {
   }
 
   const onClick: MenuProps['onClick'] = (e) => {
-    if (e.keyPath.length === 1) {
+    if (e.keyPath.length === 1 || e.keyPath[1] === 'tab') {
       // main menu
       setTab(e.key);
+      if (e.key === 'teams' && singleDay) {
+        setQualified(true);
+        setSingleDay(false);
+      }
       if (e.key === 'graph' && !qualified) {
         setQualified(true);
       }
@@ -197,51 +196,85 @@ const Shell = () => {
   };
 
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
+  const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [
-    getItem('Pools', 'pools'),
-    getItem('Board', 'board'),
-    getItem('Graph', 'graph'),
-    getItem(`J${day}`, 'day', <CalendarOutlined />, [
-      getItem(
-        'Day',
-        'day',
-        <CalendarOutlined />,
-        days.map((cday) => getItem(`J${cday}`, cday, cday === day ? <CalendarOutlined /> : <Checked />)),
-        'group',
-      ),
-      getItem(
-        'Options',
-        'options',
-        <SettingOutlined />,
-        [
+    ...(width < BREAKPOINT
+      ? [
           getItem(
-            `Selected day (J${day})`,
-            'single-day',
-            <Checked checked={singleDay} />,
-            undefined,
-            undefined,
-            tab === 'pools',
+            `${tabNames[tab]} ⌵`,
+            'tab',
+            undefined, // <TrophyOutlined />,
+            Object.keys(tabNames).map((key) =>
+              getItem(
+                tabNames[key],
+                key,
+                //tab === key ? <TrophyOutlined /> : <Checked />)),
+                <Checked checked={tab === key} />,
+              ),
+            ),
           ),
-          getItem(
-            'Qualified teams',
-            'qualified',
-            <Checked checked={!singleDay && qualified} />,
-            undefined,
-            undefined,
-            tab === 'pools',
+        ]
+      : Object.keys(tabNames).map((key) => getItem(tabNames[key], key))),
+    // : [...Object.keys(tabNames).map((key) => getItem(tabNames[key], key)), getItem('|')]),
+    getItem(
+      `J${dayEnabled ? day : competition?.dayCount}`,
+      'day',
+      <CalendarOutlined />,
+      [
+        getItem(
+          'Day',
+          'day',
+          <CalendarOutlined />,
+          days.map((cday) =>
+            getItem(
+              `J${cday}`,
+              cday,
+              cday === (dayEnabled ? day : competition?.dayCount) ? <CalendarOutlined /> : <Checked />,
+              undefined,
+              undefined,
+              !dayEnabled,
+            ),
           ),
-          getItem(
-            'All teams',
-            'overall',
-            <Checked checked={!singleDay && !qualified} />,
-            undefined,
-            undefined,
-            tab === 'pools' || tab === 'graph',
-          ),
-        ],
-        'group',
-      ),
-    ]),
+          'group',
+        ),
+        getItem(
+          'Options',
+          'options',
+          <SettingOutlined />,
+          [
+            getItem(
+              `Selected day (J${day})`,
+              'single-day',
+              <Checked checked={singleDay} />,
+              undefined,
+              undefined,
+              tab === 'pools' || tab === 'teams',
+            ),
+            !isCDF
+              ? null
+              : getItem(
+                  'Qualified teams',
+                  'qualified',
+                  <Checked checked={!singleDay && qualified} />,
+                  undefined,
+                  undefined,
+                  tab === 'pools',
+                ),
+            getItem(
+              isCDF ? 'All teams' : 'All days',
+              'overall',
+              <Checked checked={isCDF ? !singleDay && !qualified : !singleDay} />,
+              undefined,
+              undefined,
+              tab === 'pools' || tab === 'graph',
+            ),
+          ].filter(Boolean),
+          'group',
+        ),
+      ],
+      undefined,
+      // !dayEnabled,
+    ),
     getItem(
       `${isCDF ? 'CDF ' : ''}${category}`,
       'category',
@@ -256,11 +289,6 @@ const Shell = () => {
       undefined, // <CalendarOutlined />,
       seasons.map((cseason) => getItem(cseason, cseason, cseason === season ? <CalendarOutlined /> : <Checked />)),
     ),
-    // getItem(undefined, 'settings', <SettingOutlined />, [
-    //   getItem('Qualified teams', 'qualified', <Checked checked={qualified} />),
-    //   getItem('All teams', 'overall', <Checked checked={!singleDay && !qualified} />),
-    //   getItem(`Selected day (J${day})`, 'single-day', <Checked checked={singleDay} />),
-    // ]),
   ];
 
   // console.log('rendering Shell');
@@ -277,87 +305,33 @@ const Shell = () => {
           overflowedIndicator={<MenuOutlined />}
           triggerSubMenuAction="click"
         />
-        {/* <Tabs
-          size="large"
-          activeKey={tab}
-          onChange={handleTabChange}
-          items={[
-            { key: 'pools', label: 'Pools' },
-            { key: 'board', label: 'Board' },
-            { key: 'graph', label: 'Graph' },
-            //{ key: 'sheet', label: 'Sheet' },
-          ]}
-          tabBarExtraContent={
-            <Space size={'middle'}>
-              <span style={{ fontSize: '1rem' }}>{competition?.name}</span>
-              <Switch
-                checkedChildren={`J${day}`}
-                unCheckedChildren="OVERALL"
-                checked={singleDay}
-                onChange={setOverall}
-                disabled={tab === 'pools'}
-                size="small"
-              />
-              <Switch
-                checkedChildren="QUALIFIED"
-                unCheckedChildren="ALL TEAMS"
-                checked={qualified}
-                onChange={setQualified}
-                disabled={singleDay || tab === 'pools' || tab === 'graph'}
-                size="small"
-              />
-              <Radio.Group onChange={(e: RadioChangeEvent) => setDay(e.target.value)} value={day} buttonStyle="solid">
-                {days.map((day) => (
-                  <Radio.Button key={`J${day}`} value={day}>
-                    {`J${day}`}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-              {/* <Radio.Group
-                onChange={(e: RadioChangeEvent) => setCategory(e.target.value)}
-                value={category}
-                buttonStyle="solid"
-              >
-                {categories.map((category) => (
-                  <Radio.Button key={category} value={category}>
-                    {category}
-                  </Radio.Button>
-                ))}
-              </Radio.Group> * /}
-              <Select
-                value={category}
-                onChange={setCategory}
-                options={categories.map((category) => ({
-                  value: category,
-                  label: category,
-                }))}
-              />
-              <Select
-                value={season}
-                onChange={setSeason}
-                options={seasons.map((season) => ({
-                  value: season,
-                  label: season,
-                }))}
-              />
-              <span style={{ fontSize: '2rem' }}>🏐</span>
-            </Space>
-          }
-        /> */}
       </Layout.Header>
       <Layout.Content>
-        {competition && tab === 'board' && (
-          <CompetitionBoard
-            // className={tab === 'board' ? '' : 'no-display'}
+        {competition && tab === 'pools' && (
+          <CompetitionPools
+            // className={tab === 'pools' ? '' : 'no-display'}
             competition={competition}
             day={day}
             singleDay={singleDay}
             qualified={qualified}
+            tokens={tokens}
+            setTokens={setTokens}
           />
         )}
-        {competition && tab === 'pools' && (
-          <CompetitionPools
-            // className={tab === 'pools' ? '' : 'no-display'}
+        {competition && tab === 'teams' && (
+          <CompetitionTeams
+            // className={tab === 'teams' ? '' : 'no-display'}
+            competition={competition}
+            day={competition.dayCount}
+            singleDay={singleDay}
+            qualified={qualified}
+            tokens={tokens}
+            setTokens={setTokens}
+          />
+        )}
+        {competition && tab === 'board' && (
+          <CompetitionBoard
+            // className={tab === 'board' ? '' : 'no-display'}
             competition={competition}
             day={day}
             singleDay={singleDay}

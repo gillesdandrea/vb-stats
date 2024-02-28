@@ -1,7 +1,6 @@
 import { Match } from './model';
 
-// TODO compute average predicted for each slot to better compare with result
-export interface MetaStats {
+export interface MetaSlot {
   low: number;
   high: number;
   expected: number;
@@ -10,7 +9,12 @@ export interface MetaStats {
   skipped: number;
 }
 
-const createMeta = (low: number, high: number): MetaStats => {
+export interface MetaStats {
+  global: MetaSlot;
+  slots: MetaSlot[];
+}
+
+const createSlot = (low: number, high: number): MetaSlot => {
   return {
     low: low / 100.0,
     high: high / 100.0,
@@ -21,73 +25,70 @@ const createMeta = (low: number, high: number): MetaStats => {
   };
 };
 
-let globalMeta = createMeta(0, 100);
-
-const metas = [
-  createMeta(50, 60),
-  createMeta(60, 70),
-  createMeta(70, 80),
-  createMeta(80, 90),
-  createMeta(90, 100),
-  //
-  // createMeta(50, 55),
-  // createMeta(55, 60),
-  // createMeta(60, 65),
-  // createMeta(65, 70),
-  // createMeta(70, 75),
-  // createMeta(75, 80),
-  // createMeta(80, 85),
-  // createMeta(85, 90),
-  // createMeta(90, 95),
-  // createMeta(95, 100),
-];
-
-export const resetMeta = () => {
-  globalMeta = createMeta(0, 100);
+export const createMetaStats = (): MetaStats => {
+  return {
+    global: createSlot(0, 100),
+    slots: [
+      createSlot(50, 60),
+      createSlot(60, 70),
+      createSlot(70, 80),
+      createSlot(80, 90),
+      createSlot(90, 100),
+      //
+      // createSlot(50, 55),
+      // createSlot(55, 60),
+      // createSlot(60, 65),
+      // createSlot(65, 70),
+      // createSlot(70, 75),
+      // createSlot(75, 80),
+      // createSlot(80, 85),
+      // createSlot(85, 90),
+      // createSlot(90, 95),
+      // createSlot(95, 100),
+    ],
+  };
 };
 
-export const addMatchMeta = (match: Match) => {
+export const metaAddMatch = (meta: MetaStats, match: Match) => {
   if (!match.winner) {
     return;
   }
   if (match.predicted === undefined) {
-    globalMeta.skipped++;
+    meta.global.skipped++;
     return;
   }
 
-  // const proba = match.winner === match.teamA ? match.winProbability : 1 - match.winProbability;
-  // const predicted = proba >= 0.5;
-  // const slot = predicted ? proba : 1 - proba;
-  const predicted = match.predicted;
-  const slot = match.winProbability >= 0.5 ? match.winProbability : 1 - match.winProbability;
-  const meta: MetaStats | undefined = metas.find((meta) => meta.low <= slot && slot < meta.high);
-  if (meta) {
-    meta.played++;
-    meta.expected += slot;
-    globalMeta.played++;
-    globalMeta.expected += slot;
-    if (predicted) {
-      meta.predicted++;
-      globalMeta.predicted++;
+  const probability = match.winProbability >= 0.5 ? match.winProbability : 1 - match.winProbability;
+  const slot: MetaSlot | undefined = meta.slots.find((slot) => slot.low <= probability && probability < slot.high);
+  if (slot) {
+    slot.played++;
+    slot.expected += probability;
+    meta.global.played++;
+    meta.global.expected += probability;
+    if (match.predicted) {
+      slot.predicted++;
+      meta.global.predicted++;
     }
   } else {
-    console.log('Cannot find a meta stat for match', match);
+    console.log('Cannot find a slot stat for match', match);
   }
 };
 
-export const metaToString = (): string => {
-  return `Globally expected: ${((100 * globalMeta.expected) / globalMeta.played).toFixed(1)}% predicted: ${(
-    (100 * globalMeta.predicted) /
-    globalMeta.played
-  ).toFixed(1)}% (${globalMeta.predicted}/${globalMeta.played}), skipped ${globalMeta.skipped}.\n${metas
+export const metaToString = (meta: MetaStats): string => {
+  return `Globally expected: ${((100 * meta.global.expected) / meta.global.played).toFixed(1)}% predicted: ${(
+    (100 * meta.global.predicted) /
+    meta.global.played
+  ).toFixed(1)}% (${meta.global.predicted}/${meta.global.played}), skipped ${
+    meta.global.skipped
+  } (no previous ranking).\n${meta.slots
     .map(
-      (meta) =>
-        `Range: ${(100 * meta.low).toFixed(0)}-${(100 * meta.high).toFixed(0)}% | expected: ${(
-          (100 * meta.expected) /
-          meta.played
-        ).toFixed(1)}% | predicted: ${((100 * meta.predicted) / meta.played).toFixed(1)}% (${meta.predicted}/${
-          meta.played
-        }) | proportion: ${((100 * meta.played) / globalMeta.played).toFixed(1)}%`,
+      (slot) =>
+        `Range: ${(100 * slot.low).toFixed(0)}-${(100 * slot.high).toFixed(0)}% | expected: ${(
+          (100 * slot.expected) /
+          slot.played
+        ).toFixed(1)}% | predicted: ${((100 * slot.predicted) / slot.played).toFixed(1)}% (${slot.predicted}/${
+          slot.played
+        }) | proportion: ${((100 * slot.played) / meta.global.played).toFixed(1)}%`,
     )
     .join('\n')}`;
 };

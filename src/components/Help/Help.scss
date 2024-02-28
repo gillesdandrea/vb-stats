@@ -1,0 +1,41 @@
+.vb-info-card {
+  .vb-stats-icon {
+    opacity: 0.75;
+    position: absolute;
+    top: 0rem;
+    left: 0;
+  }
+
+  .vb-info-header {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+
+    h2 {
+      margin-left: 2.5rem;
+    }
+
+    .vb-reference {
+      font-size: 0.6875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    @media (min-width: 992px) {
+      .vb-info-scroll {
+        height: 23.375rem; // 19rem
+        overflow-y: scroll;
+      }
+    }
+  }
+
+  .vb-info-charts-panel {
+    padding: 0.5rem;
+    border-top: 1px solid #303030;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1rem;
+
+    .vb-info-chart {
+      text-align: center;
+    }
+  }
+}

@@ -1,13 +1,16 @@
-import { useMemo } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 
+import { Layout, Spin } from 'antd';
 import cx from 'classnames';
-import { Graphviz } from 'graphviz-react';
+// import { Graphviz } from 'graphviz-react';
 
 import { getGraph } from '../../model/graph';
 import { Competition, Match, Team } from '../../model/model';
 import { isTeamInCourse } from '../../model/model-helpers';
 
 import './CompetitionGraph.scss';
+
+const Graphviz = lazy(() => import('./LazyGraphViz'));
 
 interface Props {
   competition: Competition;
@@ -41,19 +44,27 @@ const CompetitionGraph = ({ competition, day, singleDay, qualified, className }:
   // console.log('rendering CompetitionGraph');
   // console.log(dot);
   return (
-    <div className={cx('vb-graph', className)}>
-      <Graphviz
-        dot={dot}
-        options={{
-          worker: false,
-          useSharedWorker: false,
-          zoom: true,
-          width: '100vw',
-          height: '100vh',
-          fit: true,
-        }}
-      />
-    </div>
+    <Suspense
+      fallback={
+        <Spin size="large">
+          <Layout style={{ height: '100vh' }} />
+        </Spin>
+      }
+    >
+      <div className={cx('vb-graph', className)}>
+        <Graphviz
+          dot={dot}
+          options={{
+            worker: false,
+            useSharedWorker: false,
+            zoom: true,
+            width: '100vw',
+            height: '100vh',
+            fit: true,
+          }}
+        />
+      </div>
+    </Suspense>
   );
 };
 

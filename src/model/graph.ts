@@ -112,9 +112,10 @@ export const getGraph = (
   teamFilter: (team: Team, index: number) => boolean = () => true,
   matchFilter: (match: Match) => boolean = () => true,
 ) => {
-  const title = `${competition.name} ${competition.category} ${competition.season}`;
   const qualifiedTeams = new Set<Team>();
   const teams: Team[] = getBoard(competition, Sorting.POINTS, day, singleDay, qualified).filter(teamFilter);
+  const isCDF = teams.length > 0 && teams[0].pools.length > 0;
+  const title = `${isCDF ? 'CDF ' : ''}${competition.category} ${competition.season}`;
   teams.forEach((team) => qualifiedTeams.add(team));
   return `digraph {
   tooltip="${title}"
