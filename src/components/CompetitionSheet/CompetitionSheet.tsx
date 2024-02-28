@@ -1,8 +1,5 @@
 import cx from 'classnames';
 
-import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
-
 import { Competition, Sheet, Team } from '../../model/model';
 import { acceptLicences, calcCSStats, filterPointSheets } from '../../model/sheet-helpers';
 

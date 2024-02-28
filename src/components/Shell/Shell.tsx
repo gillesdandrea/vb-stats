@@ -13,7 +13,7 @@ import {
   seasonToNumber,
   seasonToString,
 } from '../../model/model';
-import { useCompetition } from '../../utils/fetch-utils';
+import useCompetition from '../../utils/useCompetition';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
