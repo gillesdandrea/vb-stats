@@ -269,7 +269,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
       event.target.value
-        // .toLocaleLowerCase()
+        .toLocaleLowerCase()
         .split(' ')
         .filter((token) => token),
     );
