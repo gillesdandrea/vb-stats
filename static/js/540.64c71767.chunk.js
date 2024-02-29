@@ -1,0 +1,2 @@
+(self.webpackChunkvb_stats=self.webpackChunkvb_stats||[]).push([[540],{8777:(s,t,a)=>{"use strict";a.r(t),a.d(t,{default:()=>b});var e=a(6813),u=a(5364);const b=s=>(0,u.jsx)(e.w,{...s})},7702:()=>{},8070:()=>{},1562:()=>{}}]);
+//# sourceMappingURL=540.64c71767.chunk.js.map
