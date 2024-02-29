@@ -77,7 +77,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
         <h2>
           VB Stats - {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
         </h2>
-        <div className={cx('vb-info-scroll', { 'vb-info-unplayed': stats.total === 0 })}>
+        <div className={cx('vb-info-scroll', { 'vb-info-unplayed': day > competition.lastDay })}>
           <p>
             Bienvenue dans la page de pronostics de la Coupe de France Volley-Ball {competition.category}{' '}
             {competition.season}.

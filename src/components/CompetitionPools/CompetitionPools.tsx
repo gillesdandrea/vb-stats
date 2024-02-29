@@ -124,9 +124,11 @@ const renderTeam = ({
           </div>
         </div>
 
-        <div className="vb-card-chart">
-          <Progress type="dashboard" percent={probability} size={88} strokeColor={color} strokeWidth={8} />
-        </div>
+        {day > 1 && (
+          <div className="vb-card-chart">
+            <Progress type="dashboard" percent={probability} size={88} strokeColor={color} strokeWidth={8} />
+          </div>
+        )}
       </div>
     </div>
   );
