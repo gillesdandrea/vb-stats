@@ -1,6 +1,6 @@
 {
   "name": "vb-stats",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "homepage": "https://gillesdandrea.github.io/vb-stats",
   "private": true,
   "dependencies": {

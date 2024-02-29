@@ -21,8 +21,11 @@
 
     @media (min-width: 992px) {
       .vb-info-scroll {
-        height: 23.375rem; // 19rem
+        height: 23.4rem;
         overflow-y: scroll;
+      }
+      .vb-info-unplayed {
+        height: 20.15rem;
       }
     }
   }

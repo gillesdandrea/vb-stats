@@ -1,11 +1,14 @@
 import { presetDarkPalettes } from '@ant-design/colors';
 import { Progress } from 'antd';
+import cx from 'classnames';
 
 import { Competition, Pool } from '../../model/model';
 import { getDayRanking, getPoolProbabilities } from '../../model/model-helpers';
 
 import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './Help.scss';
+
+const NA = '_';
 
 interface Props {
   competition: Competition;
@@ -74,7 +77,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
         <h2>
           VB Stats - {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
         </h2>
-        <div className="vb-info-scroll">
+        <div className={cx('vb-info-scroll', { 'vb-info-unplayed': stats.total === 0 })}>
           <p>
             Bienvenue dans la page de pronostics de la Coupe de France Volley-Ball {competition.category}{' '}
             {competition.season}.
@@ -134,7 +137,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
           <Progress
             type="dashboard"
             percent={(100 * stats.predicted) / pools.length}
-            format={(percent) => `${percent?.toFixed(0)}%`}
+            format={(percent) => (stats.total ? `${percent?.toFixed(0)}%` : NA)}
             size={chartSize}
             strokeColor={green[6]}
             strokeWidth={8}
@@ -145,7 +148,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
           <Progress
             type="dashboard"
             percent={(100 * stats.outsiders) / pools.length}
-            format={(percent) => `${percent?.toFixed(0)}%`}
+            format={(percent) => (stats.total ? `${percent?.toFixed(0)}%` : NA)}
             size={chartSize}
             strokeColor={gold[6]}
             strokeWidth={8}
@@ -156,7 +159,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
           <Progress
             type="dashboard"
             percent={(100 * stats.unpredicted) / pools.length}
-            format={(percent) => `${percent?.toFixed(0)}%`}
+            format={(percent) => (stats.total ? `${percent?.toFixed(0)}%` : NA)}
             size={chartSize}
             strokeColor={red[5]}
             strokeWidth={8}
@@ -167,7 +170,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
           <Progress
             type="dashboard"
             percent={(100 * stats.right) / stats.total}
-            format={(percent) => `${percent?.toFixed(0)}%`}
+            format={(percent) => (stats.total ? `${percent?.toFixed(0)}%` : NA)}
             size={chartSize}
             strokeColor={blue[5]}
             strokeWidth={8}
