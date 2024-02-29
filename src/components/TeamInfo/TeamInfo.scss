@@ -106,6 +106,15 @@
     backdrop-filter: blur(15px) grayscale(0.5) opacity(0.8);
   }
 
+  .ranking-low {
+    top: unset;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.85rem;
+  }
+
   .title {
     font-size: 1rem;
   }

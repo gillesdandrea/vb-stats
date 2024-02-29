@@ -1,11 +1,11 @@
 {
   "name": "vb-stats",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "homepage": "https://gillesdandrea.github.io/vb-stats",
   "private": true,
   "dependencies": {
     "@ant-design/colors": "^7.0.2",
-    "@ant-design/icons": "^5.3.0",
+    "@ant-design/icons": "^5.3.1",
     "@babel/core": "^7.24.0",
     "@babel/plugin-syntax-flow": "^7.23.3",
     "@babel/plugin-transform-react-jsx": "^7.23.4",

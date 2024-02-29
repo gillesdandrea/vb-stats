@@ -21,9 +21,16 @@ export const filterTeam = (team: Team, tokens: string[]) =>
   tokens.length === 0 ||
   tokens.some((token) => {
     const rtoken = token.replaceAll('_', ' ');
-    if (team.name.toLocaleLowerCase().includes(rtoken)) return true;
-    const local = `${team.department.num_dep} ${team.department.dep_name} ${team.department.region_name}`;
-    if (local.toLocaleLowerCase().includes(rtoken)) return true;
+    const name = team.name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase();
+    if (name.includes(rtoken)) return true;
+    const local = `${team.department.num_dep} ${team.department.dep_name} ${team.department.region_name}`
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase();
+    if (local.includes(rtoken)) return true;
     return false;
   });
 

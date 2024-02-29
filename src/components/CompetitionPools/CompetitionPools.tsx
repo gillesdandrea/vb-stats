@@ -10,6 +10,7 @@ import debounce from 'lodash/debounce';
 import { Competition, Match, Pool, Team } from '../../model/model';
 import {
   filterTeam,
+  getBoard,
   getDayRanking,
   getPoolProbabilities,
   getTeamOpposition,
@@ -24,6 +25,8 @@ import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
 import TeamInfo from '../TeamInfo/TeamInfo';
 
 import './CompetitionPools.scss';
+import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
+import { Sorting } from '../../model/model-sorters';
 
 interface Props {
   competition: Competition;
@@ -230,6 +233,11 @@ const renderPool = ({
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const allTeams = useMemo(
+    () => getBoard(competition, Sorting.POINTS, competition.dayCount, false, false),
+    [competition],
+  );
+
   const [modalTeam, setModalTeam] = useState<Team | null>(null);
   const [modalTeams, setModalTeams] = useState<Team[]>([]);
 
@@ -261,7 +269,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
   const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
     setTokens(
       event.target.value
-        .toLocaleLowerCase()
+        // .toLocaleLowerCase()
         .split(' ')
         .filter((token) => token),
     );
@@ -316,9 +324,10 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
   const pools = Array.from(cday.pools.values()).filter((pool: Pool) =>
     pool.teams.some((team: Team) => filterTeam(team, tokens)),
   );
+  const teams = pools.length === 0 ? allTeams.filter((team: Team) => filterTeam(team, tokens)) : [];
 
   return (
-    <div ref={scrollRef} className={cx('vb-pools', className)}>
+    <div ref={scrollRef} className={cx(teams.length === 0 ? 'vb-pools' : 'vb-teams', className)}>
       <Headroom scrollRef={scrollRef} className="vb-search">
         <Search
           defaultValue={tokens.join(' ')}
@@ -336,7 +345,17 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
           </Col>
         )}
         {pools.length === 0 ? (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ margin: 'auto' }} />
+          teams.length === 0 ? (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ margin: 'auto' }} />
+          ) : (
+            teams.map((team: Team) => {
+              return (
+                <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={8} key={team.id} className="vb-team-info">
+                  <TeamInfo competition={competition} team={team} day={day} />
+                </Col>
+              );
+            })
+          )
         ) : (
           pools.map((pool: Pool) => {
             return pool ? renderPool({ competition, pool, day, pushModalTeam }) : null;
@@ -355,7 +374,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
           <TeamInfo
             competition={competition}
             team={modalTeam}
-            day={day}
+            day={competition.dayCount}
             displayRanking={false}
             pushModalTeam={pushModalTeam}
           />
