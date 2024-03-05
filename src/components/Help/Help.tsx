@@ -95,9 +95,8 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             et celles d'Occitanie.
           </p>
           <p>
-            La barre de menu permet aussi d'afficher, le parcours des équipes (<i>Teams</i>), le classement (
-            <i>Board</i>), le graphe des matchs (<i>Graph</i>) mais aussi de changer de journée, de catégorie ou de
-            saison.
+            La barre de menu permet aussi d'afficher, le classement (<i>Board</i>), le graphe des matchs (<i>Graph</i>)
+            mais aussi de changer de journée, de catégorie ou de saison.
           </p>
           <p>
             Toutes les données utilisées viennent du site de la{' '}
