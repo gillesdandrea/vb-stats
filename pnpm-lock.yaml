@@ -130,9 +130,15 @@ devDependencies:
   stylelint:
     specifier: ^16.2.1
     version: 16.2.1(typescript@5.4.2)
+  stylelint-config-clean-order:
+    specifier: ^5.4.1
+    version: 5.4.1(stylelint@16.2.1)
   stylelint-config-standard-scss:
     specifier: ^13.0.0
     version: 13.0.0(postcss@8.4.35)(stylelint@16.2.1)
+  stylelint-order:
+    specifier: ^6.0.4
+    version: 6.0.4(stylelint@16.2.1)
   tsx:
     specifier: ^4.7.1
     version: 4.7.1
@@ -5430,6 +5436,14 @@ packages:
       util-deprecate: 1.0.2
     dev: true
 
+  /postcss-sorting@8.0.2(postcss@8.4.35):
+    resolution: {integrity: sha512-M9dkSrmU00t/jK7rF6BZSZauA5MAaBW4i5EnJXspMwt4iqTh/L9j6fgMnbElEOfyRyfLfVbIHj/R52zHzAPe1Q==}
+    peerDependencies:
+      postcss: ^8.4.20
+    dependencies:
+      postcss: 8.4.35
+    dev: true
+
   /postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: true
@@ -6712,6 +6726,15 @@ packages:
       escape-string-regexp: 1.0.5
     dev: true
 
+  /stylelint-config-clean-order@5.4.1(stylelint@16.2.1):
+    resolution: {integrity: sha512-C9E94vFk7QKqPshXik3iNU5cYz7vm0Up4/wu1biRjThWLWJ3gYRdXfyV/1fFU7u4ThfSIf2/ijNhk0pf0ErPWQ==}
+    peerDependencies:
+      stylelint: '>=14'
+    dependencies:
+      stylelint: 16.2.1(typescript@5.4.2)
+      stylelint-order: 6.0.4(stylelint@16.2.1)
+    dev: true
+
   /stylelint-config-recommended-scss@14.0.0(postcss@8.4.35)(stylelint@16.2.1):
     resolution: {integrity: sha512-HDvpoOAQ1RpF+sPbDOT2Q2/YrBDEJDnUymmVmZ7mMCeNiFSdhRdyGEimBkz06wsN+HaFwUh249gDR+I9JR7Onw==}
     engines: {node: '>=18.12.0'}
@@ -6762,6 +6785,16 @@ packages:
     dependencies:
       stylelint: 16.2.1(typescript@5.4.2)
       stylelint-config-recommended: 14.0.0(stylelint@16.2.1)
+    dev: true
+
+  /stylelint-order@6.0.4(stylelint@16.2.1):
+    resolution: {integrity: sha512-0UuKo4+s1hgQ/uAxlYU4h0o0HS4NiQDud0NAUNI0aa8FJdmYHA5ZZTFHiV5FpmE3071e9pZx5j0QpVJW5zOCUA==}
+    peerDependencies:
+      stylelint: ^14.0.0 || ^15.0.0 || ^16.0.1
+    dependencies:
+      postcss: 8.4.35
+      postcss-sorting: 8.0.2(postcss@8.4.35)
+      stylelint: 16.2.1(typescript@5.4.2)
     dev: true
 
   /stylelint-scss@6.2.1(stylelint@16.2.1):

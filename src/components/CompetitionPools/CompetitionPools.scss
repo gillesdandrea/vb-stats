@@ -42,10 +42,11 @@
 
           .vb-team-a,
           .vb-team-b {
-            flex-basis: 100%;
             overflow-x: hidden;
-            text-wrap: nowrap;
+            flex-basis: 100%;
+
             text-overflow: ellipsis;
+            text-wrap: nowrap;
             white-space: nowrap;
           }
 
@@ -56,6 +57,7 @@
           .vb-score {
             margin-right: 0.5rem;
             margin-left: 0.5rem;
+
             text-align: center;
             text-wrap: nowrap;
             white-space: nowrap;
@@ -74,11 +76,13 @@
         }
 
         .vb-score-details {
+          position: relative;
+          top: -0.125rem;
+
           display: flex;
           flex-direction: row;
           gap: 0.5rem;
-          position: relative;
-          top: -0.125rem;
+
           font-size: 0.6875rem;
           text-align: center;
           text-wrap: nowrap;
@@ -89,10 +93,10 @@
             text-align: right;
 
             .vb-tag {
+              padding-right: 0.25rem;
+              padding-left: 0.25rem;
               border: 1px solid #303030;
               border-radius: 4px;
-              padding-left: 0.25rem;
-              padding-right: 0.25rem;
             }
           }
 
@@ -104,23 +108,28 @@
       }
 
       .vb-card-body {
-        display: flex;
         overflow-x: hidden;
+        display: flex;
 
         .vb-card-left {
+          position: relative;
+
           display: flex;
           flex-direction: column;
-          position: relative;
+
           padding: 0.5rem;
+
           border-right: 1px solid #303030;
 
           .vb-legend {
-            transform-origin: 0 0;
             position: absolute;
             bottom: -0.5rem;
             left: 1rem;
+            transform-origin: 0 0;
             transform: rotate(-90deg);
+
             width: 20rem;
+
             color: gray;
           }
         }
@@ -170,11 +179,12 @@
                     flex-direction: row;
 
                     .trophy {
+                      width: 2.75rem;
+
                       font-size: 0.75rem;
+                      text-align: left;
                       text-wrap: nowrap;
                       white-space: nowrap;
-                      width: 2.75rem;
-                      text-align: left;
                     }
                   }
                 }
@@ -186,8 +196,8 @@
 
               .vb-card-chart {
                 position: absolute;
-                bottom: 0.5rem;
                 right: 0.5rem;
+                bottom: 0.5rem;
 
                 .ant-progress-inner {
                   backdrop-filter: blur(15px) grayscale(0.5) opacity(0.8);
