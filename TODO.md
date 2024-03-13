@@ -8,5 +8,5 @@
 ## Technical
 
 - [x] PWA
-- [ ] stylelint for properties order
-- [ ] eslint-plugin-import
+- [x] stylelint for properties order
+- [x] eslint-plugin-import

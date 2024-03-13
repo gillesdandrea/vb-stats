@@ -1,4 +1,4 @@
-import { Rating } from 'ts-trueskill';
+import type { Rating } from 'ts-trueskill';
 
 import { Department } from './geography';
 import { CSheetMatch, SheetMap, SheetMatch, SheetTeam } from './sheet';

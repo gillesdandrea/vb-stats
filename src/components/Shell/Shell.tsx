@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
@@ -14,13 +14,17 @@ import {
   seasonToString,
 } from '../../model/model';
 import useCompetition from '../../utils/useCompetition';
-import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
-import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
-import CompetitionPools from '../CompetitionPools/CompetitionPools';
 
+// import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
+// import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
+// import CompetitionPools from '../CompetitionPools/CompetitionPools';
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
+
+const CompetitionBoard = lazy(() => import('../CompetitionBoard/CompetitionBoard'));
+const CompetitionGraph = lazy(() => import('../CompetitionGraph/CompetitionGraph'));
+const CompetitionPools = lazy(() => import('../CompetitionPools/CompetitionPools'));
 
 const BREAKPOINT = 512; // 576
 
@@ -87,13 +91,12 @@ const Shell = () => {
   useEffect(() => {
     if (day > 0 && fetched) {
       const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
-      window.history.replaceState(
-        {},
-        '',
-        `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
-          day ? `&day=${day === dayCount ? 'last' : day}` : ''
-        }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`,
-      );
+      const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
+        day ? `&day=${day === dayCount ? 'last' : day}` : ''
+      }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`;
+      if (window.location.href !== `${window.location.origin}${url}`) {
+        window.history.replaceState({}, '', url);
+      }
     }
   }, [fetched, tab, season, category, dayCount, day, singleDay, qualified, tokens]);
 
@@ -122,9 +125,6 @@ const Shell = () => {
     );
   }
 
-  // const seasons = Object.keys(competitions ?? {});
-  // const categories = Object.keys((competitions && season ? competitions[season] : {}) ?? {});
-  // const competition = competitions && categories.length > 0 && category ? competitions[season][category] : undefined;
   const lastDay = !competition ? 0 : competition.lastDay + (competition.lastDay < competition.dayCount ? 1 : 0);
   const days = competition
     ? Array(lastDay)
@@ -295,7 +295,6 @@ const Shell = () => {
   // console.log('rendering Shell');
   return (
     <Layout className="vb-shell">
-      {/* <VBStatsLogo className="vb-stats-logo" style={{ width: '4rem', height: '4rem' }} /> */}
       <img src={vbStatsLogo} className="vb-stats-logo" alt="vb-stats logo" />
       <Layout.Header>
         <Menu
@@ -309,18 +308,25 @@ const Shell = () => {
         />
       </Layout.Header>
       <Layout.Content>
-        {competition && tab === 'pools' && (
-          <CompetitionPools
-            // className={tab === 'pools' ? '' : 'no-display'}
-            competition={competition}
-            day={day}
-            singleDay={singleDay}
-            qualified={qualified}
-            tokens={tokens}
-            setTokens={setTokens}
-          />
-        )}
-        {/* {competition && tab === 'teams' && (
+        <Suspense
+          fallback={
+            <Spin size="large">
+              <Layout style={{ height: '100vh' }} />
+            </Spin>
+          }
+        >
+          {competition && tab === 'pools' && (
+            <CompetitionPools
+              // className={tab === 'pools' ? '' : 'no-display'}
+              competition={competition}
+              day={day}
+              singleDay={singleDay}
+              qualified={qualified}
+              tokens={tokens}
+              setTokens={setTokens}
+            />
+          )}
+          {/* {competition && tab === 'teams' && (
           <CompetitionTeams
             // className={tab === 'teams' ? '' : 'no-display'}
             competition={competition}
@@ -331,25 +337,25 @@ const Shell = () => {
             setTokens={setTokens}
           />
         )} */}
-        {competition && tab === 'board' && (
-          <CompetitionBoard
-            // className={tab === 'board' ? '' : 'no-display'}
-            competition={competition}
-            day={day}
-            singleDay={singleDay}
-            qualified={qualified}
-          />
-        )}
-        {competition && tab === 'graph' && (
-          <CompetitionGraph
-            // className={tab === 'graph' ? '' : 'no-display'}
-            competition={competition}
-            day={day}
-            singleDay={singleDay}
-            qualified={qualified}
-          />
-        )}
-        {/*competition && tab === 'sheet' && (
+          {competition && tab === 'board' && (
+            <CompetitionBoard
+              // className={tab === 'board' ? '' : 'no-display'}
+              competition={competition}
+              day={day}
+              singleDay={singleDay}
+              qualified={qualified}
+            />
+          )}
+          {competition && tab === 'graph' && (
+            <CompetitionGraph
+              // className={tab === 'graph' ? '' : 'no-display'}
+              competition={competition}
+              day={day}
+              singleDay={singleDay}
+              qualified={qualified}
+            />
+          )}
+          {/*competition && tab === 'sheet' && (
           <CompetitionSheet
             // className={tab === 'graph' ? '' : 'no-display'}
             competition={competition}
@@ -358,6 +364,7 @@ const Shell = () => {
             qualified={qualified}
           />
         )*/}
+        </Suspense>
       </Layout.Content>
     </Layout>
   );

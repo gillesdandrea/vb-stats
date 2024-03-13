@@ -74,7 +74,6 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
   return (
     <div className="vb-info-card">
       <div className="vb-info-header">
-        {/* <VBStatsLogo className="vb-stats-icon" style={{ width: '3rem', height: '3rem' }} /> */}
         <img src={vbStatsLogo} className="vb-stats-icon" alt="vb-stats logo" />
         <h2>
           VB Stats - {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
