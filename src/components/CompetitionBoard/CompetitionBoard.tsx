@@ -19,16 +19,16 @@ import {
   isTeamInCourse,
   poolId2Name,
 } from '../../model/model-helpers';
-
 import {
-  Sorting,
   pointSorter,
   poolSorter,
   previousPoolSorter,
   rankingSorter,
   ratingSorter,
   setSorter,
+  Sorting,
 } from '../../model/model-sorters';
+
 import './CompetitionBoard.scss';
 
 interface Props {

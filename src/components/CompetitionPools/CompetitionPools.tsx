@@ -18,6 +18,7 @@ import {
   getTeamStats,
   poolId2Name,
 } from '../../model/model-helpers';
+import { Sorting } from '../../model/model-sorters';
 import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
 import Headroom from '../Headroom/Headroom';
 import Help from '../Help/Help';
@@ -26,7 +27,6 @@ import TeamInfo from '../TeamInfo/TeamInfo';
 
 import './CompetitionPools.scss';
 import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
-import { Sorting } from '../../model/model-sorters';
 
 interface Props {
   competition: Competition;

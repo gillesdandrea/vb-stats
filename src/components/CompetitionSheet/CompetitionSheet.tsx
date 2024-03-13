@@ -1,9 +1,9 @@
 import cx from 'classnames';
 
 import { Competition, Sheet, Team } from '../../model/model';
+import { CSheetStat, CSStats } from '../../model/sheet';
 import { acceptLicences, calcCSStats, filterPointSheets } from '../../model/sheet-helpers';
 
-import { CSheetStat, CSStats } from '../../model/sheet';
 import './CompetitionSheet.scss';
 
 interface Props {

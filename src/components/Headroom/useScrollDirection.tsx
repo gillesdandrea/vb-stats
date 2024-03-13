@@ -1,4 +1,5 @@
 import { RefObject, useEffect, useState } from 'react';
+
 import { usePrevious, useScroll } from 'react-use';
 
 const useScrollDirection = (scrollRef: RefObject<HTMLElement>, scrollSensibility = 2) => {

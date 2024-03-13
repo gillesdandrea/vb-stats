@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 
 import { Layout, Spin } from 'antd';
 import cx from 'classnames';

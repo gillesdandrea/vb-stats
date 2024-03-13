@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import 'antd/dist/reset.css';
+import pkg from '../package.json';
+
 import App from './components/App/App';
 
+import 'antd/dist/reset.css';
 import './index.css';
-
-import pkg from '../package.json';
 
 console.log(`Loaded ${pkg.name}@${pkg.version}`);
 

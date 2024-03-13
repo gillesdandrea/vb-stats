@@ -1,16 +1,16 @@
 import { Match, Sheet, Team } from './model';
 import {
   CSheetLicence,
-  CSStats,
   CSheetMatch,
   CSheetPoint,
   CSheetSet,
   CSheetStat,
+  CSStats,
   Licenced,
   Position,
+  Roles,
   SheetMatch,
   SheetTeam,
-  Roles,
 } from './sheet';
 
 const getDeltaPoints = (points: number[], idx: number) =>

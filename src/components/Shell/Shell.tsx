@@ -17,12 +17,10 @@ import useCompetition from '../../utils/useCompetition';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
-// import CompetitionTeams from '../CompetitionTeams/CompetitionTeams';
-
-// import VBStatsLogo from '../../images/vb-stats-logo.svg?react';
-import vbStatsLogo from '../../images/vb-stats-logo.svg';
 
 import './Shell.scss';
+
+import vbStatsLogo from '/vb-stats-logo.svg';
 
 const BREAKPOINT = 512; // 576
 

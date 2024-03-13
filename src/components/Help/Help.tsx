@@ -5,10 +5,9 @@ import cx from 'classnames';
 import { Competition, Pool } from '../../model/model';
 import { getDayRanking, getPoolProbabilities } from '../../model/model-helpers';
 
-// import VBStatsLogo from '../../images/vb-stats-logo.svg?react';
-import vbStatsLogo from '../../images/vb-stats-logo.svg';
-
 import './Help.scss';
+
+import vbStatsLogo from '/vb-stats-logo.svg';
 
 const NA = '_';
 

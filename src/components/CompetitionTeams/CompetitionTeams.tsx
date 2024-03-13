@@ -9,8 +9,8 @@ import { Competition, Team } from '../../model/model';
 import { filterTeam, getBoard } from '../../model/model-helpers';
 import { Sorting } from '../../model/model-sorters';
 import Headroom from '../Headroom/Headroom';
-
 import TeamInfo from '../TeamInfo/TeamInfo';
+
 import './CompetitionTeams.scss';
 
 interface Props {
