@@ -1,21 +1,16 @@
 import { useMemo, useState } from 'react';
 
-import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import cx from 'classnames';
 
-import { Competition, Match, Score, Team } from '../../model/model';
+import { Competition, Team } from '../../model/model';
 import {
   getBoard,
-  getDayDistance,
   getDayRanking,
-  getFirstCountInPreviousDay,
-  getGlobalTeamStats,
   getTeamOpposition,
   getTeamRanking,
   getTeamStats,
-  getWinProbability,
   isTeamInCourse,
   poolId2Name,
 } from '../../model/model-helpers';
@@ -28,6 +23,7 @@ import {
   setSorter,
   Sorting,
 } from '../../model/model-sorters';
+import Trophies from '../Trophies/Trophies';
 
 import './CompetitionBoard.scss';
 
@@ -42,70 +38,6 @@ interface Props {
 const smallWidth = 60;
 const mediumWidth = 100;
 const largeWidth = 120;
-
-const medals = [' -', '🥇', '🥈', '🥉'];
-
-const getMatch = (match: Match, selected: Team) => {
-  const proba = 100 * (selected === match.teamA ? match.winProbability : 1 - match.winProbability);
-  const probaText = `${proba.toFixed(1)}%`;
-  if (match.teamA === selected) {
-    return `${match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',')} (${probaText})`;
-  }
-  return `${match.score.map((set: Score) => `${set.scoreB}-${set.scoreA}`).join(', ')} ((${probaText}))`;
-};
-
-// TODO should be a component
-export const getTrophies = (competition: Competition, team: Team, selected?: Team) => {
-  const rankings = Array(competition.lastDay)
-    .fill(0)
-    .map((_, index) => getDayRanking(competition, team, index + 1));
-  const firsts = Array(competition.lastDay)
-    .fill(0)
-    .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
-  if (selected && selected !== team) {
-    const matchs = getGlobalTeamStats(selected).matchs.filter(
-      (match: Match) => match.teamA === team || match.teamB === team,
-    );
-    const pool = matchs.length > 0 && selected.pools.length > 0 ? selected.pools[matchs[0].day].teams : [];
-    const host = pool.length === 3 ? pool[0].name : undefined;
-
-    if (selected && matchs.length === 0) {
-      return `(${(getWinProbability(selected, team, competition.dayCount) * 100).toFixed(1)}%)`;
-    }
-
-    return matchs.map((match) => (
-      <div key={match.id} className="match">
-        {`J${match.day}`}
-        {getDayDistance(competition, selected, match.day)}
-        {firsts[match.day - 1] === 2 ? '*' : ''}
-        &nbsp;
-        {match.winner === undefined ? (
-          <QuestionCircleTwoTone />
-        ) : match.winner === selected ? (
-          <CheckCircleTwoTone twoToneColor="green" />
-        ) : (
-          <CloseCircleTwoTone twoToneColor="red" />
-        )}
-        &nbsp;
-        {getMatch(match, selected)}
-        {` ${match.date} ${host ? `@${host}` : team === match.teamA ? '' : '✈️'}`}
-      </div>
-    ));
-  }
-  const trophies =
-    rankings.length > 0
-      ? rankings
-          .filter((rank, index) => index < team.lastDay)
-          .map((rank, index) => (
-            <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
-              competition,
-              team,
-              index + 1,
-            )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
-          ))
-      : null;
-  return <div className="trophies">{trophies}</div>;
-};
 
 const CompetitionBoard = ({ competition, day, singleDay, qualified, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -301,7 +233,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       // width: `${competition.lastDays * 3 + 1.75}rem`,
       width: '25rem',
       ellipsis: true,
-      render: (team: Team) => getTrophies(competition, team, selectedTeam),
+      render: (team: Team) => <Trophies competition={competition} team={team} selected={selectedTeam} />,
     },
   ];
 

@@ -19,14 +19,14 @@ import {
   poolId2Name,
 } from '../../model/model-helpers';
 import { Sorting } from '../../model/model-sorters';
-import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
 import Headroom from '../Headroom/Headroom';
 import Help from '../Help/Help';
 import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
 import TeamInfo from '../TeamInfo/TeamInfo';
+import Trophies from '../Trophies/Trophies';
 
-import './CompetitionPools.scss';
 import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
+import './CompetitionPools.scss';
 
 interface Props {
   competition: Competition;
@@ -109,7 +109,7 @@ const renderTeam = ({
             <div>
               {team.department.num_dep} - {team.department.region_name}
             </div>
-            <div>{getTrophies(competition, team)}</div>
+            <Trophies competition={competition} team={team} />
             <div className="small-text">
               <div>
                 ranking: {ranking} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
@@ -266,15 +266,18 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
     return team;
   }, [modalTeams]);
 
-  const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setTokens(
-      event.target.value
-        .toLocaleLowerCase()
-        .split(' ')
-        .filter((token) => token),
-    );
-  };
-  const debouncedSearchHandler = useMemo(() => debounce(handleSearch, 300), []);
+  const handleSearch: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setTokens(
+        event.target.value
+          .toLocaleLowerCase()
+          .split(' ')
+          .filter((token) => token),
+      );
+    },
+    [setTokens],
+  );
+  const debouncedSearchHandler = useMemo(() => debounce(handleSearch, 300), [handleSearch]);
   // Stop the invocation of the debounced function after unmounting
   useEffect(() => {
     return () => {

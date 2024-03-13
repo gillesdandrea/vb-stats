@@ -10,3 +10,4 @@
 - [x] PWA
 - [x] stylelint for properties order
 - [x] eslint-plugin-import
+- [ ] Issue: sorting on previous day is broken

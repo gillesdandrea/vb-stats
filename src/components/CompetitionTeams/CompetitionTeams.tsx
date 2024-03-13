@@ -31,7 +31,6 @@ const CompetitionTeams = ({ competition, day, singleDay, qualified, tokens, setT
     [competition, day, singleDay, qualified],
   );
 
-  // const [tokens, setTokens] = useState<string[]>([]);
   const handleSearch: ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       setTokens(

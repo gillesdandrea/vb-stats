@@ -21,12 +21,8 @@
     background-color: #141414;
   }
 
-  .trophies {
-    display: flex;
-    flex-direction: row;
-
+  .vb-trophies {
     .trophy {
-      width: 3rem;
       text-align: right;
     }
   }
