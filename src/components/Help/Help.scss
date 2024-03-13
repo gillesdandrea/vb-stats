@@ -2,7 +2,7 @@
   .vb-stats-icon {
     opacity: 0.75;
     position: absolute;
-    top: 0rem;
+    top: 0;
     left: 0;
     width: 3rem;
     height: 3rem;
@@ -21,11 +21,12 @@
       margin-bottom: 0.25rem;
     }
 
-    @media (min-width: 992px) {
+    @media (width >= 992px) {
       .vb-info-scroll {
         height: 23.4rem;
         overflow-y: scroll;
       }
+
       .vb-info-unplayed {
         height: 20.15rem;
       }

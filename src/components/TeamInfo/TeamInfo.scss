@@ -58,6 +58,7 @@
       .vb-card-footer {
         display: flex;
         flex-direction: column;
+
         // padding: 0.5rem 1rem 0.25rem;
         // border-top: 1px solid #303030;
 
@@ -86,9 +87,11 @@
       .ant-collapse-item:not(:first-child) {
         padding-top: 0.5rem;
       }
+
       .ant-collapse-header {
         padding: initial;
       }
+
       .ant-collapse-content-box {
         padding: initial;
       }
@@ -99,7 +102,6 @@
     position: absolute;
     top: 0.75rem;
     right: 0.75rem;
-
     color: #ffffffd9;
     border: 1px solid #ffffffd9;
     background: transparent;

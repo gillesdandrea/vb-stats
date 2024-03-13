@@ -3,7 +3,7 @@
 
   .vb-stats-logo {
     position: absolute;
-    top: 0rem;
+    top: 0;
     right: 0.25rem;
     width: 4rem;
     height: 4rem;
@@ -11,13 +11,14 @@
   }
 
   .ant-layout-header {
-    padding-left: 0rem;
+    padding-left: 0;
     padding-right: 4rem;
-    border-bottom: 1px solid rgba(253, 253, 253, 0.12);
+    border-bottom: 1px solid rgb(253 253 253 / 12%);
 
     .ant-menu {
       background-color: transparent;
       border-bottom: unset;
+
       // line-height: 56px;
       user-select: none;
     }
