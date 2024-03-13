@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect, useMemo, useRef } from 'react';
+import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Col, Empty, Row } from 'antd';
 import Search from 'antd/es/input/Search';
@@ -32,15 +32,18 @@ const CompetitionTeams = ({ competition, day, singleDay, qualified, tokens, setT
   );
 
   // const [tokens, setTokens] = useState<string[]>([]);
-  const handleSearch: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setTokens(
-      event.target.value
-        .toLocaleLowerCase()
-        .split(' ')
-        .filter((token) => token),
-    );
-  };
-  const debouncedSearchHandler = useMemo(() => debounce(handleSearch, 300), []);
+  const handleSearch: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setTokens(
+        event.target.value
+          .toLocaleLowerCase()
+          .split(' ')
+          .filter((token) => token),
+      );
+    },
+    [setTokens],
+  );
+  const debouncedSearchHandler = useMemo(() => debounce(handleSearch, 300), [handleSearch]);
   // Stop the invocation of the debounced function after unmounting
   useEffect(() => {
     return () => {

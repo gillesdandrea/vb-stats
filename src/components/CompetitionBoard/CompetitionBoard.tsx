@@ -54,6 +54,7 @@ const getMatch = (match: Match, selected: Team) => {
   return `${match.score.map((set: Score) => `${set.scoreB}-${set.scoreA}`).join(', ')} ((${probaText}))`;
 };
 
+// TODO should be a component
 export const getTrophies = (competition: Competition, team: Team, selected?: Team) => {
   const rankings = Array(competition.lastDay)
     .fill(0)
@@ -156,8 +157,8 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           ? ranking === previous
             ? ''
             : ranking < previous
-            ? ` ⏶ ${previous - ranking}`
-            : ` ⏷ ${ranking - previous}`
+              ? ` ⏶ ${previous - ranking}`
+              : ` ⏷ ${ranking - previous}`
           : ' ⏴';
         return <small>{delta}</small>;
       },

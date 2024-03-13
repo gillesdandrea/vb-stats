@@ -2,7 +2,6 @@ import { Suspense, lazy, useMemo } from 'react';
 
 import { Layout, Spin } from 'antd';
 import cx from 'classnames';
-// import { Graphviz } from 'graphviz-react';
 
 import { getGraph } from '../../model/graph';
 import { Competition, Match, Team } from '../../model/model';
@@ -10,7 +9,7 @@ import { isTeamInCourse } from '../../model/model-helpers';
 
 import './CompetitionGraph.scss';
 
-const Graphviz = lazy(() => import('./LazyGraphViz'));
+const Graphviz = lazy(() => import('../Graphviz/Graphviz'));
 
 interface Props {
   competition: Competition;
@@ -55,10 +54,11 @@ const CompetitionGraph = ({ competition, day, singleDay, qualified, className }:
         <Graphviz
           dot={dot}
           options={{
-            worker: false,
-            useSharedWorker: false,
+            useWorker: false,
             zoom: true,
+            // @ts-expect-error force width in vw
             width: '100vw',
+            // @ts-expect-error force height in vh
             height: '100vh',
             fit: true,
           }}
