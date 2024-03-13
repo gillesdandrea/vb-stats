@@ -4,7 +4,7 @@ const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
 const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
 const MIN_DELTA = 0.0001;
 
-export const rateMatch = (ratingWinner, ratingLoser, tightScore = false) => {
+export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false) => {
   // return rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
   const ranks = [0, 1];
   const weights = [[1], [tightScore ? TIGHT_FACTOR : 1]];

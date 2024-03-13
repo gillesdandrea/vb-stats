@@ -17,7 +17,7 @@ import useCompetition from '../../utils/useCompetition';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
-import CompetitionTeams from '../CompetitionTeams/CompetitionTeams';
+// import CompetitionTeams from '../CompetitionTeams/CompetitionTeams';
 
 import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
 import './Shell.scss';
@@ -28,7 +28,7 @@ const seasons = iseasons.map(seasonToString);
 
 const tabNames: Record<string, string> = {
   pools: 'Pools',
-  teams: 'Teams',
+  // teams: 'Teams',
   board: 'Board',
   graph: 'Graph',
 };
@@ -318,7 +318,7 @@ const Shell = () => {
             setTokens={setTokens}
           />
         )}
-        {competition && tab === 'teams' && (
+        {/* {competition && tab === 'teams' && (
           <CompetitionTeams
             // className={tab === 'teams' ? '' : 'no-display'}
             competition={competition}
@@ -328,7 +328,7 @@ const Shell = () => {
             tokens={tokens}
             setTokens={setTokens}
           />
-        )}
+        )} */}
         {competition && tab === 'board' && (
           <CompetitionBoard
             // className={tab === 'board' ? '' : 'no-display'}

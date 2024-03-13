@@ -39,8 +39,8 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
 
   return (
     <div className={cx('vb-card-header-content', { eliminated })}>
-      {displayRanking && ranking && (
-        <Avatar size="large" className="ranking">
+      {ranking && (
+        <Avatar size="large" className={cx('ranking', { 'ranking-low': !displayRanking })}>
           {ranking}
         </Avatar>
       )}

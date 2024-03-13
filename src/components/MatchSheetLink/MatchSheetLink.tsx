@@ -11,14 +11,16 @@ interface MatchSheetLinkProps {
 
 const MatchSheetLink = ({ competition, match }: MatchSheetLinkProps) => {
   return (
-    <a
-      href={`https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${competition.season}&codent=ACJEUNES&codmatch=${match.id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="vb-match-sheet-link"
-    >
-      <FilePdfOutlined />
-    </a>
+    match.winner && (
+      <a
+        href={`https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${competition.season}&codent=ACJEUNES&codmatch=${match.id}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="vb-match-sheet-link"
+      >
+        <FilePdfOutlined />
+      </a>
+    )
   );
 };
 
