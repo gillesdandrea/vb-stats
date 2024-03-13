@@ -6,6 +6,7 @@
 - [x] Set more weight on last match edges.
 
 ## Technical
+
 - [x] PWA
 - [ ] stylelint for properties order
 - [ ] eslint-plugin-import
