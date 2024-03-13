@@ -71,18 +71,18 @@ const renderTeam = ({
     probability < 17 //
       ? red[5]
       : probability < 33 //
-      ? gold[6]
-      : probability < 66 //
-      ? blue[6]
-      : green[6];
+        ? gold[6]
+        : probability < 66 //
+          ? blue[6]
+          : green[6];
   const ranking = getTeamRanking(team, day, false, true);
   const previous = getTeamRanking(team, day - 1, false, true);
   const delta = previous
     ? ranking === previous
       ? ''
       : ranking < previous
-      ? ` ⏶ ${previous - ranking}`
-      : ` ⏷ ${ranking - previous}`
+        ? ` ⏶ ${previous - ranking}`
+        : ` ⏷ ${ranking - previous}`
     : '';
   const dayCount = Math.min(day, team.lastDay);
 
@@ -299,7 +299,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
                     const qa = 1 + (1 - match.winProbability) / match.winProbability;
                     const qb = 1 + match.winProbability / (1 - match.winProbability);
                     return (
-                      <div style={{ display: 'flex' }}>
+                      <div key={match.id} style={{ display: 'flex' }}>
                         <div style={{ width: '2rem' }}>{`J${cday.day}`}</div>
                         <div style={{ width: '6rem' }}>{match.date}</div>
                         <div style={{ width: '4rem', color: match.predicted === false ? 'red' : '' }}>{`${(

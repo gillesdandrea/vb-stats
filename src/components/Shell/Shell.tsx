@@ -19,7 +19,9 @@ import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
 // import CompetitionTeams from '../CompetitionTeams/CompetitionTeams';
 
-import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
+// import VBStatsLogo from '../../images/vb-stats-logo.svg?react';
+import vbStatsLogo from '../../images/vb-stats-logo.svg';
+
 import './Shell.scss';
 
 const BREAKPOINT = 512; // 576
@@ -164,7 +166,7 @@ const Shell = () => {
     } else {
       // sub menu
       switch (e.keyPath[1]) {
-        case 'day':
+        case 'day': {
           const nday = Number.parseInt(e.key);
           if (Number.isInteger(nday)) {
             setDay(nday);
@@ -185,6 +187,7 @@ const Shell = () => {
             }
           }
           break;
+        }
         case 'category':
           setCategory(e.key);
           break;
@@ -294,7 +297,8 @@ const Shell = () => {
   // console.log('rendering Shell');
   return (
     <Layout className="vb-shell">
-      <VBStatsLogo className="vb-stats-logo" style={{ width: '4rem', height: '4rem' }} />
+      {/* <VBStatsLogo className="vb-stats-logo" style={{ width: '4rem', height: '4rem' }} /> */}
+      <img src={vbStatsLogo} className="vb-stats-logo" alt="vb-stats logo" />
       <Layout.Header>
         <Menu
           onClick={onClick}

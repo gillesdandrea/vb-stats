@@ -70,12 +70,12 @@ export const createMatch = (competition: Competition, data: any): Match => {
     victory: unplayed
       ? Victory.Unplayed
       : Math.abs(setA - setB) < 2
-      ? Victory.TieBreak
-      : ratio <= MEDIUM
-      ? Victory.Medium
-      : ratio <= HIGH
-      ? Victory.Large
-      : Victory.Huge,
+        ? Victory.TieBreak
+        : ratio <= MEDIUM
+          ? Victory.Medium
+          : ratio <= HIGH
+            ? Victory.Large
+            : Victory.Huge,
   };
   return match;
 };
@@ -96,7 +96,6 @@ export const updateRating = (match: Match, statsA: Stats, statsB: Stats) => {
       }
     });
   } else {
-    // eslint-disable-next-line no-lonely-if
     if (match.winner === match.teamA) {
       const [newAR, newBR] = rateMatch(statsA.rating, statsB.rating);
       statsA.rating = newAR;
@@ -167,7 +166,6 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
 };
 
 export const processCompetition = (competition: Competition, datas: any[][]) => {
-  // @ts-ignore
   const isCDF = datas.length > 0 && datas[0][0]['Entit�'] === 'ACJEUNES';
 
   // reorder matchs based on results of the first matchs

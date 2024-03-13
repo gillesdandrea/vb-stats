@@ -5,7 +5,9 @@ import cx from 'classnames';
 import { Competition, Pool } from '../../model/model';
 import { getDayRanking, getPoolProbabilities } from '../../model/model-helpers';
 
-import { ReactComponent as VBStatsLogo } from '../../images/vb-stats-logo.svg';
+// import VBStatsLogo from '../../images/vb-stats-logo.svg?react';
+import vbStatsLogo from '../../images/vb-stats-logo.svg';
+
 import './Help.scss';
 
 const NA = '_';
@@ -73,7 +75,8 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
   return (
     <div className="vb-info-card">
       <div className="vb-info-header">
-        <VBStatsLogo className="vb-stats-icon" style={{ width: '3rem', height: '3rem' }} />
+        {/* <VBStatsLogo className="vb-stats-icon" style={{ width: '3rem', height: '3rem' }} /> */}
+        <img src={vbStatsLogo} className="vb-stats-icon" alt="vb-stats logo" />
         <h2>
           VB Stats - {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
         </h2>
@@ -86,28 +89,28 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             Chaque équipe est évaluée suivant le système{' '}
             <a href="https://www.microsoft.com/en-us/research/project/trueskill-ranking-system/">TrueSkill™</a> donnant
             une note (<i>rating</i>) qui évolue à chaque match en fonction des sets gagnés ou perdus. Ce <i>rating</i>{' '}
-            permet d'estimer la probabilité de victoire pour chaque match et la probabilité pour chaque équipe de
+            permet d&apos;estimer la probabilité de victoire pour chaque match et la probabilité pour chaque équipe de
             terminer premier de sa poule.
           </p>
           <p>
             La barre de recherche permet de filtrer les équipes par noms, départements ou régions. Par exemple,{' '}
-            <i>"cannes 84 occit"</i> affichera toutes les poules contenant l'équipe de Cannes, celles du Vaucluse (84)
-            et celles d'Occitanie.
+            <i>&quot;cannes 84 occit&quot;</i> affichera toutes les poules contenant l&apos;équipe de Cannes, celles du
+            Vaucluse (84) et celles d&apos;Occitanie.
           </p>
           <p>
-            La barre de menu permet aussi d'afficher, le classement (<i>Board</i>), le graphe des matchs (<i>Graph</i>)
-            mais aussi de changer de journée, de catégorie ou de saison.
+            La barre de menu permet aussi d&apos;afficher, le classement (<i>Board</i>), le graphe des matchs (
+            <i>Graph</i>) mais aussi de changer de journée, de catégorie ou de saison.
           </p>
           <p>
             Toutes les données utilisées viennent du site de la{' '}
-            <a href="http://www.ffvb.org/index.php?lvlid=124&dsgtypid=38&artid=1095&pos=2">FFVB</a>. N'hésitez pas à
-            m'envoyer un message sur insta <a href="https://www.instagram.com/gillesdandrea">@gillesdandrea</a> ou sur
-            le compte ami <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
+            <a href="http://www.ffvb.org/index.php?lvlid=124&dsgtypid=38&artid=1095&pos=2">FFVB</a>. N&apos;hésitez pas
+            à m&apos;envoyer un message sur insta <a href="https://www.instagram.com/gillesdandrea">@gillesdandrea</a>{' '}
+            ou sur le compte ami <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
           </p>
           <p>
             Enfin, les statistiques ci-dessous vous disent combien de fois TrueSkill™ a raison (
-            <i style={{ color: green[6] }}>Favorite wins</i>), quand il se trompe et qu'un favori est éliminé (
-            <i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu'il estimait perdant sort vainqueur (
+            <i style={{ color: green[6] }}>Favorite wins</i>), quand il se trompe et qu&apos;un favori est éliminé (
+            <i style={{ color: red[5] }}>Favorite out</i>) ou que celui qu&apos;il estimait perdant sort vainqueur (
             <i style={{ color: gold[6] }}>Outsider wins</i>) ainsi que les matchs prédits (
             <i style={{ color: blue[5] }}>Predictions</i>) 😉
           </p>
@@ -115,7 +118,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
           <div className="vb-reference">
             C. Stewart, M. Mazel, B. Sadler (2022).{' '}
             <a href="https://scholar.smu.edu/cgi/viewcontent.cgi?article=1227&context=datasciencereview">
-              Application of Probabilistic Ranking Systems on Women’s Junior Division Beach Volleyball.
+              Application of Probabilistic Ranking Systems on Women&apos;s Junior Division Beach Volleyball.
               <i>SMU Data Science Review, Vol. 6, No. 2.</i>
             </a>
           </div>

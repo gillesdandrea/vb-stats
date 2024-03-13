@@ -14,7 +14,7 @@ const useCompetition = (season: number, category: string): UseQueryResult<Compet
     queryFn: async () => {
       const now = Date.now();
 
-      const request = await axios.get(process.env.PUBLIC_URL + '/data/' + resource);
+      const request = await axios.get(import.meta.env.BASE_URL + '/data/' + resource);
       const { data } = Papa.parse<string[]>(request.data, {
         header: true,
         delimiter: ';',

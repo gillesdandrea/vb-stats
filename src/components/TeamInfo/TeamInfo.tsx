@@ -32,8 +32,8 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
       ? ranking === previous
         ? ''
         : ranking < previous
-        ? ` ⏶ ${previous - ranking}`
-        : ` ⏷ ${ranking - previous}`
+          ? ` ⏶ ${previous - ranking}`
+          : ` ⏷ ${ranking - previous}`
       : '';
   const dayCount = Math.min(day, team.lastDay);
 
@@ -104,8 +104,8 @@ const renderMatchs = (
         ? ranking === previous
           ? ''
           : ranking < previous
-          ? ` ⏶ ${previous - ranking}`
-          : ` ⏷ ${ranking - previous}`
+            ? ` ⏶ ${previous - ranking}`
+            : ` ⏷ ${ranking - previous}`
         : '';
     const dayCount = Math.min(day, teamB.lastDay);
 

@@ -52,14 +52,14 @@ export const pointSorter =
       astats.matchCount === 0
         ? -1
         : astats.pointLost === 0
-        ? Number.MAX_SAFE_INTEGER
-        : astats.pointWon / astats.pointLost;
+          ? Number.MAX_SAFE_INTEGER
+          : astats.pointWon / astats.pointLost;
     const bpratio =
       astats.matchCount === 0
         ? -1
         : bstats.pointLost === 0
-        ? Number.MAX_SAFE_INTEGER
-        : bstats.pointWon / bstats.pointLost;
+          ? Number.MAX_SAFE_INTEGER
+          : bstats.pointWon / bstats.pointLost;
     return apratio === bpratio ? ratingSorter(day, global)(a, b) : bpratio - apratio;
   };
 
