@@ -1,4 +1,4 @@
-import { quality, rate, Rating, TrueSkill } from 'ts-trueskill';
+import { Rating, TrueSkill } from 'ts-trueskill';
 
 const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
 const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
