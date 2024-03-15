@@ -6,11 +6,11 @@ import cx from 'classnames';
 import { getGraph } from '../../model/graph';
 import { Competition, Match, Team } from '../../model/model';
 import { isTeamInCourse } from '../../model/model-helpers';
-import Graphviz from '../Graphviz/Graphviz';
 
+// import Graphviz from '../Graphviz/Graphviz';
 import './CompetitionGraph.scss';
 
-// const Graphviz = lazy(() => import('../Graphviz/Graphviz'));
+const Graphviz = lazy(() => import('../Graphviz/Graphviz'));
 
 interface Props {
   competition: Competition;
@@ -44,28 +44,28 @@ const CompetitionGraph = ({ competition, day, singleDay, qualified, className }:
   // console.log('rendering CompetitionGraph');
   // console.log(dot);
   return (
-    // <Suspense
-    //   fallback={
-    //     <Spin size="large">
-    //       <Layout style={{ height: '100vh' }} />
-    //     </Spin>
-    //   }
-    // >
-    <div className={cx('vb-graph', className)}>
-      <Graphviz
-        dot={dot}
-        options={{
-          useWorker: false,
-          zoom: true,
-          // @ts-expect-error force width in vw
-          width: '100vw',
-          // @ts-expect-error force height in vh
-          height: '100vh',
-          fit: true,
-        }}
-      />
-    </div>
-    // </Suspense>
+    <Suspense
+      fallback={
+        <Spin size="large">
+          <Layout style={{ height: '100vh' }} />
+        </Spin>
+      }
+    >
+      <div className={cx('vb-graph', className)}>
+        <Graphviz
+          dot={dot}
+          options={{
+            useWorker: false,
+            zoom: true,
+            // @ts-expect-error force width in vw
+            width: '100vw',
+            // @ts-expect-error force height in vh
+            height: 'calc(100vh - 4rem)',
+            fit: true,
+          }}
+        />
+      </div>
+    </Suspense>
   );
 };
 
