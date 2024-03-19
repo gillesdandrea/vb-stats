@@ -1,3 +1,13 @@
+export type TeamSheetsMap = Record<string, Sheet[]>;
+
+export interface Sheet {
+  id: string;
+  isA: boolean;
+  steam: SheetTeam;
+  smatch: SheetMatch;
+  csmatch: CSheetMatch;
+}
+
 //
 
 export enum Roles {
@@ -64,9 +74,10 @@ export interface CSStats {
 
 //
 
-export type SheetMap = Record<string, SheetMatch>;
+// export type SheetMap = Record<string, SheetMatch>;
 
 export interface SheetMatch {
+  url?: string;
   match: string;
   day: string;
   description: string;
@@ -77,8 +88,8 @@ export interface SheetMatch {
     first: Referee;
     second: Referee;
     marker: Referee;
-    assistant: Referee;
-    local: Referee;
+    assistant?: Referee;
+    local?: Referee;
   };
   sets: SheetSet[];
 }

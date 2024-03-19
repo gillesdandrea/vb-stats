@@ -16,8 +16,8 @@
     "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist",
     "generate-pwa-assets": "pwa-assets-generator",
-    "cdf-scrap": "tsx scripts/cdf-scrap.ts",
-    "pdf-parse": "tsx scripts/pdf-parse.js"
+    "cdf-scrap": "tsx src/scripts/cdf-scrap.ts",
+    "pdf-parse": "tsx src/scripts/pdf-parse.ts"
   },
   "dependencies": {
     "@ant-design/colors": "^7.0.2",

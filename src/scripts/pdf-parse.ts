@@ -1,6 +1,12 @@
-import { readFileSync, writeFileSync } from 'fs';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+import axios from 'axios';
+import Papa from 'papaparse';
 import PDFParser from 'pdf2json';
+
+import { seasonToString } from '@/model/model';
+import { Licenced, Referee, SheetMatch, SheetSet, SheetTeam } from '@/model/sheet';
 
 // TODO
 // [ ] référence match, jour, date
@@ -9,27 +15,23 @@ import PDFParser from 'pdf2json';
 // [ ] Temps morts
 // [ ] Sanctions, remarques (petite finale régionale)
 // [ ] scores
+// [ ] Process "forfait", see https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=2023/2024&codent=ACJEUNES&codmatch=JFQ005
 
-// const PREFIX = './public/sheets/2022-23/2022-23-cdfm18m';
-const PREFIX = './public/sheets/2023-24/2023-24-2fa';
-// const PREFIX = './public/sheets/2023-24/2023-24-pmaa';
-const days = {};
+interface Token {
+  x: number;
+  y: number;
+  s: number;
+  text: string;
+}
 
-const addMatch = (match) => {
-  let day = days[match.day];
-  if (!day) {
-    day = {};
-    days[match.day] = day;
-  }
-  day[match.match] = match;
-};
+type Elements = Record<string, string>;
 
-const check = (a, b) => {
+const check = (a: Token, b: Token) => {
   return a.y < b.y && Math.abs(a.x - b.x) < 1;
 };
 
-const createOptional = (tokens, columns, index = 0) => {
-  const element = {};
+const createOptional = (tokens: Token[], columns: string[], index = 0): [number, Elements] => {
+  const element: Elements = {};
   let max = index;
   let stop = false;
   columns.forEach((column, idx) => {
@@ -43,15 +45,15 @@ const createOptional = (tokens, columns, index = 0) => {
   return [max + 1, element];
 };
 
-const create = (tokens, columns, index = 0) => {
-  const element = {};
+const create = <T>(tokens: Token[], columns: string[], index = 0): T => {
+  const element: Elements = {};
   columns.forEach((column, idx) => {
     element[column] = tokens[index * columns.length + idx]?.text;
   });
-  return element;
+  return element as T;
 };
 
-const interval = (texts, marker, end = undefined) => {
+const interval = (texts: Token[], marker: string, end?: string) => {
   let tokens = texts;
   const idx = tokens.findIndex((token) => token.text === marker);
   if (idx >= 0) {
@@ -70,7 +72,7 @@ const interval = (texts, marker, end = undefined) => {
   return tokens;
 };
 
-const skip = (texts, markers = [], end = undefined) => {
+const skip = (texts: Token[], markers: string[] = [], end?: string) => {
   let tokens = texts;
   markers.forEach((marker, index) => {
     const idx = tokens.findIndex((token) => token.text === marker);
@@ -91,8 +93,8 @@ const skip = (texts, markers = [], end = undefined) => {
   return tokens;
 };
 
-const getArray = (texts, columns) => {
-  const elements = [];
+const getArray = <T>(texts: Token[], columns: string[]): [Token[], T[]] => {
+  const elements: T[] = [];
   const x = texts[0].x;
   const index = texts.findIndex((text, index) => {
     if (index % columns.length !== 0) {
@@ -102,12 +104,12 @@ const getArray = (texts, columns) => {
   });
   const tokens = texts.slice(0, index);
   for (let i = 0; i < tokens.length / columns.length; i++) {
-    elements.push(create(tokens, columns, i));
+    elements.push(create(tokens, columns, i) as T);
   }
   return [texts.slice(elements.length * columns.length), elements];
 };
 
-const parseSet = (teamA, texts, index) => {
+const parseSet = (teamA: string, texts: Token[], index: number): SheetSet | null => {
   const path = [];
   for (let i = 0; i < index; i++) {
     path.push('S');
@@ -205,7 +207,7 @@ const parseSet = (teamA, texts, index) => {
   //     };
 };
 
-const parseMatch = (texts) => {
+const parseSheetMatch = (texts: Token[]): SheetMatch => {
   const tokens1 = skip(texts, ['Licence', 'Licence', 'Licence']);
   const [tokens2, playersL] = getArray(tokens1, ['number', 'name', 'licence']);
   const [tokens3, playersR] = getArray(tokens2, ['number', 'name', 'licence']);
@@ -215,12 +217,12 @@ const parseMatch = (texts) => {
   const normal = xl < xr;
 
   const tokens4 = skip(tokens3, ['LIBEROS']);
-  const [tokens5, liberosL] = getArray(tokens4, ['number', 'name', 'licence']);
-  const [tokens6, liberosR] = getArray(tokens5, ['number', 'name', 'licence']);
+  const [tokens5, liberosL] = getArray<Licenced>(tokens4, ['number', 'name', 'licence']);
+  const [tokens6, liberosR] = getArray<Licenced>(tokens5, ['number', 'name', 'licence']);
 
   const tokens7 = skip(tokens4, ['OFFICIELS']);
-  const [tokens8, officielsL] = getArray(tokens7, ['number', 'name', 'licence']);
-  const [tokens9, officielsR] = getArray(tokens8, ['number', 'name', 'licence']);
+  const [tokens8, officielsL] = getArray<Licenced>(tokens7, ['number', 'name', 'licence']);
+  const [tokens9, officielsR] = getArray<Licenced>(tokens8, ['number', 'name', 'licence']);
 
   const first = skip(texts, ['1er'], '2ème');
   const second = skip(texts, ['2ème'], 'Marqueur');
@@ -228,27 +230,27 @@ const parseMatch = (texts) => {
   //const assistant = skip(texts, ['Marq.Ass.'], 'R.Salle');
   //const local = skip(texts, ['R.Salle'], 'Juges');
 
-  const setLicence = (player) => (player.licence !== '0' ? player : { ...player, licence: player.number });
+  const setLicence = (player: any) => (player.licence !== '0' ? player : { ...player, licence: player.number });
 
-  const teamA = {
+  const teamA: SheetTeam = {
     name: texts[7].text,
     players: normal ? playersL.map(setLicence) : playersR.map(setLicence),
     liberos: normal ? liberosL.map(setLicence) : liberosR.map(setLicence),
-    officials: normal ? officielsL : officielsR,
+    officials: (normal ? officielsL : officielsR) as Licenced[],
   };
-  const teamB = {
+  const teamB: SheetTeam = {
     name: texts[8].text,
     players: normal ? playersR.map(setLicence) : playersL.map(setLicence),
     liberos: normal ? liberosR.map(setLicence) : liberosL.map(setLicence),
     officials: normal ? officielsR : officielsL,
   };
-  const sets = [
+  const sets: SheetSet[] = [
     parseSet(teamA.name, texts, 1),
     parseSet(teamA.name, texts, 2),
     parseSet(teamA.name, texts, 3),
     parseSet(teamA.name, texts, 4),
     parseSet(teamA.name, texts, 5),
-  ].filter((set) => set);
+  ].filter((set) => set) as SheetSet[];
   const elements = texts[2].text.split(' ');
 
   return {
@@ -259,9 +261,9 @@ const parseMatch = (texts) => {
     teamA,
     teamB,
     approbation: {
-      first: create(first, ['name', 'league', 'licence']),
-      second: create(second, ['name', 'league', 'licence']),
-      marker: create(marker, ['name', 'league', 'licence']),
+      first: create<Referee>(first, ['name', 'league', 'licence']),
+      second: create<Referee>(second, ['name', 'league', 'licence']),
+      marker: create<Referee>(marker, ['name', 'league', 'licence']),
       //assistant: create(assistant, ['name', 'league', 'licence']),
       //local: create(local, ['name', 'league', 'licence']),
     },
@@ -269,55 +271,93 @@ const parseMatch = (texts) => {
   };
 };
 
-const parsePDF = async (filePath, last) => {
-  const pdfParser = new PDFParser();
-
-  const texts = [];
-  pdfParser.on('pdfParser_dataError', (errData) => {
-    console.error(errData.parserError);
+const parsePDF = async (season: number, matchId: string): Promise<SheetMatch> => {
+  const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=ACJEUNES&codmatch=${matchId}`;
+  console.log(`- Parsing ${resource}`);
+  const request = await axios.get(resource, {
+    responseType: 'arraybuffer',
   });
-  pdfParser.on('pdfParser_dataReady', (pdfData) => {
-    pdfData.Pages.forEach((page) => {
-      page.Texts.forEach((text) => {
-        text.R.map((t) => ({ x: text.x, y: text.y, s: t.TS[1], text: decodeURIComponent(t.T) })).forEach((text) => {
-          texts.push(text);
+  const buffer = request.data;
+
+  return new Promise<SheetMatch>((resolve, reject) => {
+    const pdfParser = new PDFParser();
+    pdfParser.on('pdfParser_dataError', (errData: string) => {
+      console.error(errData);
+      reject(errData);
+    });
+    pdfParser.on('pdfParser_dataReady', (pdfData) => {
+      const texts: Token[] = [];
+      pdfData.Pages.forEach((page) => {
+        page.Texts.forEach((text) => {
+          text.R.map((t) => ({ x: text.x, y: text.y, s: t.TS[1], text: decodeURIComponent(t.T) })).forEach((text) => {
+            texts.push(text);
+          });
         });
       });
+      try {
+        const match = {
+          url: resource,
+          ...parseSheetMatch(texts),
+        };
+        resolve(match);
+      } catch (e) {
+        reject(e);
+      }
     });
-    // console.log(JSON.stringify(texts));
-    const match = parseMatch(texts);
-    // console.log(JSON.stringify(match, null, 2));
-    addMatch(match);
-    console.log(`Added ${match.description}`);
-
-    if (last) {
-      // TODO hack...
-      setTimeout(() => {
-        // console.log(JSON.stringify(days, null, 2));
-        Object.keys(days).forEach((key) => {
-          console.log(path.resolve(`${PREFIX}-j${key}.json`));
-          writeFileSync(path.resolve(`${PREFIX}-j${key}.json`), JSON.stringify(days[key], null, 2));
-        });
-      }, 2000);
-    }
+    pdfParser.parseBuffer(buffer);
   });
-  // const buffer = readFileSync(path.resolve(filePath));
-  // await pdfParser.parseBuffer(buffer);
-  await pdfParser.loadPDF(path.resolve(filePath));
-  // return parseMatch(texts);
 };
 
 //
 
-if (process.argv.length <= 2) {
-  console.log('pdf-parse <pdf-file>');
+if (process.argv.length <= 4) {
+  console.log('pdf-parse <season> <category> <pattern>');
+  console.log('  i.e. pdf-parse 2024 M21F 0138032');
+  console.log('  i.e. pdf-parse 2024 M21F VENELLES');
   process.exit(0);
 }
 
-const paths = process.argv.slice(2);
-console.log(`pdf-parse ${paths.join(' ')}`);
-paths.forEach(async (path, index) => {
-  console.log(`- parsing ${path}...`);
-  const match = await parsePDF(path, index === paths.length - 1);
-  // console.log(match);
+const season = Number.parseInt(process.argv[2]);
+const category = process.argv[3].toUpperCase();
+const pattern = process.argv[4].toUpperCase();
+
+const spath = `./public/sheets/FFVB-${season}-CDF-${category}.JSON`;
+const sexists = await fs
+  .access(spath, fs.constants.F_OK)
+  .then(() => true)
+  .catch(() => false);
+const sfile = sexists ? await fs.readFile(spath, { encoding: 'utf8' }) : '{}';
+
+const cachedMatchs: Record<string, SheetMatch> = JSON.parse(sfile);
+
+const mpath = `./public/data/FFVB-${season}-CDF-${category}.CSV`;
+const mfile = await fs.readFile(mpath, { encoding: 'utf8' });
+const { data: csv } = await Papa.parse(mfile, {
+  header: true,
+  delimiter: ';',
+  skipEmptyLines: true,
 });
+
+const sheetMatchs: Record<string, SheetMatch> = {};
+for (const { Match: matchId } of csv.filter(
+  (line: any) =>
+    (line.Match === pattern ||
+      line.EQA_no.includes(pattern) ||
+      line.EQB_no.includes(pattern) ||
+      line.EQA_nom.includes(pattern) ||
+      line.EQB_nom.includes(pattern)) &&
+    line.Set,
+) as any[]) {
+  try {
+    const cached = cachedMatchs[matchId];
+    const match = cached ? cached : await parsePDF(season, matchId);
+    sheetMatchs[matchId] = match;
+    console.log(`${cached ? '-' : '+'} ${matchId}: ${match.teamA.name} v ${match.teamB.name}`);
+    // console.log(JSON.stringify(match, null, 2));
+  } catch (e) {
+    console.warn(`!!! ${matchId}`, e);
+  }
+}
+
+console.log(`Updating: ${spath}...`);
+await fs.writeFile(path.resolve(spath), JSON.stringify(sheetMatchs, null, 2));

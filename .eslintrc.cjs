@@ -32,6 +32,8 @@ module.exports = {
       'error',
       {
         groups: [
+          // `node` packages
+          ['^node:'],
           // `react`, `react-dom`, then `next` packages
           ['^react$', '^react-dom$', '^react-dom/', '^next', '^vite$'],
           // External packages

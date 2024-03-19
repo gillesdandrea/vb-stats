@@ -21,7 +21,7 @@ const useCompetition = (season: number, category: string): UseQueryResult<Compet
         skipEmptyLines: true,
       });
 
-      const competition = createCompetition('Volley-Ball Stats', `${season - 1}/${season}`, category, []);
+      const competition = createCompetition('Volley-Ball Stats', `${season - 1}/${season}`, category);
       data.length > 0 && processCompetition(competition, [data]);
       console.log(
         `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.lastDay}/${competition.dayCount} day(s).`,

@@ -1,8 +1,12 @@
+import { useMemo, useState } from 'react';
+
+import { Layout, Result, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Sheet, Team } from '../../model/model';
+import { Competition, Match, Sheet, Team } from '../../model/model';
 import { CSheetStat, CSStats } from '../../model/sheet';
 import { acceptLicences, calcCSStats, filterPointSheets } from '../../model/sheet-helpers';
+import useSheets from '../../utils/useSheets';
 
 import './CompetitionSheet.scss';
 
@@ -90,16 +94,78 @@ const Player = ({
 };
 
 const CompetitionSheet = ({ competition, day, singleDay, qualified, className }: Props) => {
+  const [team, setTeam] = useState<Team>();
+  const [match, setMatch] = useState<Match>();
+
+  const filterOption = (input: string, option?: { label: string; value: string }) =>
+    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+
+  const teams = useMemo(
+    () =>
+      Array.from(competition.teams.values()).map((team: Team) => ({
+        value: team.id,
+        label: `${team.name} (${team.department.num_dep})`,
+      })),
+    [competition],
+  );
+  const handleTeamChange = (value: string) => {
+    setTeam(competition.teams.get(value));
+  };
+
+  const matchs = useMemo(
+    () =>
+      team
+        ? team.gstats[competition.dayCount].matchs.map((match: Match) => ({
+            value: match.id,
+            label: `J${match.day} - ${match.teamA === team ? match.teamB.name : match.teamA.name} (${match.id})`,
+          }))
+        : [],
+    [competition, team],
+  );
+  const handleMatchChange = (value: string) => {
+    const match = team ? team.gstats[competition.dayCount].matchs.find((match) => match.id === value) : undefined;
+    setMatch(match);
+  };
+
+  const { isLoading, isError, data: teamSheets, error } = useSheets(competition);
+
+  if (isLoading) {
+    return (
+      <Spin size="large">
+        <Layout style={{ height: '100vh' }} />
+      </Spin>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Layout style={{ height: '100vh' }}>
+        <Result
+          status="error"
+          title="Failed to load data..."
+          subTitle={
+            <>
+              <div>{`No match sheets for ${competition.season} - ${competition.category}`}</div>
+              <div>{String(error)}</div>
+            </>
+          }
+        />
+      </Layout>
+    );
+  }
+
+  ///
+
   // const teamId = '0060036'; // PGVB
   // const teamId = '0060007'; // AS Cannes
   // const teamId = '0138032'; // PAYS D'AIX VENELLES V.B. 2
   // const team = competition.teams.get(teamId);
-  let team: Team | undefined;
-  competition.teams.forEach((t) => {
-    if (!team || team.sheets.length < t.sheets.length) {
-      team = t;
-    }
-  });
+  // let _team: Team | undefined;
+  // competition.teams.forEach((t) => {
+  //   if (!_team || _team.sheets.length < t.sheets.length) {
+  //     _team = t;
+  //   }
+  // });
 
   const Tom = '2309489';
   const Anto = '2212762';
@@ -121,14 +187,14 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
   const DornicM = '2128747'; // 14 setter PAYS D'AIX VENELLES V.B. 2
   const NataliaB = '2193754'; // 11 setter PAYS D'AIX VENELLES V.B. 2
 
-  const usheets: Sheet[] = team?.sheets || [];
+  // const usheets: Sheet[] = _team?.sheets || [];
   // const setters = [Maxim, Mady, Aless, Nathan];
   const setters = [AxelGD, MatteoC, Nathan, Arman, DornicM, NataliaB];
   // const setters = [DornicM, NataliaB];
 
   // const sheets = filterMatchSetSheets(usheets, acceptSetWon(false));
   // const sheets = filterMatchSetSheets(usheets, acceptMatchs(['MMA022']));
-  const sheets = usheets;
+  const sheets = teamSheets && team ? teamSheets[team.id] : [];
   const csstats = calcCSStats(setters, sheets);
 
   /*
@@ -215,6 +281,33 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
 
   return (
     <div className={cx('vb-sheet', className)}>
+      <h2>
+        Stats {competition.category} {competition.season}
+      </h2>
+      <Spacer />
+      <div>Select Team, Match, Setters</div>
+      <Spacer />
+      <Space wrap>
+        <Select
+          style={{ width: '22rem' }}
+          showSearch
+          placeholder="Select a team..."
+          filterOption={filterOption}
+          onChange={handleTeamChange}
+          options={teams}
+        />
+        <Select
+          disabled={!team}
+          style={{ width: '22rem' }}
+          showSearch
+          placeholder="Select a match..."
+          filterOption={filterOption}
+          onChange={handleMatchChange}
+          options={matchs}
+        />
+      </Space>
+      <Spacer />
+
       {/*}
       <Upload.Dragger
         name={'file'}
@@ -268,10 +361,6 @@ const CompetitionSheet = ({ competition, day, singleDay, qualified, className }:
         <p className="ant-upload-hint">Support for a single or bulk upload of PDF volleyball match sheets.</p>
       </Upload.Dragger>
       */}
-      <h2>
-        Stats {competition.category} {competition.season}
-      </h2>
-      <Spacer />
       <div>
         Pour chaque position, au service (SRV), le nombre moyen de points gagnés avant de perdre le service, càd un
         point perdu.
