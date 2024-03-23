@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 
 import pkg from '../package.json';
 
-import App from './components/App/App';
+import App from './App';
 
 import 'antd/dist/reset.css';
 import './index.css';

@@ -7,6 +7,11 @@ import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 
+import Headroom from '../../components/Headroom/Headroom';
+import Help from '../../components/Help/Help';
+import MatchSheetLink from '../../components/MatchSheetLink/MatchSheetLink';
+import TeamInfo from '../../components/TeamInfo/TeamInfo';
+import Trophies from '../../components/Trophies/Trophies';
 import { Competition, Match, Pool, Team } from '../../model/model';
 import {
   filterTeam,
@@ -19,11 +24,6 @@ import {
   poolId2Name,
 } from '../../model/model-helpers';
 import { Sorting } from '../../model/model-sorters';
-import Headroom from '../Headroom/Headroom';
-import Help from '../Help/Help';
-import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
-import TeamInfo from '../TeamInfo/TeamInfo';
-import Trophies from '../Trophies/Trophies';
 
 import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
 import './CompetitionPools.scss';

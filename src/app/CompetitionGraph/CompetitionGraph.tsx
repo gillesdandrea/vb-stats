@@ -10,7 +10,7 @@ import { isTeamInCourse } from '../../model/model-helpers';
 // import Graphviz from '../Graphviz/Graphviz';
 import './CompetitionGraph.scss';
 
-const Graphviz = lazy(() => import('../Graphviz/Graphviz'));
+const Graphviz = lazy(() => import('../../components/Graphviz/Graphviz'));
 
 interface Props {
   competition: Competition;

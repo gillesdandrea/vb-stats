@@ -100,7 +100,6 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
     gstats: [createStats(rating)],
     dstats: [],
     pools: [],
-    sheets: [],
     dayCount: 0,
     lastDay: 0,
   };

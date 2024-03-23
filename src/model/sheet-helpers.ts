@@ -1,4 +1,4 @@
-import { Match, Sheet, Team } from './model';
+import { Match, Team } from './model';
 import {
   CSheetLicence,
   CSheetMatch,
@@ -9,6 +9,7 @@ import {
   Licenced,
   Position,
   Roles,
+  Sheet,
   SheetMatch,
   SheetTeam,
 } from './sheet';

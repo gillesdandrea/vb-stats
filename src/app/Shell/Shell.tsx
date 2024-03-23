@@ -17,6 +17,7 @@ import useCompetition from '../../utils/useCompetition';
 import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '../CompetitionPools/CompetitionPools';
+import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
 
 import './Shell.scss';
 
@@ -35,6 +36,7 @@ const tabNames: Record<string, string> = {
   // teams: 'Teams',
   board: 'Board',
   graph: 'Graph',
+  sheet: 'Sheet',
 };
 
 const Checked = ({ checked }: { checked?: boolean }) =>
@@ -355,15 +357,15 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {/*competition && tab === 'sheet' && (
+        {competition && tab === 'sheet' && (
           <CompetitionSheet
-            // className={tab === 'graph' ? '' : 'no-display'}
+            // className={tab === 'sheet' ? '' : 'no-display'}
             competition={competition}
             day={day}
             singleDay={singleDay}
             qualified={qualified}
           />
-        )*/}
+        )}
         {/*</Suspense>*/}
       </Layout.Content>
     </Layout>

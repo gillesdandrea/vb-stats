@@ -2,7 +2,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider, theme } from 'antd';
 
-import Shell from '../Shell/Shell';
+import Shell from './app/Shell/Shell';
 
 const queryClient = new QueryClient({});
 

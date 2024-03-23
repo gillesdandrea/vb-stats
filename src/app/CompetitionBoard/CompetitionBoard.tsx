@@ -4,6 +4,7 @@ import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import cx from 'classnames';
 
+import Trophies from '../../components/Trophies/Trophies';
 import { Competition, Team } from '../../model/model';
 import {
   getBoard,
@@ -23,7 +24,6 @@ import {
   setSorter,
   Sorting,
 } from '../../model/model-sorters';
-import Trophies from '../Trophies/Trophies';
 
 import './CompetitionBoard.scss';
 
