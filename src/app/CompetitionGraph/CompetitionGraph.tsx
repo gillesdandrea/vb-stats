@@ -3,14 +3,14 @@ import { lazy, Suspense, useMemo } from 'react';
 import { Layout, Spin } from 'antd';
 import cx from 'classnames';
 
-import { getGraph } from '../../model/graph';
-import { Competition, Match, Team } from '../../model/model';
-import { isTeamInCourse } from '../../model/model-helpers';
+import { getGraph } from '@/model/graph';
+import { Competition, Match, Team } from '@/model/model';
+import { isTeamInCourse } from '@/model/model-helpers';
 
-// import Graphviz from '../Graphviz/Graphviz';
+// import Graphviz from '@/components/Graphviz/Graphviz';
 import './CompetitionGraph.scss';
 
-const Graphviz = lazy(() => import('../../components/Graphviz/Graphviz'));
+const Graphviz = lazy(() => import('@/components/Graphviz/Graphviz'));
 
 interface Props {
   competition: Competition;

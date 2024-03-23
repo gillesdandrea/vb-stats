@@ -2,7 +2,9 @@ import { CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleOutlined, QuestionCir
 import { Avatar, Card, Collapse, CollapseProps } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Match, Team } from '../../model/model';
+import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
+import Trophies from '@/components/Trophies/Trophies';
+import { Competition, Match, Team } from '@/model/model';
 import {
   getDayRanking,
   getTeamMatch,
@@ -10,9 +12,7 @@ import {
   getTeamRanking,
   getTeamStats,
   isTeamInCourse,
-} from '../../model/model-helpers';
-import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
-import Trophies from '../Trophies/Trophies';
+} from '@/model/model-helpers';
 
 import './TeamInfo.scss';
 

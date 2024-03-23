@@ -4,6 +4,10 @@ import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOut
 import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
 import { useWindowSize } from 'react-use';
 
+import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
+import CompetitionGraph from '@/app/CompetitionGraph/CompetitionGraph';
+import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
+import CompetitionSheet from '@/app/CompetitionSheet/CompetitionSheet';
 import {
   categories,
   defaultCategory,
@@ -12,20 +16,16 @@ import {
   seasons as iseasons,
   seasonToNumber,
   seasonToString,
-} from '../../model/model';
-import useCompetition from '../../utils/useCompetition';
-import CompetitionBoard from '../CompetitionBoard/CompetitionBoard';
-import CompetitionGraph from '../CompetitionGraph/CompetitionGraph';
-import CompetitionPools from '../CompetitionPools/CompetitionPools';
-import CompetitionSheet from '../CompetitionSheet/CompetitionSheet';
+} from '@/model/model';
+import useCompetition from '@/utils/useCompetition';
 
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
 
-// const CompetitionBoard = lazy(() => import('../CompetitionBoard/CompetitionBoard'));
-// const CompetitionGraph = lazy(() => import('../CompetitionGraph/CompetitionGraph'));
-// const CompetitionPools = lazy(() => import('../CompetitionPools/CompetitionPools'));
+// const CompetitionBoard = lazy(() => import('@/app/CompetitionBoard/CompetitionBoard'));
+// const CompetitionGraph = lazy(() => import('@/app/CompetitionGraph/CompetitionGraph'));
+// const CompetitionPools = lazy(() => import('@/app/CompetitionPools/CompetitionPools'));
 
 const BREAKPOINT = 512; // 576
 

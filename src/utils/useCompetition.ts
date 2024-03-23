@@ -2,10 +2,10 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import Papa from 'papaparse';
 
-import { createMetaStats, metaAddMatch, metaToString } from '../model/meta';
-import { Competition, getResourceName } from '../model/model';
-import { createCompetition } from '../model/model-helpers';
-import { processCompetition } from '../model/model-process';
+import { createMetaStats, metaAddMatch, metaToString } from '@/model/meta';
+import { Competition, getResourceName } from '@/model/model';
+import { createCompetition } from '@/model/model-helpers';
+import { processCompetition } from '@/model/model-process';
 
 const useCompetition = (season: number, category: string): UseQueryResult<Competition, Error> => {
   const resource = getResourceName(season, category);

@@ -3,10 +3,10 @@ import { useMemo, useState } from 'react';
 import { Layout, Result, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Match, Team } from '../../model/model';
-import { CSheetStat, CSStats, Sheet } from '../../model/sheet';
-import { acceptLicences, calcCSStats, filterPointSheets } from '../../model/sheet-helpers';
-import useSheets from '../../utils/useSheets';
+import { Competition, Match, Team } from '@/model/model';
+import { CSheetStat, CSStats, Sheet } from '@/model/sheet';
+import { acceptLicences, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
+import useSheets from '@/utils/useSheets';
 
 import './CompetitionSheet.scss';
 

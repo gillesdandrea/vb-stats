@@ -4,8 +4,8 @@ import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import cx from 'classnames';
 
-import Trophies from '../../components/Trophies/Trophies';
-import { Competition, Team } from '../../model/model';
+import Trophies from '@/components/Trophies/Trophies';
+import { Competition, Team } from '@/model/model';
 import {
   getBoard,
   getDayRanking,
@@ -14,7 +14,7 @@ import {
   getTeamStats,
   isTeamInCourse,
   poolId2Name,
-} from '../../model/model-helpers';
+} from '@/model/model-helpers';
 import {
   pointSorter,
   poolSorter,
@@ -23,7 +23,7 @@ import {
   ratingSorter,
   setSorter,
   Sorting,
-} from '../../model/model-sorters';
+} from '@/model/model-sorters';
 
 import './CompetitionBoard.scss';
 

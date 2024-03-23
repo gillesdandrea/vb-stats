@@ -5,11 +5,11 @@ import Search from 'antd/es/input/Search';
 import cx from 'classnames';
 import debounce from 'lodash/debounce';
 
-import Headroom from '../../components/Headroom/Headroom';
-import TeamInfo from '../../components/TeamInfo/TeamInfo';
-import { Competition, Team } from '../../model/model';
-import { filterTeam, getBoard } from '../../model/model-helpers';
-import { Sorting } from '../../model/model-sorters';
+import Headroom from '@/components/Headroom/Headroom';
+import TeamInfo from '@/components/TeamInfo/TeamInfo';
+import { Competition, Team } from '@/model/model';
+import { filterTeam, getBoard } from '@/model/model-helpers';
+import { Sorting } from '@/model/model-sorters';
 
 import './CompetitionTeams.scss';
 
