@@ -1,3 +1,4 @@
+// team.id -> Sheet
 export type TeamSheetsMap = Record<string, Sheet[]>;
 
 export interface Sheet {
