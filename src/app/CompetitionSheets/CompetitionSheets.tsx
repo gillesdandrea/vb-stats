@@ -8,7 +8,7 @@ import { CSheetStat, CSStats, Licenced } from '@/model/sheet';
 import { acceptLicences, acceptSomePoint, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
 import useSheets from '@/utils/useSheets';
 
-import './CompetitionSheet.scss';
+import './CompetitionSheets.scss';
 
 type CategoryClubSetter = Record<string, Record<string, string[]>>;
 
@@ -71,7 +71,7 @@ const summary = (csstats: CSStats): string => {
 
 const Spacer = () => <div style={{ height: 12 }} />;
 
-const CompetitionSheet = ({ competition, className }: Props) => {
+const CompetitionSheets = ({ competition, className }: Props) => {
   const { isLoading, isError, data: teamSheets } = useSheets(competition);
 
   const [team, setTeam] = useState<Team>();
@@ -148,9 +148,9 @@ const CompetitionSheet = ({ competition, className }: Props) => {
   const acceptor = acceptSomePoint(setters.map((setter) => acceptLicences([setter])));
   // const csstats = calcCSStats(setters, setters.length > 0 ? filterPointSheets(sheets, acceptor) : sheets);
 
-  // console.log('rendering CompetitionSheet');
+  // console.log('rendering CompetitionSheets');
   return (
-    <div className={cx('vb-sheet', className)}>
+    <div className={cx('vb-sheets', className)}>
       <h2>
         Stats {competition.category} {competition.season}
       </h2>
@@ -251,4 +251,4 @@ const CompetitionSheet = ({ competition, className }: Props) => {
   );
 };
 
-export default CompetitionSheet;
+export default CompetitionSheets;

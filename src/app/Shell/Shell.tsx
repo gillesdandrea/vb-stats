@@ -7,7 +7,7 @@ import { useWindowSize } from 'react-use';
 import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '@/app/CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
-import CompetitionSheet from '@/app/CompetitionSheet/CompetitionSheet';
+import CompetitionSheets from '@/app/CompetitionSheets/CompetitionSheets';
 import {
   categories,
   defaultCategory,
@@ -36,7 +36,7 @@ const tabNames: Record<string, string> = {
   // teams: 'Teams',
   board: 'Board',
   graph: 'Graph',
-  sheet: 'Sheet',
+  sheets: 'Sheets',
 };
 
 const Checked = ({ checked }: { checked?: boolean }) =>
@@ -357,9 +357,9 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {competition && tab === 'sheet' && (
-          <CompetitionSheet
-            // className={tab === 'sheet' ? '' : 'no-display'}
+        {competition && tab === 'sheets' && (
+          <CompetitionSheets
+            // className={tab === 'sheets' ? '' : 'no-display'}
             competition={competition}
             day={day}
             singleDay={singleDay}
