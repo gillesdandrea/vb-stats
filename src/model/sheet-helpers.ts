@@ -14,10 +14,26 @@ import {
   SheetTeam,
 } from './sheet';
 
+const assert = (value: boolean, message?: string): boolean => {
+  if (!value) {
+    if (message) {
+      // console.warn(message);
+    } else {
+      throw new Error('assert failed');
+    }
+  }
+  return value;
+};
+
 const getDeltaPoints = (points: number[], idx: number) =>
   idx === 0 ? Math.max(0, points[0]) : points[idx] - Math.max(0, points[idx - 1]);
 
-const getPlayers = (licenceds: Map<string, Licenced>, positions: Position[], scoreA: number, scoreB: number) => {
+const getPlayers = (
+  licenceds: Map<string, Licenced>,
+  positions: Position[],
+  scoreA: number,
+  scoreB: number,
+): Licenced[] => {
   const licences = positions.map((position) => {
     if (position.substitute) {
       const [scoreInA, scoreInB] = position.scoreIn?.split(':').map((score) => Number.parseInt(score)) || [];
@@ -375,19 +391,20 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
     : undefined;
 };
 
-const assert = (value: boolean) => {
-  if (!value) {
-    throw new Error('assert failed');
-  }
-};
-
 export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = createCSStats()): CSStats => {
   sumCSheetStats(sheets, csstats.total);
   const servesheets = filterPointSheets(sheets, acceptServe());
   sumCSheetStats(servesheets, csstats.serve);
   const receivesheets = filterPointSheets(sheets, acceptServe(false));
   sumCSheetStats(receivesheets, csstats.receive);
-  assert(csstats.total.points === csstats.serve.points + csstats.receive.points);
+  if (
+    !assert(
+      csstats.total.points === csstats.serve.points + csstats.receive.points,
+      'inconsistent points count, missing setter?',
+    )
+  ) {
+    csstats.incomplete = true;
+  }
 
   let ssum = 0;
   csstats.pserves.forEach((css, index) => {
@@ -395,7 +412,9 @@ export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = create
     sumCSheetStats(psheets, css);
     ssum += css.points;
   });
-  assert(ssum === csstats.serve.points);
+  if (!assert(ssum === csstats.serve.points, 'inconsistent points count, missing setter?')) {
+    csstats.incomplete = true;
+  }
 
   let rsum = 0;
   csstats.preceives.forEach((css, index) => {
@@ -403,7 +422,9 @@ export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = create
     sumCSheetStats(psheets, css);
     rsum += css.points;
   });
-  assert(rsum === csstats.receive.points);
+  if (!assert(rsum === csstats.receive.points, 'inconsistent points count, missing setter?')) {
+    csstats.incomplete = true;
+  }
 
   return csstats;
 };
@@ -474,76 +495,3 @@ export const createCSheetStat = (): CSheetStat => ({
   positionWons: [0, 0, 0, 0, 0, 0, 0],
   positionLosts: [0, 0, 0, 0, 0, 0, 0],
 });
-
-//
-
-/** @deprecated */
-export const addCSheetStat = (
-  stat: CSheetStat,
-  sheet: Sheet,
-  whitelic: string[] = [],
-  blacklic: string[] = [],
-  accept: (csmatch: CSheetMatch, set: CSheetSet, point: CSheetPoint) => boolean = () => true,
-): CSheetStat => {
-  const check = (licences: CSheetLicence) => checkLicence(licences, whitelic, blacklic);
-
-  const { csmatch } = sheet;
-  stat.matchs++;
-  if (check(csmatch)) {
-    stat.matchWon += csmatch.count > 0 ? +1 : 0;
-    stat.matchLost += csmatch.count < 0 ? +1 : 0;
-  }
-  csmatch.sets.forEach((set) => {
-    stat.sets++;
-    if (check(set)) {
-      stat.setWon += set.count > 0 ? +1 : 0;
-      stat.setLost += set.count < 0 ? +1 : 0;
-    }
-    set.points.forEach((point, index) => {
-      stat.points++;
-      if (point.serve) {
-        stat.serves++;
-      }
-
-      if (check(point) && accept(csmatch, set, point)) {
-        stat.pointWon += point.count > 0 ? point.count : 0;
-        stat.pointLost += point.count < 0 ? -point.count : 0;
-        if (whitelic.length === 0) {
-          // we count all serve when there is no white list
-          stat.serveWon += point.serve ? (point.count > 0 ? point.count : 0) : 0;
-          stat.serveLost += point.serve ? (point.count < 0 ? -point.count : 0) : 0;
-        } else {
-          const positions = [point.players.findIndex((player) => player.licence === whitelic[0])]; // better to use only first player
-          // const positions = whitelic.map((licence) => point.players.findIndex((player) => player.licence === licence));
-          positions.forEach((position) => {
-            const index = (position + point.rotation) % 6;
-            if (point.serve && index === 0) {
-              stat.serveWon += point.serve ? (point.count > 0 ? point.count : 0) : 0;
-              stat.serveLost += point.serve ? (point.count < 0 ? -point.count : 0) : 0;
-            }
-            if (point.count > 0) {
-              stat.positionWons[index + 1] += point.count;
-            } else {
-              stat.positionLosts[index + 1] -= point.count;
-            }
-          });
-        }
-      }
-    });
-  });
-  return stat;
-};
-
-/** @deprecated */
-export const getSheetsStats = (
-  sheets: Sheet[],
-  whitelic: string[] = [],
-  blacklic: string[] = [],
-  accept: (csmatch: CSheetMatch, set: CSheetSet, point: CSheetPoint) => boolean = () => true,
-): CSheetStat => {
-  const stat = createCSheetStat();
-  sheets.forEach((sheet) => {
-    addCSheetStat(stat, sheet, whitelic, blacklic, accept);
-  });
-  return stat;
-};

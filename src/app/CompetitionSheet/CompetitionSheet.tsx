@@ -1,14 +1,33 @@
 import { useMemo, useState } from 'react';
 
-import { Empty, Layout, Select, Space, Spin } from 'antd';
+import { Alert, Empty, Layout, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
 import { Competition, Team } from '@/model/model';
-import { CSheetStat, CSStats } from '@/model/sheet';
-import { calcCSStats } from '@/model/sheet-helpers';
+import { CSheetStat, CSStats, Licenced } from '@/model/sheet';
+import { acceptLicences, acceptSomePoint, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
 import useSheets from '@/utils/useSheets';
 
 import './CompetitionSheet.scss';
+
+type CategoryClubSetter = Record<string, Record<string, string[]>>;
+
+const knownSetters: CategoryClubSetter = {
+  M21F: {
+    // PAYS D'AIX VENELLES V.B.
+    '0138032': [
+      '2128747', // DORNIC MARTINAYA (14)
+      '2193754', // BRUGNEAUX NATALIA (11)
+    ],
+  },
+  '2FA': {
+    // PAYS D'AIX VENELLES V.B.
+    '0138032': [
+      '2128747', // DORNIC MARTINAYA (14)
+      '2193754', // BRUGNEAUX NATALIA (11)
+    ],
+  },
+};
 
 interface Props {
   competition: Competition;
@@ -29,6 +48,8 @@ const matchStats = (stat: CSheetStat) => {
 
 const pointsRatio = (stat: CSheetStat) =>
   `${stat.pointWon} / ${stat.pointLost} = ${(stat.pointWon / stat.pointLost).toFixed(3)}`;
+
+const pointsRatioServe = (stat: CSheetStat) => `${(stat.pointWon / stat.pointLost + 1).toFixed(3)} (${stat.pointLost})`;
 
 const pointsRatioS = (stat: CSheetStat) => `${(stat.pointWon / stat.pointLost).toFixed(3)} (${stat.pointLost})`;
 
@@ -51,14 +72,12 @@ const summary = (csstats: CSStats): string => {
 const Spacer = () => <div style={{ height: 12 }} />;
 
 const CompetitionSheet = ({ competition, className }: Props) => {
-  const [team, setTeam] = useState<Team>();
-  // const [match, setMatch] = useState<Match>();
-
   const { isLoading, isError, data: teamSheets } = useSheets(competition);
-  console.log(teamSheets);
 
-  const filterOption = (input: string, option?: { label: string; value: string }) =>
-    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+  const [team, setTeam] = useState<Team>();
+  const [teamSetters, setTeamSetters] = useState<CategoryClubSetter>(knownSetters);
+  const setters = (competition && team && teamSetters[competition.category][team.id]) ?? [];
+  const sheets = useMemo(() => (teamSheets && team ? teamSheets[team.id] : []), [team, teamSheets]);
 
   const teams = useMemo(
     () =>
@@ -70,24 +89,40 @@ const CompetitionSheet = ({ competition, className }: Props) => {
         })),
     [competition, teamSheets],
   );
-  const handleTeamChange = (value: string) => {
-    setTeam(competition.teams.get(value));
+  const [players, licenceds] = useMemo(() => {
+    if (team && sheets.length > 0) {
+      const licenceds = new Map<string, Licenced>();
+      sheets.forEach((sheet) => sheet.steam.players.forEach((licenced) => licenceds.set(licenced.licence, licenced)));
+      const players = Array.from(licenceds.values()).sort((a: Licenced, b: Licenced) => a.name.localeCompare(b.name));
+      return [
+        players.map((licenced) => ({
+          value: licenced.licence,
+          label: `${licenced.licence} - ${licenced.name} (${licenced.number})`,
+        })),
+        players,
+      ];
+    }
+    return [];
+  }, [team, sheets]);
+
+  const handleTeamChange = (teamId: string) => {
+    setTeam(competition.teams.get(teamId));
   };
 
-  // const matchs = useMemo(
-  //   () =>
-  //     team
-  //       ? team.gstats[competition.dayCount].matchs.map((match: Match) => ({
-  //           value: match.id,
-  //           label: `J${match.day} - ${match.teamA === team ? match.teamB.name : match.teamA.name} (${match.id})`,
-  //         }))
-  //       : [],
-  //   [competition, team],
-  // );
-  // const handleMatchChange = (value: string) => {
-  //   const match = team ? team.gstats[competition.dayCount].matchs.find((match) => match.id === value) : undefined;
-  //   setMatch(match);
-  // };
+  const handleSettersChange = (setters: string[]) => {
+    competition &&
+      team &&
+      setTeamSetters((teamSetters) => ({
+        ...teamSetters,
+        [competition.category]: {
+          ...teamSetters[competition.category],
+          [team.id]: setters,
+        },
+      }));
+  };
+
+  const filterOption = (input: string, option?: { label: string; value: string }) =>
+    (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
   if (isLoading) {
     return (
@@ -109,20 +144,9 @@ const CompetitionSheet = ({ competition, className }: Props) => {
     );
   }
 
-  ///
-
-  const Nathan = '2091829';
-  const AxelGD = '2052969'; // 01 setter AS Cannes
-  const MatteoC = '2153177';
-  const Arman = '16';
-
-  const DornicM = '2128747'; // 14 setter PAYS D'AIX VENELLES V.B. 2
-  const NataliaB = '2193754'; // 11 setter PAYS D'AIX VENELLES V.B. 2
-
-  const setters = [AxelGD, MatteoC, Nathan, Arman, DornicM, NataliaB];
-
-  const sheets = teamSheets && team ? teamSheets[team.id] : [];
   const csstats = calcCSStats(setters, sheets);
+  const acceptor = acceptSomePoint(setters.map((setter) => acceptLicences([setter])));
+  // const csstats = calcCSStats(setters, setters.length > 0 ? filterPointSheets(sheets, acceptor) : sheets);
 
   // console.log('rendering CompetitionSheet');
   return (
@@ -131,7 +155,7 @@ const CompetitionSheet = ({ competition, className }: Props) => {
         Stats {competition.category} {competition.season}
       </h2>
       <Spacer />
-      <div>Select Team, Match, Setters</div>
+      <div>Select Team, then Setters</div>
       <Spacer />
       <Space wrap>
         <Select
@@ -140,20 +164,35 @@ const CompetitionSheet = ({ competition, className }: Props) => {
           placeholder="Select a team..."
           filterOption={filterOption}
           onChange={handleTeamChange}
+          value={team?.id}
           options={teams}
         />
-        {/* <Select
+        <Select
           disabled={!team}
+          mode="multiple"
           style={{ width: '22rem' }}
           showSearch
-          placeholder="Select a match..."
+          placeholder="Select setters"
           filterOption={filterOption}
-          onChange={handleMatchChange}
-          options={matchs}
-        /> */}
+          onChange={handleSettersChange}
+          value={setters}
+          options={players}
+        />
       </Space>
-      <Spacer />
+      {csstats.incomplete && (
+        <>
+          <Spacer />
+          <Alert
+            style={{ maxWidth: '22rem' }}
+            message="Points manquants"
+            description="Sélectionnez d'autres passeurs pour visualiser tous les points joués."
+            type="warning"
+            showIcon
+          />
+        </>
+      )}
 
+      <Spacer />
       <div>
         Pour chaque position, au service (SRV), le nombre moyen de points gagnés avant de perdre le service, càd un
         point perdu.
@@ -171,18 +210,42 @@ const CompetitionSheet = ({ competition, className }: Props) => {
       <Spacer />
       <Spacer />
       <pre>
-        <div>Global:</div>
-        <div>{summary(csstats)}</div>
+        <div>{`Global: ${pointsRatio(csstats.total).padStart(PAD, ' ')} - ${matchStats(csstats.total)}\n\n`}</div>
+        <div>{summary(calcCSStats(setters, setters.length > 0 ? filterPointSheets(sheets, acceptor) : sheets))}</div>
         <Spacer />
         {sheets.map((sheet) => (
           <div key={sheet.id}>
             <div>
               Match {sheet.id}: {sheet.smatch.teamA.name} vs. {sheet.smatch.teamB.name}
             </div>
-            <div>{summary(calcCSStats(setters, [sheet]))}</div>
+            <div>
+              {summary(calcCSStats(setters, setters.length > 0 ? filterPointSheets([sheet], acceptor) : [sheet]))}
+            </div>
             <Spacer />
           </div>
         ))}
+        <Spacer />
+        <Spacer />
+        {licenceds?.map((licenced: Licenced) => {
+          const licCSStats = calcCSStats(
+            [licenced.licence],
+            filterPointSheets(sheets, acceptLicences([licenced.licence])),
+          );
+          return (
+            <div key={licenced.licence}>
+              <div>{`${licenced.name} (${licenced.number})`}:</div>
+              <div>Séries services: {pointsRatioServe(licCSStats.pserves[0])}</div>
+              <div>PLC: {summary(licCSStats)}</div>
+              <div>
+                WTH: {summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([licenced.licence]))))}
+              </div>
+              <div>
+                W/O: {summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([], [licenced.licence]))))}
+              </div>
+              <Spacer />
+            </div>
+          );
+        })}
       </pre>
     </div>
   );

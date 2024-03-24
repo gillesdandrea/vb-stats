@@ -71,6 +71,7 @@ export interface CSStats {
   receive: CSheetStat;
   pserves: CSheetStat[];
   preceives: CSheetStat[];
+  incomplete?: boolean;
 }
 
 //
