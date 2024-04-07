@@ -19,6 +19,10 @@ const knownSetters: CategoryClubSetters = {
       '2128747', // DORNIC MARTINAYA (14)
       '2193754', // BRUGNEAUX NATALIA (11)
     ],
+    // VANDOEUVRE-NANCY VOLLEY-BALL
+    '0543620': [
+      '2139417', // DOUAY LOUISE (13)
+    ],
   },
   '2FA': {
     // PAYS D'AIX VENELLES V.B.
@@ -76,7 +80,7 @@ const CompetitionSheets = ({ competition, className }: Props) => {
 
   const [team, setTeam] = useState<Team>();
   const [teamSetters, setTeamSetters] = useState<CategoryClubSetters>(knownSetters);
-  const setters = (competition && team && teamSetters[competition.category][team.id]) ?? [];
+  const setters = (competition && team && teamSetters[competition.category]?.[team.id]) ?? [];
   const sheets = useMemo(() => (team && teamSheets ? teamSheets[team.id] : []), [team, teamSheets]);
 
   const teamOptions = useMemo(
@@ -147,6 +151,10 @@ const CompetitionSheets = ({ competition, className }: Props) => {
   const acceptor = acceptSomePoint(setters.map((setter) => acceptLicences([setter])));
   const sheetsWithSetters = (sheets: Sheet[]) => (setters.length > 0 ? filterPointSheets(sheets, acceptor) : sheets);
   const csstats = calcCSStats(setters, sheets);
+  const licPlayers: Record<string, Licenced> = {};
+  players?.forEach((player) => {
+    licPlayers[player.licence] = player;
+  });
 
   // console.log('rendering CompetitionSheets');
   return (
@@ -240,6 +248,23 @@ const CompetitionSheets = ({ competition, className }: Props) => {
               <div>
                 W/O: {summary(calcCSStats(setters, filterPointSheets(sheets, acceptLicences([], [licenced.licence]))))}
               </div>
+              <Spacer />
+              <div>
+                {csstats.peers[licenced.licence] &&
+                  Object.entries(csstats.peers[licenced.licence]).map(([key, value]) => {
+                    const player = licPlayers[key];
+                    const win = value?.[0] ?? 0;
+                    const loss = value?.[1] ?? 0;
+                    return (
+                      <div key={`${licenced.licence}:${key}}`}>
+                        {win} / {loss} ({(win / loss).toFixed(3)}) -{' '}
+                        {((100 * (win + loss)) / licCSStats.total.points).toFixed(1)}% - {player.name} ({player.number}){' '}
+                        {key === licenced.licence && '*'}
+                      </div>
+                    );
+                  })}
+              </div>
+              <Spacer />
               <Spacer />
             </div>
           );

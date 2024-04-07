@@ -61,8 +61,8 @@ export interface CSheetStat {
   serves: number;
   serveWon: number;
   serveLost: number;
-  positionWons: number[]; // count for each position, 0 is for libero
-  positionLosts: number[];
+  // positionWons: number[]; // count for each position, 0 is for libero
+  // positionLosts: number[];
 }
 
 export interface CSStats {
@@ -71,6 +71,7 @@ export interface CSStats {
   receive: CSheetStat;
   pserves: CSheetStat[];
   preceives: CSheetStat[];
+  peers: CPeerStat;
   incomplete?: boolean;
 }
 
@@ -128,3 +129,15 @@ export interface Position {
   scoreIn?: string;
   scoreOut?: string;
 }
+
+//
+
+export type CPeerStat = Record<string, Record<string, [number, number]>>;
+
+export const incPeerStat = (peerStat: CPeerStat, licA: string, licB: string, inc: number): PeerStats => {
+  if (!peerStat[licA]) peerStat[licA] = {};
+  if (!peerStat[licA][licB]) peerStat[licA][licB] = [0, 0];
+  if (inc > 0) peerStat[licA][licB][0] += inc;
+  if (inc < 0) peerStat[licA][licB][1] -= inc;
+  return peerStat;
+};

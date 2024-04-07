@@ -272,6 +272,7 @@ const parseSheetMatch = (texts: Token[]): SheetMatch => {
 };
 
 const parsePDF = async (season: number, matchId: string): Promise<SheetMatch> => {
+  // const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=ABCCS&codmatch=${matchId}`;
   const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=ACJEUNES&codmatch=${matchId}`;
   console.log(`- Parsing ${resource}`);
   const request = await axios.get(resource, {
@@ -340,13 +341,14 @@ const { data: csv } = await Papa.parse(mfile, {
 
 const sheetMatchs: Record<string, SheetMatch> = {};
 for (const { Match: matchId } of csv.filter(
-  (line: any) =>
-    (line.Match === pattern ||
+  (line: any): boolean =>
+    !!cachedMatchs[line.Match] ||
+    ((line.Match === pattern ||
       line.EQA_no.includes(pattern) ||
       line.EQB_no.includes(pattern) ||
       line.EQA_nom.includes(pattern) ||
       line.EQB_nom.includes(pattern)) &&
-    line.Set,
+      line.Set),
 ) as any[]) {
   try {
     const cached = cachedMatchs[matchId];

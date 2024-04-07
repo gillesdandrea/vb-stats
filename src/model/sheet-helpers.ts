@@ -1,11 +1,13 @@
 import { Match, Team } from './model';
 import {
+  CPeerStat,
   CSheetLicence,
   CSheetMatch,
   CSheetPoint,
   CSheetSet,
   CSheetStat,
   CSStats,
+  incPeerStat,
   Licenced,
   Position,
   Roles,
@@ -14,7 +16,7 @@ import {
   SheetTeam,
 } from './sheet';
 
-const assert = (value: boolean, message?: string): boolean => {
+export const assert = (value: boolean, message?: string): boolean => {
   if (!value) {
     if (message) {
       // console.warn(message);
@@ -392,6 +394,7 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
 };
 
 export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = createCSStats()): CSStats => {
+  sumCPeerStats(sheets, csstats.peers);
   sumCSheetStats(sheets, csstats.total);
   const servesheets = filterPointSheets(sheets, acceptServe());
   sumCSheetStats(servesheets, csstats.serve);
@@ -449,6 +452,7 @@ export const createCSStats = (): CSStats => ({
     createCSheetStat(),
     createCSheetStat(),
   ],
+  peers: {},
 });
 
 export const sumCSheetStats = (sheets: Sheet[], stat: CSheetStat = createCSheetStat()): CSheetStat => {
@@ -492,6 +496,25 @@ export const createCSheetStat = (): CSheetStat => ({
   serves: 0,
   serveWon: 0,
   serveLost: 0,
-  positionWons: [0, 0, 0, 0, 0, 0, 0],
-  positionLosts: [0, 0, 0, 0, 0, 0, 0],
+  // positionWons: [0, 0, 0, 0, 0, 0, 0],
+  // positionLosts: [0, 0, 0, 0, 0, 0, 0],
 });
+
+export const sumCPeerStats = (sheets: Sheet[], stat: CPeerStat = {}): CPeerStat => {
+  sheets.forEach((sheet) => sumCPeerStat(sheet, stat));
+  return stat;
+};
+
+export const sumCPeerStat = (sheet: Sheet, peerStats: CPeerStat): CPeerStat => {
+  const { csmatch } = sheet;
+  csmatch.sets.forEach((set) => {
+    set.points.forEach((point) => {
+      point.players.forEach((playerA) =>
+        point.players.forEach((playerB) => {
+          incPeerStat(peerStats, playerA.licence, playerB.licence, point.count);
+        }),
+      );
+    });
+  });
+  return peerStats;
+};
