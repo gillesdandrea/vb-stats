@@ -134,7 +134,7 @@ export interface Position {
 
 export type CPeerStat = Record<string, Record<string, [number, number]>>;
 
-export const incPeerStat = (peerStat: CPeerStat, licA: string, licB: string, inc: number): PeerStats => {
+export const incPeerStat = (peerStat: CPeerStat, licA: string, licB: string, inc: number): CPeerStat => {
   if (!peerStat[licA]) peerStat[licA] = {};
   if (!peerStat[licA][licB]) peerStat[licA][licB] = [0, 0];
   if (inc > 0) peerStat[licA][licB][0] += inc;
