@@ -1,5 +1,5 @@
 #!/usr/bin/env -S node --no-warnings --loader ts-node/esm
-
+import { PromisePool } from '@supercharge/promise-pool';
 import { writeFileSync } from 'fs';
 import path from 'path';
 
@@ -67,7 +67,6 @@ const getFFVBResults = async (
 
     const data: string = await response.text();
     if (response.ok) {
-      console.log(filepath);
       const [header, ...lines] = data.split('\n');
       lines.sort();
       writeFileSync(filepath, [header, ...lines].filter((line) => line).join('\n') + '\n', 'utf8');
@@ -85,19 +84,18 @@ const getFFVBResults = async (
 (async () => {
   // const years = [2022, 2023, 2024];
   const years = [2024];
-  for (const season of years) {
-    for (const competition of Object.keys(competitions)) {
-      for (const category of Object.keys(divisions)) {
-        await getFFVBResults(season, competition as Competition, category as Category);
-      }
-    }
-  }
 
-  // years.forEach((season) => {
-  //   Object.keys(competitions).forEach((competition) => {
-  //     Object.keys(divisions).forEach(async (category) => {
-  //       await getFFVBResults(season, competition as Competition, category as Category);
-  //     });
-  //   });
-  // });
+  const results = years.flatMap((season) => {
+    return Object.keys(competitions).flatMap((competition) => {
+      return Object.keys(divisions).map((category) => {
+        return { season, competition, category };
+      });
+    });
+  });
+
+  await PromisePool.withConcurrency(4)
+    .for(results)
+    .process(async ({ season, competition, category }) => {
+      await getFFVBResults(season, competition as Competition, category as Category);
+    });
 })();

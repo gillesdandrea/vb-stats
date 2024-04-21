@@ -52,6 +52,9 @@ devDependencies:
   '@nabla/vite-plugin-eslint':
     specifier: ^2.0.2
     version: 2.0.2(eslint@8.57.0)(vite@5.1.6)
+  '@supercharge/promise-pool':
+    specifier: ^3.2.0
+    version: 3.2.0
   '@tanstack/eslint-plugin-query':
     specifier: ^5.27.7
     version: 5.27.7(eslint@8.57.0)(typescript@5.4.2)
@@ -139,6 +142,9 @@ devDependencies:
   stylelint-config-standard-scss:
     specifier: ^13.0.0
     version: 13.0.0(postcss@8.4.35)(stylelint@16.2.1)
+  stylelint-prettier:
+    specifier: ^5.0.0
+    version: 5.0.0(prettier@3.2.5)(stylelint@16.2.1)
   tsx:
     specifier: ^4.7.1
     version: 4.7.1
@@ -2084,6 +2090,11 @@ packages:
 
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
+    dev: true
+
+  /@supercharge/promise-pool@3.2.0:
+    resolution: {integrity: sha512-pj0cAALblTZBPtMltWOlZTQSLT07jIaFNeM8TWoJD1cQMgDB9mcMlVMoetiB35OzNJpqQ2b+QEtwiR9f20mADg==}
+    engines: {node: '>=8'}
     dev: true
 
   /@surma/rollup-plugin-off-main-thread@2.2.3:
@@ -6687,6 +6698,18 @@ packages:
     dependencies:
       postcss: 8.4.35
       postcss-sorting: 8.0.2(postcss@8.4.35)
+      stylelint: 16.2.1(typescript@5.4.2)
+    dev: true
+
+  /stylelint-prettier@5.0.0(prettier@3.2.5)(stylelint@16.2.1):
+    resolution: {integrity: sha512-RHfSlRJIsaVg5Br94gZVdWlz/rBTyQzZflNE6dXvSxt/GthWMY3gEHsWZEBaVGg7GM+XrtVSp4RznFlB7i0oyw==}
+    engines: {node: '>=18.12.0'}
+    peerDependencies:
+      prettier: '>=3.0.0'
+      stylelint: '>=16.0.0'
+    dependencies:
+      prettier: 3.2.5
+      prettier-linter-helpers: 1.0.0
       stylelint: 16.2.1(typescript@5.4.2)
     dev: true
 
