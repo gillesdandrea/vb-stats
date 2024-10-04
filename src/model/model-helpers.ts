@@ -210,7 +210,7 @@ export const getMatchPool = (competition: Competition, match: Match): Pool | und
 };
 
 export const getDayRanking = (competition: Competition, team: Team, day: number) => {
-  return day > competition.lastDay ? 0 : team.ranking.pools[day] ?? 0;
+  return day > competition.lastDay ? 0 : (team.ranking.pools[day] ?? 0);
 };
 
 export const getFirstCountInPreviousDay = (competition: Competition, team: Team, day: number): number => {
@@ -261,7 +261,7 @@ export const getBoard = (
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
 ): Team[] => {
-  const board = qualified ? competition.days[day]?.teams ?? [] : Array.from(competition.teams.values());
+  const board = qualified ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {

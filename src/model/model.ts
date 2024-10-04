@@ -7,7 +7,7 @@ export const SET_RANKING = true;
 
 // export const seasons = [2024];
 // export const categories = ['M15M'];
-export const seasons = [2024, 2023, 2022];
+export const seasons = [2025, 2024, 2023, 2022];
 export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F'];
 export const getResourceName = (season: number, category: string) => `FFVB-${season}-CDF-${category}.CSV`;
 

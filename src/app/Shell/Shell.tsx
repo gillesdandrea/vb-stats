@@ -141,7 +141,7 @@ const Shell = () => {
     }
   }
 
-  if (competition && (day < 1 || day > lastDay)) {
+  if (competition && day !== lastDay && (day < 1 || day > lastDay)) {
     setDay(lastDay);
     return <div />;
   }

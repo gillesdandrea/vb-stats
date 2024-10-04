@@ -155,7 +155,7 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
 };
 
 export const processCompetition = (competition: Competition, datas: any[][]) => {
-  const isCDF = datas.length > 0 && datas[0][0]['Entit�'] === 'ACJEUNES';
+  const isCDF = datas.length > 0 && datas[0][0]['Entité'] === 'ACJEUNES';
 
   // reorder matchs based on results of the first matchs
   if (isCDF) {
