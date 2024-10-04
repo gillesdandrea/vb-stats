@@ -282,7 +282,7 @@ const parsePDF = async (season: number, matchId: string): Promise<SheetMatch> =>
 
   return new Promise<SheetMatch>((resolve, reject) => {
     const pdfParser = new PDFParser();
-    pdfParser.on('pdfParser_dataError', (errData: string) => {
+    pdfParser.on('pdfParser_dataError', (errData) => {
       console.error(errData);
       reject(errData);
     });

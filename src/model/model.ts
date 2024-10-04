@@ -11,8 +11,8 @@ export const seasons = [2025, 2024, 2023, 2022];
 export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F'];
 export const getResourceName = (season: number, category: string) => `FFVB-${season}-CDF-${category}.CSV`;
 
-export const defaultSeason = 2024;
-export const defaultCategory = 'M15M';
+export const defaultSeason = 2025;
+export const defaultCategory = 'M18M';
 export const seasonToString = (season: number) => `${season - 1}/${season}`;
 export const seasonToNumber = (season: string) => Number.parseInt(season.substring(5));
 
