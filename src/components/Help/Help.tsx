@@ -103,7 +103,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             Toutes les données utilisées viennent du site de la{' '}
             <a href="http://www.ffvb.org/index.php?lvlid=124&dsgtypid=38&artid=1095&pos=2">FFVB</a>. N&apos;hésitez pas
             à m&apos;envoyer un message sur insta <a href="https://www.instagram.com/gillesdandrea">@gillesdandrea</a>{' '}
-            ou sur le compte ami <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
+            ou sur le compte ami <a href="https://www.instagram.com/cdf_volley__masculin">@cdf_volley__masculin</a>
           </p>
           <p>
             Enfin, les statistiques ci-dessous vous disent combien de fois TrueSkill™ a raison (

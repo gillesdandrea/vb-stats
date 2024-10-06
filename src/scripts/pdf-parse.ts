@@ -1,12 +1,16 @@
 import fs from 'node:fs/promises';
+import https from 'node:https';
 import path from 'node:path';
 
 import axios from 'axios';
 import Papa from 'papaparse';
 import PDFParser from 'pdf2json';
 
-import { seasonToString } from '@/model/model';
+import { Entity, seasonToString } from '@/model/model';
 import { Licenced, Referee, SheetMatch, SheetSet, SheetTeam } from '@/model/sheet';
+
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+const iaxios = axios.create({ httpsAgent });
 
 // TODO
 // [ ] référence match, jour, date
@@ -271,11 +275,12 @@ const parseSheetMatch = (texts: Token[]): SheetMatch => {
   };
 };
 
-const parsePDF = async (season: number, matchId: string): Promise<SheetMatch> => {
+const parsePDF = async (season: number, entity: Entity, matchId: string): Promise<SheetMatch> => {
+  // entity = ABCCS, ACJEUNES, LICA, ...
   // const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=ABCCS&codmatch=${matchId}`;
-  const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=ACJEUNES&codmatch=${matchId}`;
+  const resource = `https://www.ffvbbeach.org/ffvbapp/resu/ffvolley_fdme.php?saison=${seasonToString(season)}&codent=${entity}&codmatch=${matchId}`;
   console.log(`- Parsing ${resource}`);
-  const request = await axios.get(resource, {
+  const request = await iaxios.get(resource, {
     responseType: 'arraybuffer',
   });
   const buffer = request.data;
@@ -311,18 +316,19 @@ const parsePDF = async (season: number, matchId: string): Promise<SheetMatch> =>
 
 //
 
-if (process.argv.length <= 4) {
-  console.log('pdf-parse <season> <category> <pattern>');
-  console.log('  i.e. pdf-parse 2024 M21F 0138032');
-  console.log('  i.e. pdf-parse 2024 M21F VENELLES');
+if (process.argv.length <= 5) {
+  console.log('pdf-parse <season> <entity> <category> <pattern>');
+  console.log('  i.e. pdf-parse 2024 ACJEUNES M21F 0138032');
+  console.log('  i.e. pdf-parse 2025 LICA PMA CANNES');
   process.exit(0);
 }
 
 const season = Number.parseInt(process.argv[2]);
-const category = process.argv[3].toUpperCase();
-const pattern = process.argv[4].toUpperCase();
+const entity = process.argv[3].toUpperCase() as Entity;
+const division = process.argv[4].toUpperCase();
+const pattern = process.argv[5].toUpperCase();
 
-const spath = `./public/sheets/FFVB-${season}-CDF-${category}.JSON`;
+const spath = `./public/sheets/FFVB-${season}-${entity}-${division}.JSON`;
 const sexists = await fs
   .access(spath, fs.constants.F_OK)
   .then(() => true)
@@ -331,7 +337,8 @@ const sfile = sexists ? await fs.readFile(spath, { encoding: 'utf8' }) : '{}';
 
 const cachedMatchs: Record<string, SheetMatch> = JSON.parse(sfile);
 
-const mpath = `./public/data/FFVB-${season}-CDF-${category}.CSV`;
+const codent = entity === 'ACJEUNES' ? 'CDF' : entity;
+const mpath = `./public/data/FFVB-${season}-${codent}-${division}.CSV`;
 const mfile = await fs.readFile(mpath, { encoding: 'utf8' });
 const { data: csv } = await Papa.parse(mfile, {
   header: true,
@@ -352,9 +359,9 @@ for (const { Match: matchId } of csv.filter(
 ) as any[]) {
   try {
     const cached = cachedMatchs[matchId];
-    const match = cached ? cached : await parsePDF(season, matchId);
+    const match = cached ? cached : await parsePDF(season, entity, matchId);
     sheetMatchs[matchId] = match;
-    console.log(`${cached ? '-' : '+'} ${matchId}: ${match.teamA.name} v ${match.teamB.name}`);
+    console.log(`${cached ? '-' : '+'} ${entity} ${matchId}: ${match.teamA.name} v ${match.teamB.name}`);
     // console.log(JSON.stringify(match, null, 2));
   } catch (e) {
     console.warn(`!!! ${matchId}`, e);

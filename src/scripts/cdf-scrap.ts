@@ -1,120 +1,11 @@
 #!/usr/bin/env -S node --no-warnings --loader ts-node/esm
 
-import { writeFileSync } from 'node:fs';
-import https from 'node:https';
-import path from 'node:path';
-
 import { PromisePool } from '@supercharge/promise-pool';
-import axios from 'axios';
-import qs from 'query-string';
 
-const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-const iaxios = axios.create({ httpsAgent });
+import { Division, Entity, fetchFFVBResults } from './vb-utils';
 
-type Competition = 'CDF';
-type Category = 'M13M' | 'M15M' | 'M18M' | 'M21M' | 'M13F' | 'M15F' | 'M18F' | 'M21F';
-
-const competitions: Record<string, string> = {
-  CDF: 'ACJEUNES',
-};
-
-const divisions: Record<string, string> = {
-  M13M: 'BMX', // benjamins
-  M15M: 'MMX', // minimes
-  M18M: 'CMX', // cadets
-  M21M: 'JMX', // juniors
-  M13F: 'BFX', // benjamins
-  M15F: 'MFX', // minimes
-  M18F: 'CFX', // cadets
-  M21F: 'JFX', // juniors
-};
-
-const fetchCalendar = async ({
-  season,
-  entity,
-  pool,
-  division,
-  tour,
-}: {
-  season: number;
-  entity: string;
-  pool?: string;
-  division?: string;
-  tour?: number;
-}) => {
-  try {
-    const response = await iaxios.request({
-      method: 'POST',
-      url: 'https://www.ffvbbeach.org/ffvbapp/resu/vbspo_calendrier_export.php',
-      headers: {
-        accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'accept-language': 'en-US,en;q=0.9,fr-FR;q=0.8,fr;q=0.7,und;q=0.6',
-        'cache-control': 'max-age=0',
-        'content-type': 'application/x-www-form-urlencoded',
-        // 'sec-ch-ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
-        // 'sec-ch-ua-mobile': '?0',
-        // 'sec-ch-ua-platform': '"macOS"',
-        // 'sec-fetch-dest': 'document',
-        // 'sec-fetch-mode': 'navigate',
-        // 'sec-fetch-site': 'same-origin',
-        // 'sec-fetch-user': '?1',
-        // 'upgrade-insecure-requests': '1',
-        // cookie:
-        //   '_ga=GA1.1.945702207.1671449106; __utmc=7271653; PHPSESSID=hpkd3fhmdlhhlv25li28cnpav7; cto_bundle=Ix4TKF9qSSUyRkhpOXJsNFh3dSUyRnlNMHY3THZ2ZVJ2QnJFbGQ1bGw2cXpDMEN1STBBR3h1bXR4RGFIT0h6azBhQVBDOUd6b3NHdXpPaEpuY2lCcnFqJTJCd2NNTmtQVk50TmY2V3JFUmRneHpERjl5SFdFWGE5WmRCalAzR2pHWDllWERwcWZIRHZpa0pQWlZIbjlJY2JpNHNYZVg3NmhvMGVNeUtXRmh4dGt0ejBOOVJzVEklM0Q; __utmz=7271653.1721225974.154.39.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utma=7271653.945702207.1671449106.1721556300.1721568117.171; __utmt=1; __utmb=7271653.4.10.1721568117; _ga_G41692G2SG=GS1.1.1721568117.209.1.1721568199.51.0.0',
-        // Referer: 'https://www.ffvbbeach.org/ffvbapp/resu/vbspo_calendrier.php?saison=2023/2024&codent=ABCCS&division=INT',
-        // 'Referrer-Policy': 'strict-origin-when-cross-origin',
-      },
-      data: qs.stringify({
-        cal_saison: `${season - 1}/${season}`,
-        cal_codent: entity,
-        cal_codpoule: pool,
-        cal_coddiv: division,
-        cal_codtour: tour ? String(tour).padStart(2, '0') : undefined,
-        typ_edition: 'E',
-        type: 'RES',
-        rech_equipe: undefined,
-        x: 25,
-        y: 19,
-      }),
-      responseType: 'arraybuffer',
-      responseEncoding: 'binary',
-    });
-    const decoder = new TextDecoder('ISO-8859-1');
-    const text = decoder.decode(response.data);
-    return text;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-// https://www.ffvbbeach.org/ffvbapp/resu/jeunes/2023-2024/
-const getFFVBResults = async (
-  season: number,
-  competition: Competition,
-  category: Category,
-  day?: number,
-): Promise<string[]> => {
-  const codent = competitions[competition];
-  const division = divisions[category];
-  const tour = day ? day.toString().padStart(2, '0') : '';
-  const filepath = path.join(
-    process.cwd(),
-    `public/data/FFVB-${season}-${competition}-${category}${day ? `-J${tour}` : ''}.CSV`,
-  );
-  console.log('Fetching', `${season - 1}-${season} ${competition} ${category} ${day ? `J${tour}` : ''}...`);
-  try {
-    const data = await fetchCalendar({ season, entity: codent, division });
-    const [header, ...lines] = data.split('\n');
-    lines.sort();
-    writeFileSync(filepath, [header, ...lines].filter((line) => line).join('\n') + '\n', 'utf8');
-    console.log('Written', filepath);
-    return lines;
-  } catch (error) {
-    console.error(error);
-  }
-  return [];
+const competitions = {
+  CDF: ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F'],
 };
 
 (async () => {
@@ -122,16 +13,16 @@ const getFFVBResults = async (
   const years = [2025];
 
   const results = years.flatMap((season) => {
-    return Object.keys(competitions).flatMap((competition) => {
+    return Object.entries(competitions).flatMap(([entity, divisions]) => {
       return Object.keys(divisions).map((category) => {
-        return { season, competition, category };
+        return { season, entity, category };
       });
     });
   });
 
   await PromisePool.withConcurrency(4)
     .for(results)
-    .process(async ({ season, competition, category }) => {
-      await getFFVBResults(season, competition as Competition, category as Category);
+    .process(async ({ season, entity, category }) => {
+      await fetchFFVBResults({ season, entity: entity as Entity, division: category as Division });
     });
 })();

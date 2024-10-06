@@ -7,6 +7,7 @@ import { useWindowSize } from 'react-use';
 import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '@/app/CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
+import CompetitionSheets from '@/app/CompetitionSheets/CompetitionSheets';
 import {
   categories,
   defaultCategory,
@@ -23,7 +24,6 @@ import useCompetition from '@/utils/useCompetition';
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
-import CompetitionSheets from '../CompetitionSheets/CompetitionSheets';
 
 // const CompetitionBoard = lazy(() => import('@/app/CompetitionBoard/CompetitionBoard'));
 // const CompetitionGraph = lazy(() => import('@/app/CompetitionGraph/CompetitionGraph'));
@@ -80,7 +80,7 @@ const Shell = () => {
 
   const pday: number = Number.parseInt(params.day);
   const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
-  const [entity, setEntity] = useState<Entity>(params.entity as Entity ?? defaultEntity);
+  const [entity, setEntity] = useState<Entity>((params.entity as Entity) ?? defaultEntity);
   const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
