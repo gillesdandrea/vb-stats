@@ -14,15 +14,15 @@ const competitions = {
 
   const results = years.flatMap((season) => {
     return Object.entries(competitions).flatMap(([entity, divisions]) => {
-      return Object.keys(divisions).map((category) => {
-        return { season, entity, category };
+      return divisions.map((division) => {
+        return { season, entity, division };
       });
     });
   });
 
   await PromisePool.withConcurrency(4)
     .for(results)
-    .process(async ({ season, entity, category }) => {
-      await fetchFFVBResults({ season, entity: entity as Entity, division: category as Division });
+    .process(async ({ season, entity, division }) => {
+      await fetchFFVBResults({ season, entity: entity as Entity, division: division as Division });
     });
 })();
