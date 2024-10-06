@@ -28,6 +28,8 @@ export interface CSheetMatch extends CSheetLicence {
   isA: boolean;
   count: number;
   sets: CSheetSet[];
+  setA: number;
+  setB: number;
 }
 
 export interface CSheetSet extends CSheetLicence {
@@ -37,6 +39,8 @@ export interface CSheetSet extends CSheetLicence {
   serve: boolean; // initial service
   rotations: number;
   points: CSheetPoint[];
+  scoreA: number;
+  scoreB: number;
 }
 
 export interface CSheetPoint extends CSheetLicence {

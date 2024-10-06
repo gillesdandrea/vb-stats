@@ -103,6 +103,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
     isA,
     count: !match.winner ? 0 : match.winner === team ? +1 : -1,
     sets: [],
+    setA: match.setA,
+    setB: match.setB,
     licences: new Set(),
   };
   if (!isA && smatch.teamB.name !== team.name) {
@@ -114,7 +116,7 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
 
   let setA = 0;
   let setB = 0;
-  smatch.sets.forEach((sset, index) => {
+  smatch.sets.forEach((sset, setidx) => {
     // console.log(index, sset);
     const pointA = sset.pointsA[sset.pointsA.length - 1];
     const pointB = sset.pointsB[sset.pointsB.length - 1];
@@ -132,6 +134,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
       serve: iserve,
       rotations: 0,
       points: [],
+      scoreA: match.score[setidx].scoreA,
+      scoreB: match.score[setidx].scoreB,
       licences: new Set(),
     };
     setA += pointA > pointB ? 1 : 0;
@@ -215,7 +219,7 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
     id: smatch.match,
     isA: team === match.teamA,
     steam,
-    smatch: smatch,
+    smatch,
     csmatch,
   };
   return sheet;
@@ -270,6 +274,8 @@ export const filterMatchSetSheet = (sheet: Sheet, accept: MatchSetAcceptor): She
       isA,
       count: csmatch.count,
       sets,
+      setA: csmatch.setA,
+      setB: csmatch.setB,
       licences: csmatch.licences,
     };
     return {
@@ -364,12 +370,14 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
     isA,
     count: csmatch.count,
     sets: [],
+    setA: csmatch.setA,
+    setB: csmatch.setB,
     licences: csmatch.licences,
   };
   csmatch.sets.forEach((set: CSheetSet) => {
     const points = set.points.filter((point) => accept(sheet, csmatch, set, point));
     if (points.length > 0) {
-      const { setA, setB, count, serve, rotations, licences } = set;
+      const { setA, setB, count, serve, rotations, scoreA, scoreB, licences } = set;
       const fset: CSheetSet = {
         setA,
         setB,
@@ -377,6 +385,8 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
         serve,
         rotations,
         points,
+        scoreA,
+        scoreB,
         licences,
       };
       fcsm.sets.push(fset);
