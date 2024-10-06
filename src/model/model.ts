@@ -8,17 +8,21 @@ export const SET_RANKING = true;
 // export const seasons = [2024];
 // export const categories = ['M15M'];
 export const seasons = [2025, 2024, 2023, 2022];
-export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F'];
-export const getResourceName = (season: number, category: string) => `FFVB-${season}-CDF-${category}.CSV`;
+export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F', 'PMA'];
+export const getResourceName = (season: number, entity: Entity, category: string) => `FFVB-${season}-${entity === 'ACJEUNES' ? 'CDF' : entity}-${category}.CSV`;
 
 export const defaultSeason = 2025;
+export const defaultEntity: Entity = 'ACJEUNES';
 export const defaultCategory = 'M18M';
 export const seasonToString = (season: number) => `${season - 1}/${season}`;
 export const seasonToNumber = (season: string) => Number.parseInt(season.substring(5));
 
+export type Entity = 'ACJEUNES' | 'ABCCS' | 'LICA'; // TODO
+
 export interface Competition {
   readonly name: string;
   readonly season: string;
+  readonly entity: Entity;
   readonly category: string;
   readonly teams: Map<string, Team>;
   readonly matchs: Match[];

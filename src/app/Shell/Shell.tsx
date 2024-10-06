@@ -10,7 +10,9 @@ import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
 import {
   categories,
   defaultCategory,
+  defaultEntity,
   defaultSeason,
+  Entity,
   getResourceName,
   seasons as iseasons,
   seasonToNumber,
@@ -21,6 +23,7 @@ import useCompetition from '@/utils/useCompetition';
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
+import CompetitionSheets from '../CompetitionSheets/CompetitionSheets';
 
 // const CompetitionBoard = lazy(() => import('@/app/CompetitionBoard/CompetitionBoard'));
 // const CompetitionGraph = lazy(() => import('@/app/CompetitionGraph/CompetitionGraph'));
@@ -77,6 +80,7 @@ const Shell = () => {
 
   const pday: number = Number.parseInt(params.day);
   const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
+  const [entity, setEntity] = useState<Entity>(params.entity as Entity ?? defaultEntity);
   const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
@@ -86,20 +90,20 @@ const Shell = () => {
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
   const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
 
-  const { isLoading, isError, data: competition, error } = useCompetition(seasonToNumber(season), category);
+  const { isLoading, isError, data: competition, error } = useCompetition(seasonToNumber(season), entity, category);
   const fetched = !!competition;
 
   useEffect(() => {
     if (day > 0 && fetched) {
       const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
-      const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${category ? `&category=${category}` : ''}${
+      const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${entity === defaultEntity ? '' : `&entity=${entity}`}${category ? `&category=${category}` : ''}${
         day ? `&day=${day === dayCount ? 'last' : day}` : ''
       }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`;
       if (window.location.href !== `${window.location.origin}${url}`) {
         window.history.replaceState({}, '', url);
       }
     }
-  }, [fetched, tab, season, category, dayCount, day, singleDay, qualified, tokens]);
+  }, [fetched, tab, season, entity, category, dayCount, day, singleDay, qualified, tokens]);
 
   if (isLoading) {
     return (
@@ -117,7 +121,7 @@ const Shell = () => {
           title="Failed to load data..."
           subTitle={
             <>
-              <div>{getResourceName(seasonToNumber(season), category)}</div>
+              <div>{getResourceName(seasonToNumber(season), entity, category)}</div>
               <div>{String(error)}</div>
             </>
           }
@@ -356,7 +360,7 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {/* {competition && tab === 'sheets' && (
+        {competition && tab === 'sheets' && (
           <CompetitionSheets
             // className={tab === 'sheets' ? '' : 'no-display'}
             competition={competition}
@@ -364,7 +368,7 @@ const Shell = () => {
             singleDay={singleDay}
             qualified={qualified}
           />
-        )} */}
+        )}
         {/*</Suspense>*/}
       </Layout.Content>
     </Layout>

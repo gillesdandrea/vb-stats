@@ -6,7 +6,7 @@ import { SheetMatch, TeamSheetsMap } from '@/model/sheet';
 import { createSheet } from '@/model/sheet-helpers';
 
 const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Error> => {
-  const resource = `FFVB-${seasonToNumber(competition?.season)}-CDF-${competition?.category}.JSON`;
+  const resource = `FFVB-${seasonToNumber(competition?.season)}-${competition?.entity}-${competition?.category}.JSON`;
   return useQuery<TeamSheetsMap, Error>({
     queryKey: [resource],
     queryFn: async () => {
