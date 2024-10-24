@@ -2,7 +2,9 @@ import { CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleOutlined, QuestionCir
 import { Avatar, Card, Collapse, CollapseProps } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Match, Team } from '../../model/model';
+import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
+import Trophies from '@/components/Trophies/Trophies';
+import { Competition, Match, Team } from '@/model/model';
 import {
   getDayRanking,
   getTeamMatch,
@@ -10,9 +12,7 @@ import {
   getTeamRanking,
   getTeamStats,
   isTeamInCourse,
-} from '../../model/model-helpers';
-import { getTrophies } from '../CompetitionBoard/CompetitionBoard';
-import MatchSheetLink from '../MatchSheetLink/MatchSheetLink';
+} from '@/model/model-helpers';
 
 import './TeamInfo.scss';
 
@@ -60,7 +60,7 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
             <div>
               {team.department.num_dep} - {team.department.region_name}
             </div>
-            <div>{getTrophies(competition, team)}</div>
+            <Trophies competition={competition} team={team} />
             <div className="small-text">
               <div>
                 ranking: {ranking ?? '-'} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
@@ -152,7 +152,7 @@ const renderMatchs = (
                 </a>
               )}
             </div>
-            <div>{getTrophies(competition, teamB)}</div>
+            <Trophies competition={competition} team={teamB} />
           </div>
         </div>
       ),

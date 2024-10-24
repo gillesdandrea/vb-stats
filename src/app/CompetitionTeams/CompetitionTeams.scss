@@ -1,0 +1,23 @@
+.vb-teams {
+  overflow-y: scroll;
+  height: calc(100vh - 4rem);
+  padding: 1rem;
+
+  .vb-search {
+    max-width: 36rem;
+    margin-left: auto;
+    padding-bottom: 1rem;
+
+    .ant-input-group {
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 0 0 200px rgb(255 255 255 / 8%);
+
+      .ant-input-affix-wrapper,
+      .ant-input,
+      .ant-input-group-addon,
+      .ant-input-search-button {
+        background-color: transparent;
+      }
+    }
+  }
+}

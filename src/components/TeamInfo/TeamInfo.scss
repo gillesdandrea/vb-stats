@@ -9,24 +9,24 @@
     padding: unset;
 
     .vb-card {
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
 
       .vb-card-split {
         display: flex;
         flex-direction: row;
 
         .vb-card-left {
+          flex-grow: 0;
           min-width: 3rem;
           padding: 0.5rem;
           text-align: center;
-          flex-grow: 0;
         }
 
         .vb-card-right {
-          padding: 0.5rem;
           flex-grow: 1;
+          padding: 0.5rem;
         }
       }
 
@@ -39,11 +39,12 @@
           .vb-card-split {
             .vb-card-left {
               .vb-legend {
-                transform-origin: 0 0;
                 position: absolute;
                 bottom: -0.5rem;
                 left: 0.75rem;
+                transform-origin: 0 0;
                 transform: rotate(-90deg);
+
                 color: gray;
               }
             }
@@ -58,6 +59,7 @@
       .vb-card-footer {
         display: flex;
         flex-direction: column;
+
         // padding: 0.5rem 1rem 0.25rem;
         // border-top: 1px solid #303030;
 
@@ -70,10 +72,10 @@
         }
 
         .vb-tag {
+          padding-right: 0.25rem;
+          padding-left: 0.25rem;
           border: 1px solid #303030;
           border-radius: 4px;
-          padding-left: 0.25rem;
-          padding-right: 0.25rem;
         }
       }
     }
@@ -86,9 +88,11 @@
       .ant-collapse-item:not(:first-child) {
         padding-top: 0.5rem;
       }
+
       .ant-collapse-header {
         padding: initial;
       }
+
       .ant-collapse-content-box {
         padding: initial;
       }
@@ -101,17 +105,20 @@
     right: 0.75rem;
 
     color: #ffffffd9;
-    border: 1px solid #ffffffd9;
+
     background: transparent;
     backdrop-filter: blur(15px) grayscale(0.5) opacity(0.8);
+    border: 1px solid #ffffffd9;
   }
 
   .ranking-low {
     top: unset;
     right: 0.75rem;
     bottom: 0.75rem;
+
     width: 2rem;
     height: 2rem;
+
     font-size: 0.85rem;
   }
 
@@ -127,28 +134,15 @@
     font-size: 0.75rem;
   }
 
-  .trophies {
-    display: flex;
-    flex-direction: row;
-
-    .trophy {
-      font-size: 0.75rem;
-      text-wrap: nowrap;
-      white-space: nowrap;
-      width: 2.75rem;
-      text-align: left;
-    }
-  }
-
   .match-icon {
     margin: 0 0.25rem;
   }
 
   .vb-tag {
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
     border: 1px solid #303030;
     border-radius: 4px;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
   }
 
   .eliminated {

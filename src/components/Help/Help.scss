@@ -1,11 +1,13 @@
 .vb-info-card {
   .vb-stats-icon {
-    opacity: 0.75;
     position: absolute;
-    top: 0rem;
+    top: 0;
     left: 0;
+
     width: 3rem;
     height: 3rem;
+
+    opacity: 0.75;
   }
 
   .vb-info-header {
@@ -17,15 +19,16 @@
     }
 
     .vb-reference {
-      font-size: 0.6875rem;
       margin-bottom: 0.25rem;
+      font-size: 0.6875rem;
     }
 
-    @media (min-width: 992px) {
+    @media (width >= 992px) {
       .vb-info-scroll {
-        height: 23.4rem;
         overflow-y: scroll;
+        height: 23.4rem;
       }
+
       .vb-info-unplayed {
         height: 20.15rem;
       }
@@ -33,11 +36,13 @@
   }
 
   .vb-info-charts-panel {
-    padding: 0.5rem;
-    border-top: 1px solid #303030;
     display: flex;
-    justify-content: space-evenly;
     gap: 1rem;
+    justify-content: space-evenly;
+
+    padding: 0.5rem;
+
+    border-top: 1px solid #303030;
 
     .vb-info-chart {
       text-align: center;

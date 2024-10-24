@@ -2,13 +2,12 @@ import { presetDarkPalettes } from '@ant-design/colors';
 import { Progress } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Pool } from '../../model/model';
-import { getDayRanking, getPoolProbabilities } from '../../model/model-helpers';
-
-// import VBStatsLogo from '../../images/vb-stats-logo.svg?react';
-import vbStatsLogo from '../../images/vb-stats-logo.svg';
+import { Competition, Pool } from '@/model/model';
+import { getDayRanking, getPoolProbabilities } from '@/model/model-helpers';
 
 import './Help.scss';
+
+import vbStatsLogo from '/vb-stats-logo.svg';
 
 const NA = '_';
 
@@ -75,7 +74,6 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
   return (
     <div className="vb-info-card">
       <div className="vb-info-header">
-        {/* <VBStatsLogo className="vb-stats-icon" style={{ width: '3rem', height: '3rem' }} /> */}
         <img src={vbStatsLogo} className="vb-stats-icon" alt="vb-stats logo" />
         <h2>
           VB Stats - {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
@@ -105,7 +103,7 @@ const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
             Toutes les données utilisées viennent du site de la{' '}
             <a href="http://www.ffvb.org/index.php?lvlid=124&dsgtypid=38&artid=1095&pos=2">FFVB</a>. N&apos;hésitez pas
             à m&apos;envoyer un message sur insta <a href="https://www.instagram.com/gillesdandrea">@gillesdandrea</a>{' '}
-            ou sur le compte ami <a href="https://www.instagram.com/cdf_m15_2024__volley/">@cdf_m15_2024__volley</a>
+            ou sur le compte ami <a href="https://www.instagram.com/cdf_volley__masculin">@cdf_volley__masculin</a>
           </p>
           <p>
             Enfin, les statistiques ci-dessous vous disent combien de fois TrueSkill™ a raison (

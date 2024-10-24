@@ -2,11 +2,11 @@ import {
   Competition,
   CompetitionDay,
   HIGH,
-  MEDIUM,
   Match,
+  MEDIUM,
   Pool,
-  SET_RANKING,
   Score,
+  SET_RANKING,
   Stats,
   Team,
   Victory,
@@ -22,7 +22,6 @@ import {
   rateMatch,
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
-import { createSheet } from './sheet-helpers';
 
 export const createMatch = (competition: Competition, data: any): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
@@ -143,16 +142,6 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
     match.teamB.lastDay = lastDay;
   }
 
-  if (competition.sheets) {
-    const sheetMatch = competition.sheets[match.day - 1]?.[match.id];
-    if (sheetMatch) {
-      const sheetA = createSheet(teamA, match, sheetMatch);
-      teamA.sheets.push(sheetA);
-      const sheetB = createSheet(teamB, match, sheetMatch);
-      teamB.sheets.push(sheetB);
-    }
-  }
-
   competition.matchs.push(match); // = [...competition.matchs, match];
   competition.days[day].matchs.push(match); // idem
   // dstats and gstats are already inited
@@ -166,7 +155,7 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
 };
 
 export const processCompetition = (competition: Competition, datas: any[][]) => {
-  const isCDF = datas.length > 0 && datas[0][0]['Entit�'] === 'ACJEUNES';
+  const isCDF = datas.length > 0 && datas[0][0]['Entité'] === 'ACJEUNES';
 
   // reorder matchs based on results of the first matchs
   if (isCDF) {

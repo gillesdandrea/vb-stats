@@ -1,0 +1,39 @@
+.vb-shell.ant-layout {
+  height: '100vh';
+
+  .vb-stats-logo {
+    position: absolute;
+    top: 0;
+    right: 0.25rem;
+
+    width: 4rem;
+    height: 4rem;
+
+    opacity: 0.75;
+  }
+
+  .ant-layout-header {
+    padding-right: 4rem;
+    padding-left: 0;
+    border-bottom: 1px solid rgb(253 253 253 / 12%);
+
+    .ant-menu {
+      // line-height: 56px;
+      user-select: none;
+      background-color: transparent;
+      border-bottom: unset;
+    }
+
+    .ant-layout-content {
+      color: white;
+    }
+
+    .ant-tabs > .ant-tabs-nav {
+      min-width: 68rem;
+    }
+
+    .no-display {
+      display: none;
+    }
+  }
+}
