@@ -30,6 +30,27 @@ export const assert = (value: boolean, message?: string): boolean => {
 const getDeltaPoints = (points: number[], idx: number) =>
   idx === 0 ? Math.max(0, points[0]) : points[idx] - Math.max(0, points[idx - 1]);
 
+const getSubstitutes = (
+  licenceds: Map<string, Licenced>,
+  positions: Position[],
+  scoreA: number,
+  scoreB: number,
+): Array<Licenced | undefined> => {
+  return positions.map((position) => {
+    if (position.substitute) {
+      const [scoreInA, scoreInB] = position.scoreIn?.split(':').map((score) => Number.parseInt(score)) || [];
+      const [scoreOutA, scoreOutB] = position.scoreOut?.split(':').map((score) => Number.parseInt(score)) || [];
+      if (scoreInA === scoreA && scoreInB === scoreB) {
+        return licenceds.get(position.player);
+      }
+      if (scoreOutA === scoreA && scoreOutB === scoreB) {
+        return licenceds.get(position.substitute);
+      }
+    }
+    return undefined;
+  });
+};
+
 const getPlayers = (
   licenceds: Map<string, Licenced>,
   positions: Position[],
@@ -73,6 +94,7 @@ const createCSPoint = (
   delta: number,
   serve: boolean,
   players: Licenced[],
+  substitutes: Array<Licenced | undefined>,
   rotation: number,
   isA: boolean,
   is1: boolean,
@@ -86,7 +108,7 @@ const createCSPoint = (
     serve,
     rotation,
     players,
-    // players: serve ? [players[rotation % 6]] : [],
+    substitutes,
     licences: new Set(),
   };
   players.forEach((player) => cspoint.licences.add(player.licence));
@@ -167,7 +189,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
         const players = is1
           ? getPlayers(licenceds, positions, score1, score2)
           : getPlayers(licenceds, positions, score2, score1);
-        const cspoint = createCSPoint(delta, serving, players, rotation, isA, is1, score1, score2);
+        const substitutes = getSubstitutes(licenceds, positions, score1, score2);
+        const cspoint = createCSPoint(delta, serving, players, substitutes, rotation, isA, is1, score1, score2);
         score1++;
         if (idx1 > 0 && i === 0) {
           serving = !serving;
@@ -188,7 +211,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
           const players = is1
             ? getPlayers(licenceds, positions, score1, score2)
             : getPlayers(licenceds, positions, score2, score1);
-          const cspoint = createCSPoint(delta, serving, players, rotation, isA, is1, score1, score2);
+          const substitutes = getSubstitutes(licenceds, positions, score1, score2);
+          const cspoint = createCSPoint(delta, serving, players, substitutes, rotation, isA, is1, score1, score2);
           score2++;
           if (i === 0) {
             serving = !serving;

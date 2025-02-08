@@ -50,6 +50,7 @@ export interface CSheetPoint extends CSheetLicence {
   serve: boolean;
   rotation: number;
   players: Licenced[];
+  substitutes: Array<Licenced | undefined>;
 }
 
 export interface CSheetStat {
