@@ -8,6 +8,14 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/vb-stats',
+  css: {
+    preprocessorOptions: {
+      scss: {
+        verbose: true,
+        api: 'modern-compiler',
+      },
+    },
+  },
   plugins: [
     tsconfigPaths(),
     VitePWA({
