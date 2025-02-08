@@ -1,6 +1,6 @@
 import { FilePdfOutlined } from '@ant-design/icons';
 
-import { Competition, Match } from '../../model/model';
+import { Competition, Match } from '@/model/model';
 
 import './MatchSheetLink.scss';
 

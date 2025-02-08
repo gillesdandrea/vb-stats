@@ -2,7 +2,7 @@ import { PropsWithChildren, RefObject } from 'react';
 
 import cx from 'classnames';
 
-import useScrollDirection from './useScrollDirection';
+import useScrollDirection from '@/utils/useScrollDirection';
 
 import './Headroom.scss';
 

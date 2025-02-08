@@ -1,14 +1,14 @@
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import Papa from 'papaparse';
 
-import { createMetaStats, metaAddMatch, metaToString } from '../model/meta';
-import { Competition, getResourceName } from '../model/model';
-import { createCompetition } from '../model/model-helpers';
-import { processCompetition } from '../model/model-process';
+import { createMetaStats, metaAddMatch, metaToString } from '@/model/meta';
+import { Competition, Entity, getResourceName } from '@/model/model';
+import { createCompetition } from '@/model/model-helpers';
+import { processCompetition } from '@/model/model-process';
 
-const useCompetition = (season: number, category: string): UseQueryResult<Competition, Error> => {
-  const resource = getResourceName(season, category);
+const useCompetition = (season: number, entity: Entity, category: string): UseQueryResult<Competition, Error> => {
+  const resource = getResourceName(season, entity, category);
   return useQuery<Competition, Error>({
     queryKey: [resource],
     queryFn: async () => {
@@ -21,7 +21,7 @@ const useCompetition = (season: number, category: string): UseQueryResult<Compet
         skipEmptyLines: true,
       });
 
-      const competition = createCompetition('Volley-Ball Stats', `${season - 1}/${season}`, category, []);
+      const competition = createCompetition('Volley-Ball Stats', `${season - 1}/${season}`, entity, category);
       data.length > 0 && processCompetition(competition, [data]);
       console.log(
         `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.lastDay}/${competition.dayCount} day(s).`,

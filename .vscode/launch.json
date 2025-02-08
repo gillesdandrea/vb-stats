@@ -8,7 +8,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "vb-stats: debug chrome",
-      "url": "http://localhost:3007",
+      "url": "http://localhost:5173/vb-stats",
       "webRoot": "${workspaceFolder}"
     }
   ]

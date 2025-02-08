@@ -1,22 +1,62 @@
-import { Match, Sheet, Team } from './model';
+import { Match, Team } from './model';
 import {
+  CPeerStat,
   CSheetLicence,
-  CSStats,
   CSheetMatch,
   CSheetPoint,
   CSheetSet,
   CSheetStat,
+  CSStats,
+  incPeerStat,
   Licenced,
   Position,
+  Roles,
+  Sheet,
   SheetMatch,
   SheetTeam,
-  Roles,
 } from './sheet';
+
+export const assert = (value: boolean, message?: string): boolean => {
+  if (!value) {
+    if (message) {
+      // console.warn(message);
+    } else {
+      throw new Error('assert failed');
+    }
+  }
+  return value;
+};
 
 const getDeltaPoints = (points: number[], idx: number) =>
   idx === 0 ? Math.max(0, points[0]) : points[idx] - Math.max(0, points[idx - 1]);
 
-const getPlayers = (licenceds: Map<string, Licenced>, positions: Position[], scoreA: number, scoreB: number) => {
+const getSubstitutes = (
+  licenceds: Map<string, Licenced>,
+  positions: Position[],
+  scoreA: number,
+  scoreB: number,
+): Array<Licenced | undefined> => {
+  return positions.map((position) => {
+    if (position.substitute) {
+      const [scoreInA, scoreInB] = position.scoreIn?.split(':').map((score) => Number.parseInt(score)) || [];
+      const [scoreOutA, scoreOutB] = position.scoreOut?.split(':').map((score) => Number.parseInt(score)) || [];
+      if (scoreInA === scoreA && scoreInB === scoreB) {
+        return licenceds.get(position.player);
+      }
+      if (scoreOutA === scoreA && scoreOutB === scoreB) {
+        return licenceds.get(position.substitute);
+      }
+    }
+    return undefined;
+  });
+};
+
+const getPlayers = (
+  licenceds: Map<string, Licenced>,
+  positions: Position[],
+  scoreA: number,
+  scoreB: number,
+): Licenced[] => {
   const licences = positions.map((position) => {
     if (position.substitute) {
       const [scoreInA, scoreInB] = position.scoreIn?.split(':').map((score) => Number.parseInt(score)) || [];
@@ -54,6 +94,7 @@ const createCSPoint = (
   delta: number,
   serve: boolean,
   players: Licenced[],
+  substitutes: Array<Licenced | undefined>,
   rotation: number,
   isA: boolean,
   is1: boolean,
@@ -67,7 +108,7 @@ const createCSPoint = (
     serve,
     rotation,
     players,
-    // players: serve ? [players[rotation % 6]] : [],
+    substitutes,
     licences: new Set(),
   };
   players.forEach((player) => cspoint.licences.add(player.licence));
@@ -84,6 +125,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
     isA,
     count: !match.winner ? 0 : match.winner === team ? +1 : -1,
     sets: [],
+    setA: match.setA,
+    setB: match.setB,
     licences: new Set(),
   };
   if (!isA && smatch.teamB.name !== team.name) {
@@ -95,7 +138,7 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
 
   let setA = 0;
   let setB = 0;
-  smatch.sets.forEach((sset, index) => {
+  smatch.sets.forEach((sset, setidx) => {
     // console.log(index, sset);
     const pointA = sset.pointsA[sset.pointsA.length - 1];
     const pointB = sset.pointsB[sset.pointsB.length - 1];
@@ -113,6 +156,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
       serve: iserve,
       rotations: 0,
       points: [],
+      scoreA: match.score[setidx].scoreA,
+      scoreB: match.score[setidx].scoreB,
       licences: new Set(),
     };
     setA += pointA > pointB ? 1 : 0;
@@ -144,7 +189,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
         const players = is1
           ? getPlayers(licenceds, positions, score1, score2)
           : getPlayers(licenceds, positions, score2, score1);
-        const cspoint = createCSPoint(delta, serving, players, rotation, isA, is1, score1, score2);
+        const substitutes = getSubstitutes(licenceds, positions, score1, score2);
+        const cspoint = createCSPoint(delta, serving, players, substitutes, rotation, isA, is1, score1, score2);
         score1++;
         if (idx1 > 0 && i === 0) {
           serving = !serving;
@@ -165,7 +211,8 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
           const players = is1
             ? getPlayers(licenceds, positions, score1, score2)
             : getPlayers(licenceds, positions, score2, score1);
-          const cspoint = createCSPoint(delta, serving, players, rotation, isA, is1, score1, score2);
+          const substitutes = getSubstitutes(licenceds, positions, score1, score2);
+          const cspoint = createCSPoint(delta, serving, players, substitutes, rotation, isA, is1, score1, score2);
           score2++;
           if (i === 0) {
             serving = !serving;
@@ -196,7 +243,7 @@ export const createSheet = (team: Team, match: Match, smatch: SheetMatch): Sheet
     id: smatch.match,
     isA: team === match.teamA,
     steam,
-    smatch: smatch,
+    smatch,
     csmatch,
   };
   return sheet;
@@ -251,6 +298,8 @@ export const filterMatchSetSheet = (sheet: Sheet, accept: MatchSetAcceptor): She
       isA,
       count: csmatch.count,
       sets,
+      setA: csmatch.setA,
+      setB: csmatch.setB,
       licences: csmatch.licences,
     };
     return {
@@ -345,12 +394,14 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
     isA,
     count: csmatch.count,
     sets: [],
+    setA: csmatch.setA,
+    setB: csmatch.setB,
     licences: csmatch.licences,
   };
   csmatch.sets.forEach((set: CSheetSet) => {
     const points = set.points.filter((point) => accept(sheet, csmatch, set, point));
     if (points.length > 0) {
-      const { setA, setB, count, serve, rotations, licences } = set;
+      const { setA, setB, count, serve, rotations, scoreA, scoreB, licences } = set;
       const fset: CSheetSet = {
         setA,
         setB,
@@ -358,6 +409,8 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
         serve,
         rotations,
         points,
+        scoreA,
+        scoreB,
         licences,
       };
       fcsm.sets.push(fset);
@@ -374,19 +427,21 @@ export const filterPointSheet = (sheet: Sheet, accept: PointAcceptor): Sheet | u
     : undefined;
 };
 
-const assert = (value: boolean) => {
-  if (!value) {
-    throw new Error('assert failed');
-  }
-};
-
 export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = createCSStats()): CSStats => {
+  sumCPeerStats(sheets, csstats.peers);
   sumCSheetStats(sheets, csstats.total);
   const servesheets = filterPointSheets(sheets, acceptServe());
   sumCSheetStats(servesheets, csstats.serve);
   const receivesheets = filterPointSheets(sheets, acceptServe(false));
   sumCSheetStats(receivesheets, csstats.receive);
-  assert(csstats.total.points === csstats.serve.points + csstats.receive.points);
+  if (
+    !assert(
+      csstats.total.points === csstats.serve.points + csstats.receive.points,
+      'inconsistent points count, missing setter?',
+    )
+  ) {
+    csstats.incomplete = true;
+  }
 
   let ssum = 0;
   csstats.pserves.forEach((css, index) => {
@@ -394,7 +449,9 @@ export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = create
     sumCSheetStats(psheets, css);
     ssum += css.points;
   });
-  assert(ssum === csstats.serve.points);
+  if (!assert(ssum === csstats.serve.points, 'inconsistent points count, missing setter?')) {
+    csstats.incomplete = true;
+  }
 
   let rsum = 0;
   csstats.preceives.forEach((css, index) => {
@@ -402,7 +459,9 @@ export const calcCSStats = (setters: string[], sheets: Sheet[], csstats = create
     sumCSheetStats(psheets, css);
     rsum += css.points;
   });
-  assert(rsum === csstats.receive.points);
+  if (!assert(rsum === csstats.receive.points, 'inconsistent points count, missing setter?')) {
+    csstats.incomplete = true;
+  }
 
   return csstats;
 };
@@ -427,6 +486,7 @@ export const createCSStats = (): CSStats => ({
     createCSheetStat(),
     createCSheetStat(),
   ],
+  peers: {},
 });
 
 export const sumCSheetStats = (sheets: Sheet[], stat: CSheetStat = createCSheetStat()): CSheetStat => {
@@ -470,79 +530,25 @@ export const createCSheetStat = (): CSheetStat => ({
   serves: 0,
   serveWon: 0,
   serveLost: 0,
-  positionWons: [0, 0, 0, 0, 0, 0, 0],
-  positionLosts: [0, 0, 0, 0, 0, 0, 0],
+  // positionWons: [0, 0, 0, 0, 0, 0, 0],
+  // positionLosts: [0, 0, 0, 0, 0, 0, 0],
 });
 
-//
-
-/** @deprecated */
-export const addCSheetStat = (
-  stat: CSheetStat,
-  sheet: Sheet,
-  whitelic: string[] = [],
-  blacklic: string[] = [],
-  accept: (csmatch: CSheetMatch, set: CSheetSet, point: CSheetPoint) => boolean = () => true,
-): CSheetStat => {
-  const check = (licences: CSheetLicence) => checkLicence(licences, whitelic, blacklic);
-
-  const { csmatch } = sheet;
-  stat.matchs++;
-  if (check(csmatch)) {
-    stat.matchWon += csmatch.count > 0 ? +1 : 0;
-    stat.matchLost += csmatch.count < 0 ? +1 : 0;
-  }
-  csmatch.sets.forEach((set) => {
-    stat.sets++;
-    if (check(set)) {
-      stat.setWon += set.count > 0 ? +1 : 0;
-      stat.setLost += set.count < 0 ? +1 : 0;
-    }
-    set.points.forEach((point, index) => {
-      stat.points++;
-      if (point.serve) {
-        stat.serves++;
-      }
-
-      if (check(point) && accept(csmatch, set, point)) {
-        stat.pointWon += point.count > 0 ? point.count : 0;
-        stat.pointLost += point.count < 0 ? -point.count : 0;
-        if (whitelic.length === 0) {
-          // we count all serve when there is no white list
-          stat.serveWon += point.serve ? (point.count > 0 ? point.count : 0) : 0;
-          stat.serveLost += point.serve ? (point.count < 0 ? -point.count : 0) : 0;
-        } else {
-          const positions = [point.players.findIndex((player) => player.licence === whitelic[0])]; // better to use only first player
-          // const positions = whitelic.map((licence) => point.players.findIndex((player) => player.licence === licence));
-          positions.forEach((position) => {
-            const index = (position + point.rotation) % 6;
-            if (point.serve && index === 0) {
-              stat.serveWon += point.serve ? (point.count > 0 ? point.count : 0) : 0;
-              stat.serveLost += point.serve ? (point.count < 0 ? -point.count : 0) : 0;
-            }
-            if (point.count > 0) {
-              stat.positionWons[index + 1] += point.count;
-            } else {
-              stat.positionLosts[index + 1] -= point.count;
-            }
-          });
-        }
-      }
-    });
-  });
+export const sumCPeerStats = (sheets: Sheet[], stat: CPeerStat = {}): CPeerStat => {
+  sheets.forEach((sheet) => sumCPeerStat(sheet, stat));
   return stat;
 };
 
-/** @deprecated */
-export const getSheetsStats = (
-  sheets: Sheet[],
-  whitelic: string[] = [],
-  blacklic: string[] = [],
-  accept: (csmatch: CSheetMatch, set: CSheetSet, point: CSheetPoint) => boolean = () => true,
-): CSheetStat => {
-  const stat = createCSheetStat();
-  sheets.forEach((sheet) => {
-    addCSheetStat(stat, sheet, whitelic, blacklic, accept);
+export const sumCPeerStat = (sheet: Sheet, peerStats: CPeerStat): CPeerStat => {
+  const { csmatch } = sheet;
+  csmatch.sets.forEach((set) => {
+    set.points.forEach((point) => {
+      point.players.forEach((playerA) =>
+        point.players.forEach((playerB) => {
+          incPeerStat(peerStats, playerA.licence, playerB.licence, point.count);
+        }),
+      );
+    });
   });
-  return stat;
+  return peerStats;
 };

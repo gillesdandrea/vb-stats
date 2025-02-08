@@ -1,0 +1,13 @@
+.vb-trophies {
+  display: flex;
+  flex-direction: row;
+
+  .trophy {
+    width: 2.85rem;
+
+    font-size: 0.75rem;
+    text-align: left;
+    text-wrap: nowrap;
+    white-space: nowrap;
+  }
+}

@@ -1,32 +1,33 @@
-import { Rating } from 'ts-trueskill';
+import type { Rating } from 'ts-trueskill';
 
 import { Department } from './geography';
-import { CSheetMatch, SheetMap, SheetMatch, SheetTeam } from './sheet';
 
 // each set updates ts-ranking vs each match
 export const SET_RANKING = true;
 
-// export const seasons = [2024];
+// export const seasons = [2025];
 // export const categories = ['M15M'];
-export const seasons = [2024, 2023, 2022];
-export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F'];
-export const getResourceName = (season: number, category: string) => `FFVB-${season}-CDF-${category}.CSV`;
+export const seasons = [2025, 2024, 2023, 2022];
+export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F', 'PMA'];
+export const getResourceName = (season: number, entity: Entity, category: string) =>
+  `FFVB-${season}-${entity === 'ACJEUNES' ? 'CDF' : entity}-${category}.CSV`;
 
-export const defaultSeason = 2024;
-export const defaultCategory = 'M15M';
+export const defaultSeason = 2025;
+export const defaultEntity: Entity = 'ACJEUNES';
+export const defaultCategory = 'M18M';
 export const seasonToString = (season: number) => `${season - 1}/${season}`;
 export const seasonToNumber = (season: string) => Number.parseInt(season.substring(5));
 
-export type SheetCollection = Record<string, Record<string, SheetMap[]>>;
+export type Entity = 'ACJEUNES' | 'ABCCS' | 'LICA'; // TODO
 
 export interface Competition {
   readonly name: string;
   readonly season: string;
+  readonly entity: Entity;
   readonly category: string;
   readonly teams: Map<string, Team>;
   readonly matchs: Match[];
   readonly days: CompetitionDay[];
-  readonly sheets?: SheetMap[];
   dayCount: number;
   lastDay: number; // last played day
 }
@@ -60,7 +61,6 @@ export interface Team {
   readonly gstats: Stats[];
   readonly dstats: Stats[];
   readonly pools: Pool[];
-  readonly sheets: Sheet[];
   dayCount: number;
   lastDay: number; // last played day
 }
@@ -115,11 +115,4 @@ export interface Match {
   readonly winProbability: number;
   readonly predicted?: boolean;
   readonly victory: Victory;
-}
-export interface Sheet {
-  id: string;
-  isA: boolean;
-  steam: SheetTeam;
-  smatch: SheetMatch;
-  csmatch: CSheetMatch;
 }

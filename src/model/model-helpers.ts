@@ -1,9 +1,8 @@
 import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
-import { Competition, Match, Pool, Stats, Team } from './model';
-import { Sorting, rankingSorter, ratingSorter } from './model-sorters';
-import { SheetMap } from './sheet';
+import { Competition, Entity, Match, Pool, Stats, Team } from './model';
+import { rankingSorter, ratingSorter, Sorting } from './model-sorters';
 
 // mu, sigma, beta, tau, drawProbability
 // this.mu = mu ?? 25;
@@ -49,15 +48,15 @@ export const getWinProbability = (teamA: Team, teamB: Team, day: number): number
   return day === 1 ? 0.5 : winProbability([getTeamRating(teamA, day - 1)], [getTeamRating(teamB, day - 1)], ts);
 };
 
-export const createCompetition = (name: string, season: string, category: string, sheets: SheetMap[]): Competition => {
+export const createCompetition = (name: string, season: string, entity: Entity, category: string): Competition => {
   const competition = {
     name,
     season,
+    entity,
     category,
     teams: new Map<string, Team>(),
     matchs: [],
     days: [],
-    sheets,
     dayCount: 0,
     lastDay: 0,
   };
@@ -102,7 +101,6 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
     gstats: [createStats(rating)],
     dstats: [],
     pools: [],
-    sheets: [],
     dayCount: 0,
     lastDay: 0,
   };
@@ -213,7 +211,7 @@ export const getMatchPool = (competition: Competition, match: Match): Pool | und
 };
 
 export const getDayRanking = (competition: Competition, team: Team, day: number) => {
-  return day > competition.lastDay ? 0 : team.ranking.pools[day] ?? 0;
+  return day > competition.lastDay ? 0 : (team.ranking.pools[day] ?? 0);
 };
 
 export const getFirstCountInPreviousDay = (competition: Competition, team: Team, day: number): number => {
@@ -264,7 +262,7 @@ export const getBoard = (
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
 ): Team[] => {
-  const board = qualified ? competition.days[day]?.teams ?? [] : Array.from(competition.teams.values());
+  const board = qualified ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {

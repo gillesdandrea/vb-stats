@@ -1,0 +1,220 @@
+.vb-pools {
+  overflow-y: scroll;
+  height: calc(100vh - 4rem);
+  padding: 1rem;
+
+  .vb-search {
+    max-width: 36rem;
+    margin-left: auto;
+    padding-bottom: 1rem;
+
+    .ant-input-group {
+      // box-shadow:
+      //   rgba(0, 0, 0, 0.19) 0px 10px 20px,
+      //   rgba(0, 0, 0, 0.23) 0px 6px 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 0 0 200px rgb(255 255 255 / 8%);
+
+      .ant-input-affix-wrapper,
+      .ant-input,
+      .ant-input-group-addon,
+      .ant-input-search-button {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .ant-card {
+    .ant-card-body {
+      display: flex;
+      flex-direction: column;
+      padding: unset;
+
+      .vb-card-footer {
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem 1rem 0.25rem;
+        border-top: 1px solid #303030;
+
+        .vb-match {
+          display: flex;
+          font-size: 0.75rem;
+
+          .vb-team-a,
+          .vb-team-b {
+            overflow-x: hidden;
+            flex-basis: 100%;
+
+            text-overflow: ellipsis;
+            text-wrap: nowrap;
+            white-space: nowrap;
+          }
+
+          .vb-team-a {
+            text-align: right;
+          }
+
+          .vb-score {
+            margin-right: 0.5rem;
+            margin-left: 0.5rem;
+
+            text-align: center;
+            text-wrap: nowrap;
+            white-space: nowrap;
+          }
+
+          .vb-match-lost {
+            color: gray;
+          }
+
+          .vb-match-unpredicted {
+            color: #a61d24; // #d32029;
+            &.vb-match-tight {
+              color: #e8b339;
+            }
+          }
+        }
+
+        .vb-score-details {
+          position: relative;
+          top: -0.125rem;
+
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
+
+          font-size: 0.6875rem;
+          text-align: center;
+          text-wrap: nowrap;
+          white-space: nowrap;
+
+          .vb-score-sets {
+            flex-basis: 100%;
+            text-align: right;
+
+            .vb-tag {
+              padding-right: 0.25rem;
+              padding-left: 0.25rem;
+              border: 1px solid #303030;
+              border-radius: 4px;
+            }
+          }
+
+          .vb-score-points {
+            flex-basis: 100%;
+            text-align: left;
+          }
+        }
+      }
+
+      .vb-card-body {
+        overflow-x: hidden;
+        display: flex;
+
+        .vb-card-left {
+          position: relative;
+
+          display: flex;
+          flex-direction: column;
+
+          padding: 0.5rem;
+
+          border-right: 1px solid #303030;
+
+          .vb-legend {
+            position: absolute;
+            bottom: -0.5rem;
+            left: 1rem;
+            transform-origin: 0 0;
+            transform: rotate(-90deg);
+
+            width: 20rem;
+
+            color: gray;
+          }
+        }
+
+        .vb-card-right {
+          width: 100%;
+
+          // text-wrap: nowrap;
+          // white-space: nowrap;
+
+          .vb-card-row {
+            position: relative;
+            padding: 0.5rem;
+
+            &:not(:last-child) {
+              border-bottom: 1px solid #303030;
+            }
+
+            .title {
+              font-size: 1rem;
+            }
+
+            .vb-team-link {
+              margin-left: 0.375rem;
+              font-size: 0.875rem;
+              opacity: 0.85;
+
+              svg {
+                transform: translateY(-0.0625rem);
+              }
+            }
+
+            .strikethrough {
+              text-decoration: line-through;
+            }
+
+            .vb-card-content {
+              // flex-direction: column;
+              display: flex;
+
+              .vb-card-text {
+                .subtitle {
+                  margin-left: 1.5rem;
+
+                  .trophies {
+                    display: flex;
+                    flex-direction: row;
+
+                    .trophy {
+                      width: 2.75rem;
+
+                      font-size: 0.75rem;
+                      text-align: left;
+                      text-wrap: nowrap;
+                      white-space: nowrap;
+                    }
+                  }
+                }
+
+                .small-text {
+                  font-size: 0.75rem;
+                }
+              }
+
+              .vb-card-chart {
+                position: absolute;
+                right: 0.5rem;
+                bottom: 0.5rem;
+
+                .ant-progress-inner {
+                  backdrop-filter: blur(15px) grayscale(0.5) opacity(0.8);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .vb-championship {
+    color: white;
+  }
+}
+
+.ant-modal-wrap .ant-modal-content {
+  padding: 0;
+}
