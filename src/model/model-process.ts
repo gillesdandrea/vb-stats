@@ -294,10 +294,12 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           });
           competition.days[day].pools.forEach((pool: Pool) => {
             const teams = [...pool.teams];
-            teams.sort(rankingSorter(day, false));
-            teams.forEach((team, index) => {
-              team.ranking.pools[day] = index + 1;
-            });
+            if (pool.matchs.every(match => match.winner)) {
+              teams.sort(rankingSorter(day, false));
+              teams.forEach((team, index) => {
+                team.ranking.pools[day] = index + 1;
+              });
+            }
           });
           if (day > 1) {
             const teams = [...competition.days[day].teams];
