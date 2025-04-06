@@ -294,7 +294,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           });
           competition.days[day].pools.forEach((pool: Pool) => {
             const teams = [...pool.teams];
-            if (pool.matchs.every(match => match.winner)) {
+            if (pool.matchs.every((match) => match.winner)) {
               teams.sort(rankingSorter(day, false));
               teams.forEach((team, index) => {
                 team.ranking.pools[day] = index + 1;
