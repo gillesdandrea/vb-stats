@@ -1,14 +1,18 @@
 import { useMemo, useState } from 'react';
 
+import { presetDarkPalettes } from '@ant-design/colors';
 import { Alert, Empty, Layout, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
+// import { Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { Competition, Team } from '@/model/model';
 import { CSheetStat, CSStats, Licenced, Sheet } from '@/model/sheet';
 import { acceptLicences, acceptSomePoint, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
 import useSheets from '@/utils/useSheets';
 
 import './CompetitionSheets.scss';
+
+// @see http://localhost:5173/vb-stats?tab=sheets&season=2024/2025&entity=LICA&category=PMA&day=last&singleDay=false&qualified=true
 
 type CategoryClubSetters = Record<string, Record<string, string[]>>;
 
@@ -29,6 +33,14 @@ const knownSetters: CategoryClubSetters = {
     '0138032': [
       '2128747', // DORNIC MARTINAYA (14)
       '2193754', // BRUGNEAUX NATALIA (11)
+    ],
+  },
+  PMA: {
+    // AS CANNES
+    '0060007': [
+      '2040367', // DE VECCHI ROBIN (12)
+      '2343543', // BOUTON ALEXIS (01)
+      '2091829', // BOSCHELLI NATHAN (10)
     ],
   },
 };
@@ -77,6 +89,8 @@ const Spacer = () => <div style={{ height: 12 }} />;
 
 const CompetitionSheets = ({ competition, className }: Props) => {
   const { isLoading, isError, data: teamSheets } = useSheets(competition);
+
+  const { blue, red } = presetDarkPalettes;
 
   const [team, setTeam] = useState<Team>();
   const [teamSetters, setTeamSetters] = useState<CategoryClubSetters>(knownSetters);
@@ -228,6 +242,139 @@ const CompetitionSheets = ({ competition, className }: Props) => {
             </div>
             <div>{summary(calcCSStats(setters, sheetsWithSetters([sheet])))}</div>
             <Spacer />
+            {/* <div className="charts">
+              {sheet.csmatch.sets.map((set, sidx) => {
+                const coef = sheet.isA ? 1 : -1;
+                const data = [
+                  ...set.points.map((point, index) => {
+                    const { scoreA, scoreB, serve } = point;
+                    return {
+                      scoreA,
+                      scoreB,
+                      score: `${scoreA}-${scoreB}`,
+                      delta: coef * (scoreA - scoreB + coef * (serve ? -0.5 : 0.5)),
+                    };
+                  }),
+                  {
+                    scoreA: set.scoreA,
+                    scoreB: set.scoreB,
+                    score: `${set.scoreA}-${set.scoreB}`,
+                    delta: coef * (set.scoreA - set.scoreB),
+                  },
+                ];
+                const x10 = data.find((d) => d.scoreA === 10 || d.scoreB === 10);
+                const x20 = data.find((d) => d.scoreA === 20 || d.scoreB === 20);
+                return (
+                  <LineChart key={`${sheet.id}-${sidx}-A`} width={500} height={300} data={data}>
+                    <Line type="linear" dataKey="delta" stroke={blue[5]} dot={false} />
+                    <XAxis dataKey="score" minTickGap={25} />
+                    <YAxis type="number" domain={[-10, 10]} scale="linear" />
+                    <Tooltip />
+                    <ReferenceLine y={5} strokeDasharray="5 5" opacity={0.5} />
+                    <ReferenceLine y={0} opacity={0.5} />
+                    <ReferenceLine y={-5} strokeDasharray="5 5" opacity={0.5} />
+                    {set.points.map(
+                      (point) =>
+                        point.substitutes.some((s) => s) && (
+                          <ReferenceLine
+                            key={`sub:${point.scoreA}-${point.scoreB}`}
+                            x={`${point.scoreA}-${point.scoreB}`}
+                            opacity={0.5}
+                          />
+                        ),
+                    )}
+                    {x10 && <ReferenceLine x={x10.score} strokeDasharray="5 5" opacity={0.5} />}
+                    {x20 && <ReferenceLine x={x20.score} strokeDasharray="5 5" opacity={0.5} />}
+                  </LineChart>
+                );
+              })}
+            </div>
+            <Spacer />
+            <div className="charts">
+              {sheet.csmatch.sets.map((set, sidx) => {
+                const coef = sheet.isA ? 1 : -1;
+                const data = [
+                  ...set.points.map((point, index) => {
+                    const { scoreA, scoreB, serve } = point;
+                    return {
+                      scoreA,
+                      scoreB,
+                      score: `${scoreA}-${scoreB}`,
+                      delta: coef * (scoreA - scoreB + coef * (serve ? -0.5 : 0.5)),
+                    };
+                  }),
+                  {
+                    scoreA: set.scoreA,
+                    scoreB: set.scoreB,
+                    score: `${set.scoreA}-${set.scoreB}`,
+                    delta: coef * (set.scoreA - set.scoreB),
+                  },
+                ];
+                const x10 = data.find((d) => d.scoreA === 10 || d.scoreB === 10);
+                const x20 = data.find((d) => d.scoreA === 20 || d.scoreB === 20);
+                return (
+                  <LineChart key={`${sheet.id}-${sidx}-B`} width={500} height={300} data={data}>
+                    <Line type="step" dataKey="scoreA" stroke={blue[5]} dot={false} />
+                    <Line type="step" dataKey="scoreB" stroke={red[5]} dot={false} />
+                    <XAxis dataKey="score" minTickGap={25} />
+                    <YAxis type="number" domain={[0, 25]} scale="linear" />
+                    <Tooltip />
+                    <ReferenceLine y={10} strokeDasharray="5 5" opacity={0.5} />
+                    <ReferenceLine y={20} strokeDasharray="5 5" opacity={0.5} />
+                    {x10 && <ReferenceLine x={x10.score} strokeDasharray="5 5" opacity={0.5} />}
+                    {x20 && <ReferenceLine x={x20.score} strokeDasharray="5 5" opacity={0.5} />}
+                  </LineChart>
+                );
+              })}
+            </div>
+            <Spacer />
+            <div className="charts">
+              {sheet.csmatch.sets.map((set, sidx) => {
+                const coef = sheet.isA ? 1 : -1;
+                const data = [
+                  ...set.points
+                    .filter((point, index) => {
+                      if (set.points.length - 1 === index) {
+                        return true;
+                      }
+                      if (point.scoreB !== set.points[index + 1].scoreB) {
+                        return true;
+                      }
+                      return false;
+                    })
+                    .map((point, index) => {
+                      const { scoreA, scoreB, serve } = point;
+                      return {
+                        scoreA,
+                        scoreB,
+                      };
+                    }),
+                  {
+                    scoreA: set.scoreA,
+                    scoreB: set.scoreB,
+                  },
+                ];
+                return (
+                  <LineChart key={`${sheet.id}-${sidx}-C`} width={300} height={300} data={data}>
+                    <Line type="step" dataKey="scoreA" stroke={blue[5]} dot={false} />
+                    <XAxis dataKey="scoreB" minTickGap={25} />
+                    <YAxis type="number" minTickGap={25} domain={[0, 25]} />
+                    <Tooltip />
+                    <ReferenceLine x={25} strokeDasharray="5 5" opacity={0.5} />
+                    <ReferenceLine y={25} strokeDasharray="5 5" opacity={0.5} />
+                    <ReferenceLine
+                      segment={[
+                        { x: 0, y: 0 },
+                        { x: 25, y: 25 },
+                      ]}
+                      strokeDasharray="5 5"
+                      opacity={0.5}
+                    />
+                  </LineChart>
+                );
+              })}
+            </div>
+            <Spacer /> */}
           </div>
         ))}
         <Spacer />

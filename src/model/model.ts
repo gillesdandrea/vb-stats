@@ -8,7 +8,7 @@ export const SET_RANKING = true;
 // export const seasons = [2025];
 // export const categories = ['M15M'];
 export const seasons = [2025, 2024, 2023, 2022];
-export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F', 'PMA'];
+export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F']; // 'PMA'
 export const getResourceName = (season: number, entity: Entity, category: string) =>
   `FFVB-${season}-${entity === 'ACJEUNES' ? 'CDF' : entity}-${category}.CSV`;
 
