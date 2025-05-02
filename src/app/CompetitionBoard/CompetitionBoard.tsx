@@ -35,7 +35,7 @@ interface Props {
   className?: string | string[];
 }
 
-const smallWidth = 60;
+const smallWidth = 70;
 const mediumWidth = 100;
 const largeWidth = 120;
 

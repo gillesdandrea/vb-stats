@@ -99,6 +99,7 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
       // dayCount: 0,
     },
     gstats: [createStats(rating)],
+    sstats: [createStats(rating)],
     dstats: [],
     pools: [],
     dayCount: 0,
@@ -117,6 +118,30 @@ export const getGlobalTeamStats = (team: Team, day = team.dayCount): Stats => {
   return team.gstats[day];
 };
 
+export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4): Stats => {
+  if (!team.sstats[day]) {
+    // console.log(`Creating Sliding ${day} Team Stats for ${team.name}`);
+    team.sstats[day] = createStats(getGlobalTeamStats(team, day).rating);
+    for (let i = Math.max(0, day - maxDays + 1); i <= day; i++) {
+      const istats = getDayTeamStats(team, i);
+      const sstats = team.sstats[day];
+      team.sstats[day] = {
+        ...sstats,
+        points: sstats.points + istats.points,
+        matchCount: sstats.matchCount + istats.matchCount,
+        matchWon: sstats.matchWon + istats.matchWon,
+        matchLost: sstats.matchLost + istats.matchLost,
+        setWon: sstats.setWon + istats.setWon,
+        setLost: sstats.setLost + istats.setLost,
+        pointWon: sstats.pointWon + istats.pointWon,
+        pointLost: sstats.pointLost + istats.pointLost,
+        matchs: [...sstats.matchs, ...istats.matchs],
+      };
+    }
+  }
+  return team.sstats[day];
+};
+
 export const getDayTeamStats = (team: Team, day: number): Stats => {
   if (!team.dstats[day]) {
     // console.log(`Creating Day ${day} Team Stats for ${team.name}`);
@@ -126,6 +151,7 @@ export const getDayTeamStats = (team: Team, day: number): Stats => {
 };
 
 export const getTeamStats = (team: Team, day: number, global = true): Stats => {
+  // return global ? getSlidingTeamStats(team, day, 4) : getDayTeamStats(team, day);
   return global ? getGlobalTeamStats(team, day) : getDayTeamStats(team, day);
 };
 

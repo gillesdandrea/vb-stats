@@ -14,6 +14,7 @@ import {
 import {
   getDayTeamStats,
   getGlobalTeamStats,
+  getSlidingTeamStats,
   getTeam,
   getTeamMatch,
   getTeamRating,
@@ -146,11 +147,14 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
   competition.days[day].matchs.push(match); // idem
   // dstats and gstats are already inited
   addTeamMatch(teamA, teamA.dstats[day], match);
+  addTeamMatch(teamA, teamA.sstats[day], match);
   addTeamMatch(teamA, teamA.gstats[day], match);
   addTeamMatch(teamB, teamB.dstats[day], match);
+  addTeamMatch(teamB, teamB.sstats[day], match);
   addTeamMatch(teamB, teamB.gstats[day], match);
 
   updateRating(match, teamA.dstats[day], teamB.dstats[day]);
+  updateRating(match, teamA.sstats[day], teamB.sstats[day]);
   updateRating(match, teamA.gstats[day], teamB.gstats[day]);
 };
 
@@ -219,6 +223,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
                 team.dayCount = day;
                 // enforce stats creation
                 getGlobalTeamStats(team, day);
+                getSlidingTeamStats(team, day);
                 getDayTeamStats(team, day);
               });
             });
@@ -261,6 +266,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
                 team.pools[day] = pool as Pool;
                 // enforce stats creation
                 getGlobalTeamStats(team, day);
+                getSlidingTeamStats(team, day);
                 getDayTeamStats(team, day);
               });
             }

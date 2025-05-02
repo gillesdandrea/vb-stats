@@ -58,8 +58,9 @@ export interface Team {
   readonly name: string;
   readonly department: Department;
   readonly ranking: Ranking;
-  readonly gstats: Stats[];
-  readonly dstats: Stats[];
+  readonly gstats: Stats[]; // global (all days) stats
+  readonly sstats: Stats[]; // sliding (last 4 days) stats
+  readonly dstats: Stats[]; // daily stats
   readonly pools: Pool[];
   dayCount: number;
   lastDay: number; // last played day
