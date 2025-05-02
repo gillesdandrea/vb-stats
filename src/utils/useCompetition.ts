@@ -22,7 +22,12 @@ const useCompetition = (season: number, entity: Entity, category: string): UseQu
       });
 
       const competition = createCompetition('Volley-Ball Stats', `${season - 1}/${season}`, entity, category);
-      data.length > 0 && processCompetition(competition, [data]);
+      try {
+        data.length > 0 && processCompetition(competition, [data]);
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
       console.log(
         `${competition.name} ${competition.season} ${competition.category}:Processed ${competition.matchs.length} matchs on ${competition.lastDay}/${competition.dayCount} day(s).`,
       );

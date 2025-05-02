@@ -183,6 +183,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       });
   }
 
+  let maxDay = 0;
   datas
     .filter((data) => data)
     .map((data: any[]) => {
@@ -190,6 +191,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       const split: any[][] = [];
       data.forEach((match: any) => {
         const day = Number(match.Jo);
+        if (day !== 99 && maxDay < day) maxDay = day;
         if (!split[day]) {
           split[day] = data.filter((dayMatch: any) => dayMatch.Jo === match.Jo);
         }
@@ -200,6 +202,11 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
     .forEach((daydata: any[][]) => {
       daydata
         .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
+        // .map((data: any[]) => {
+        //   if (data[0].Jo !== '99') return data;
+        //   console.log(data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1 })));
+        //   return data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1 }));
+        // })
         .forEach((data: any[]) => {
           // add new day
           const day = Number(data[0].Jo);
