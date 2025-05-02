@@ -1,8 +1,8 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { Competition, seasonToNumber } from '@/model/model';
-import { SheetMatch, TeamSheetsMap } from '@/model/sheet';
+import { type Competition, seasonToNumber } from '@/model/model';
+import { type SheetMatch, type TeamSheetsMap } from '@/model/sheet';
 import { createSheet } from '@/model/sheet-helpers';
 
 const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Error> => {

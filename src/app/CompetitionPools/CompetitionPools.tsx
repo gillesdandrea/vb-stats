@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -12,7 +12,7 @@ import Help from '@/components/Help/Help';
 import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
 import TeamInfo from '@/components/TeamInfo/TeamInfo';
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Match, Pool, Team } from '@/model/model';
+import { type Competition, type Match, type Pool, type Team } from '@/model/model';
 import {
   filterTeam,
   getBoard,
@@ -25,7 +25,7 @@ import {
 } from '@/model/model-helpers';
 import { Sorting } from '@/model/model-sorters';
 
-import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
+import '@/app/CompetitionTeams/CompetitionTeams.scss'; // TODO hack
 import './CompetitionPools.scss';
 
 interface Props {

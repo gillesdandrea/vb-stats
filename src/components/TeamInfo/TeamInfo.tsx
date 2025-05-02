@@ -1,10 +1,10 @@
 import { CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
-import { Avatar, Card, Collapse, CollapseProps } from 'antd';
+import { Avatar, Card, Collapse, type CollapseProps } from 'antd';
 import cx from 'classnames';
 
 import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Match, Team } from '@/model/model';
+import { type Competition, type Match, type Team } from '@/model/model';
 import {
   getDayRanking,
   getTeamMatch,

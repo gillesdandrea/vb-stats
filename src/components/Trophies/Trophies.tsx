@@ -1,6 +1,6 @@
 import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 
-import { Competition, Match, Score, Team } from '@/model/model';
+import { type Competition, type Match, type Score, type Team } from '@/model/model';
 import {
   getDayDistance,
   getDayRanking,

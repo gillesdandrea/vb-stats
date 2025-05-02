@@ -1,9 +1,9 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import Papa from 'papaparse';
 
 import { createMetaStats, metaAddMatch, metaToString } from '@/model/meta';
-import { Competition, Entity, getResourceName } from '@/model/model';
+import { type Competition, type Entity, getResourceName } from '@/model/model';
 import { createCompetition } from '@/model/model-helpers';
 import { processCompetition } from '@/model/model-process';
 

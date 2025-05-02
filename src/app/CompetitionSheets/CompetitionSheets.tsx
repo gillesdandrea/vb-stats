@@ -5,8 +5,8 @@ import { Alert, Empty, Layout, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
 // import { Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
-import { Competition, Team } from '@/model/model';
-import { CSheetStat, CSStats, Licenced, Sheet } from '@/model/sheet';
+import { type Competition, type Team } from '@/model/model';
+import { type CSheetStat, type CSStats, type Licenced, type Sheet } from '@/model/sheet';
 import { acceptLicences, acceptSomePoint, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
 import useSheets from '@/utils/useSheets';
 

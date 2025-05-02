@@ -1,6 +1,6 @@
 import type { Rating } from 'ts-trueskill';
 
-import { Department } from './geography';
+import { type Department } from './geography';
 
 // each set updates ts-ranking vs each match
 export const SET_RANKING = true;

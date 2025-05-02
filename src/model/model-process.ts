@@ -1,14 +1,14 @@
 import {
-  Competition,
-  CompetitionDay,
+  type Competition,
+  type CompetitionDay,
   HIGH,
-  Match,
+  type Match,
   MEDIUM,
-  Pool,
-  Score,
+  type Pool,
+  type Score,
   SET_RANKING,
-  Stats,
-  Team,
+  type Stats,
+  type Team,
   Victory,
 } from './model';
 import {

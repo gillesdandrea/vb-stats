@@ -15,7 +15,7 @@
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:style": "stylelint \"src/**/*.{css,scss}\"",
-    "lint:style:fix": "pnpm style --fix",
+    "lint:style:fix": "pnpm lint:style --fix",
     "preview": "vite preview",
     "NOpredeploy": "pnpm run build",
     "deploy": "gh-pages -d dist",

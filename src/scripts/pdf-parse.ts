@@ -6,8 +6,8 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import PDFParser from 'pdf2json';
 
-import { Entity, seasonToString } from '@/model/model';
-import { Licenced, Referee, SheetMatch, SheetSet, SheetTeam } from '@/model/sheet';
+import { type Entity, seasonToString } from '@/model/model';
+import { type Licenced, type Referee, type SheetMatch, type SheetSet, type SheetTeam } from '@/model/sheet';
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 const iaxios = axios.create({ httpsAgent });

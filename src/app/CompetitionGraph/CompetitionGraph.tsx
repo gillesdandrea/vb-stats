@@ -4,7 +4,7 @@ import { Layout, Spin } from 'antd';
 import cx from 'classnames';
 
 import { getGraph } from '@/model/graph';
-import { Competition, Match, Team } from '@/model/model';
+import { type Competition, type Match, type Team } from '@/model/model';
 import { isTeamInCourse } from '@/model/model-helpers';
 
 // import Graphviz from '@/components/Graphviz/Graphviz';

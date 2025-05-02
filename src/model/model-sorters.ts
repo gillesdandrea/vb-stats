@@ -1,4 +1,4 @@
-import { Team } from './model';
+import { type Team } from './model';
 import { getTeamStats } from './model-helpers';
 
 export enum Sorting {

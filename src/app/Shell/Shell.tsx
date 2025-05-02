@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
-import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
+import { Layout, Menu, type MenuProps, Result, Spin } from 'antd';
 import { useWindowSize } from 'react-use';
 
 import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
@@ -13,7 +13,7 @@ import {
   defaultCategory,
   defaultEntity,
   defaultSeason,
-  Entity,
+  type Entity,
   getResourceName,
   seasons as iseasons,
   seasonToNumber,

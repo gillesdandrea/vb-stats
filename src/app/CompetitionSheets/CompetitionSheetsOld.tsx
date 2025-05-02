@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react';
 import { Layout, Result, Select, Space, Spin } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Match, Team } from '@/model/model';
-import { CSheetStat, CSStats, Sheet } from '@/model/sheet';
+import { type Competition, type Match, type Team } from '@/model/model';
+import { type CSheetStat, type CSStats, type Sheet } from '@/model/sheet';
 import { acceptLicences, calcCSStats, filterPointSheets } from '@/model/sheet-helpers';
 import useSheets from '@/utils/useSheets';
 

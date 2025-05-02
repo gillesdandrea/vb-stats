@@ -2,7 +2,7 @@ import { presetDarkPalettes } from '@ant-design/colors';
 import { Progress } from 'antd';
 import cx from 'classnames';
 
-import { Competition, Pool } from '@/model/model';
+import { type Competition, type Pool } from '@/model/model';
 import { getDayRanking, getPoolProbabilities } from '@/model/model-helpers';
 
 import './Help.scss';

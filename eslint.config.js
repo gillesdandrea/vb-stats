@@ -1,17 +1,17 @@
 import js from '@eslint/js';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import importPlugin from 'eslint-plugin-import';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import react from 'eslint-plugin-react';
-import reactCompiler from 'eslint-plugin-react-compiler';
+// import reactCompiler from 'eslint-plugin-react-compiler';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import pluginQuery from '@tanstack/eslint-plugin-query'
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 const fileMasks = '**/*.{js,jsx,cjs,mjs,ts,tsx}';
 const files = [fileMasks];
@@ -20,7 +20,7 @@ const files = [fileMasks];
 const eslintConfig = [
   {
     name: '::global-ignore',
-    ignores: ['.history', '.next', 'public', 'src/hugeicons'],
+    ignores: ['.history', 'dist', 'public'],
   },
   ...pluginQuery.configs['flat/recommended'],
   jsxA11y.flatConfigs.recommended,
@@ -65,17 +65,18 @@ const eslintConfig = [
         'error',
         { fixStyle: 'inline-type-imports', prefer: 'type-imports' },
       ],
+      '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true }],
       'import/no-duplicates': 'error',
       'jsx-a11y/anchor-is-valid': 'warn',
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
       '@tanstack/query/exhaustive-deps': 'warn',
-      },
+    },
   }),
-  {
-    name: '::react-compiler',
-    ...reactCompiler.configs.recommended,
-  },
+  // {
+  //   name: '::react-compiler',
+  //   ...reactCompiler.configs.recommended,
+  // },
   {
     name: '::no-relative-import-paths',
     files,

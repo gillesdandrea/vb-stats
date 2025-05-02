@@ -5,7 +5,7 @@ import type { ColumnsType } from 'antd/es/table';
 import cx from 'classnames';
 
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Team } from '@/model/model';
+import { type Competition, type Team } from '@/model/model';
 import {
   getBoard,
   getDayRanking,

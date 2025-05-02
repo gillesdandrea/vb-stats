@@ -1,19 +1,19 @@
-import { Match, Team } from './model';
+import { type Match, type Team } from './model';
 import {
-  CPeerStat,
-  CSheetLicence,
-  CSheetMatch,
-  CSheetPoint,
-  CSheetSet,
-  CSheetStat,
-  CSStats,
+  type CPeerStat,
+  type CSheetLicence,
+  type CSheetMatch,
+  type CSheetPoint,
+  type CSheetSet,
+  type CSheetStat,
+  type CSStats,
   incPeerStat,
-  Licenced,
-  Position,
-  Roles,
-  Sheet,
-  SheetMatch,
-  SheetTeam,
+  type Licenced,
+  type Position,
+  type Roles,
+  type Sheet,
+  type SheetMatch,
+  type SheetTeam,
 } from './sheet';
 
 export const assert = (value: boolean, message?: string): boolean => {

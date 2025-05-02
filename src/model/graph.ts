@@ -1,4 +1,4 @@
-import { Competition, Match, Score, Team, Victory } from './model';
+import { type Competition, type Match, type Score, type Team, Victory } from './model';
 import {
   getBoard,
   getDayDistance,

@@ -1,7 +1,7 @@
 import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
-import { Competition, Entity, Match, Pool, Stats, Team } from './model';
+import { type Competition, type Entity, type Match, type Pool, type Stats, type Team } from './model';
 import { rankingSorter, ratingSorter, Sorting } from './model-sorters';
 
 // mu, sigma, beta, tau, drawProbability
