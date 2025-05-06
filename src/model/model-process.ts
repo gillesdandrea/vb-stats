@@ -175,7 +175,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           const setA = ssetA === 'F' ? 0 : Number(ssetA);
           const setB = ssetB === 'F' ? 0 : Number(ssetB);
           const winner = setA > setB ? m1.EQA_no : m1.EQB_no;
-          if (winner !== m2.EQA_no && winner !== m2.EQB_no) {
+          if (winner !== m2.EQA_no && winner !== m2.EQB_no && m1.Jo !== '99') {
             data[3 * i + 1] = m3;
             data[3 * i + 2] = m2;
           }
@@ -201,12 +201,11 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
     })
     .forEach((daydata: any[][]) => {
       daydata
-        .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
-        // .map((data: any[]) => {
-        //   if (data[0].Jo !== '99') return data;
-        //   console.log(data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1 })));
-        //   return data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1 }));
-        // })
+        // .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
+        .map((data: any[]) => {
+          if (data[0].Jo !== '99') return data;
+          return data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1, pf: true }));
+        })
         .forEach((data: any[]) => {
           // add new day
           const day = Number(data[0].Jo);
@@ -215,6 +214,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             teams: [],
             matchs: [],
             pools: new Map(),
+            pf: data[0].pf,
           };
           competition.dayCount = day;
           competition.days[day] = dayCompetition;

@@ -29,6 +29,7 @@ const getColor = (match: Match) => {
 };
 
 export const getTrophies = (competition: Competition, team: Team): string => {
+  const isPF = (day: number) => competition && competition && competition.days[day].pf;
   const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
@@ -39,11 +40,12 @@ export const getTrophies = (competition: Competition, team: Team): string => {
     rankings.length > 0
       ? rankings
           .filter((rank) => rank > 0)
-          .map(
-            (rank, index) =>
-              `J${index + 1}${getDayDistance(competition, team, index + 1)}${firsts[index] === 2 ? '*' : ''}${
-                medals[rank]
-              }`,
+          .map((rank, index) =>
+            isPF(index + 1)
+              ? `PF${medals[rank]}`
+              : `J${index + 1}${getDayDistance(competition, team, index + 1)}${firsts[index] === 2 ? '*' : ''}${
+                  medals[rank]
+                }`,
           )
           .join(' ')
       : ' ';
@@ -86,11 +88,12 @@ const getTeamNode = (
 };
 
 const getMatchEdge = (competition: Competition, match: Match) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
   const teamW = match.winner ? match.winner : Math.round(1000 * match.winProbability) < 500 ? match.teamB : match.teamA;
   const teamL = teamW === match.teamA ? match.teamB : match.teamA;
   const proba = 100 * (teamW === match.teamA ? match.winProbability : 1 - match.winProbability);
   const predicted = Math.round(10 * proba) < 500 ? ' fontcolor="tomato"' : '';
-  const label = `J${match.day}: ${
+  const label = `${getDay(match.day)}: ${
     match.winner ? match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',') : match.date
   }\\n${proba.toFixed(1)}%`;
   const tooltip = `${match.teamA.name} - ${match.teamB.name}`;
@@ -121,7 +124,7 @@ export const getGraph = (
   tooltip="${title}"
   node [fontname="Arial" shape="note" style="filled" fillcolor="white"]
   edge [fontname="Arial" fontsize="8pt" minlen=2 dir="both" arrowtail="dot" arrowsize=0.5]
- 
+
 ${teams.map((team: Team, index: number) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
 
 ${competition.matchs

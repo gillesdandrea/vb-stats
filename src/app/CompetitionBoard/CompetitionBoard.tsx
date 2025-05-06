@@ -42,6 +42,7 @@ const largeWidth = 120;
 const CompetitionBoard = ({ competition, day, singleDay, qualified, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
 
   const board = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
@@ -198,7 +199,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       showSorterTooltip: false,
     },
     {
-      title: `J${day - 1}`,
+      title: getDay(day - 1),
       key: 'previous',
       align: 'right',
       width: smallWidth,

@@ -201,6 +201,7 @@ const Shell = () => {
     }
   };
 
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
   const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [
@@ -223,7 +224,7 @@ const Shell = () => {
       : Object.keys(tabNames).map((key) => getItem(tabNames[key], key))),
     // : [...Object.keys(tabNames).map((key) => getItem(tabNames[key], key)), getItem('|')]),
     getItem(
-      `J${dayEnabled ? day : competition?.dayCount}`,
+      getDay((dayEnabled ? day : competition?.dayCount) ?? 0),
       'day',
       <CalendarOutlined />,
       [
@@ -233,7 +234,7 @@ const Shell = () => {
           <CalendarOutlined />,
           days.map((cday) =>
             getItem(
-              `J${cday}`,
+              getDay(cday),
               cday,
               cday === (dayEnabled ? day : competition?.dayCount) ? <CalendarOutlined /> : <Checked />,
               undefined,
@@ -249,7 +250,7 @@ const Shell = () => {
           <SettingOutlined />,
           [
             getItem(
-              `Selected day (J${day})`,
+              `Selected day (${getDay(day)})`,
               'single-day',
               <Checked checked={singleDay} />,
               undefined,

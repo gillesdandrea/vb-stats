@@ -193,6 +193,7 @@ const renderPool = ({
   day: number;
   pushModalTeam: (team: Team) => void;
 }) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
   const { gold, volcano } = presetDarkPalettes;
   const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
   const firstCount = pool.teams.filter((team) => team.ranking.pools[day - 1] === 1).length;
@@ -208,7 +209,7 @@ const renderPool = ({
             <div className="vb-legend">
               {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
               &nbsp;
-              <Tag>J{day}</Tag>
+              <Tag>{getDay(day)}</Tag>
               <small>{pool.matchs[0]?.date}</small>
             </div>
           </div>
@@ -232,6 +233,7 @@ const renderPool = ({
 };
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
   const scrollRef = useRef<HTMLDivElement>(null);
   const allTeams = useMemo(
     () => getBoard(competition, Sorting.POINTS, competition.dayCount, false, false),
@@ -303,7 +305,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
                     const qb = 1 + match.winProbability / (1 - match.winProbability);
                     return (
                       <div key={match.id} style={{ display: 'flex' }}>
-                        <div style={{ width: '2rem' }}>{`J${cday.day}`}</div>
+                        <div style={{ width: '2rem' }}>{getDay(cday.day)}</div>
                         <div style={{ width: '6rem' }}>{match.date}</div>
                         <div style={{ width: '4rem', color: match.predicted === false ? 'red' : '' }}>{`${(
                           100 * match.winProbability

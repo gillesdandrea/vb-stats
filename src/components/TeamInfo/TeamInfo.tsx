@@ -190,6 +190,7 @@ interface TeamInfoProps {
 }
 
 const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam }: TeamInfoProps) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
   return (
     <Card className="vb-team-info">
       <div className="vb-card">
@@ -207,7 +208,7 @@ const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam
             return (
               <div className="vb-card-split" key={`J${index}${pool.name}`}>
                 <div className="vb-card-left">
-                  <div className="vb-tag">{`J${index}`}</div>
+                  <div className="vb-tag">{getDay(index)}</div>
                   <div className="medal">{medals[getDayRanking(competition, team, index)]}</div>
                 </div>
                 <div className="vb-card-right">

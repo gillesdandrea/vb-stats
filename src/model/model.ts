@@ -44,6 +44,7 @@ export interface CompetitionDay {
   readonly teams: Team[];
   readonly matchs: Match[];
   readonly pools: Map<string, Pool>;
+  readonly pf: boolean;
 }
 
 export interface Ranking {
