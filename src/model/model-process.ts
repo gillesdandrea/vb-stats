@@ -236,13 +236,15 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             });
           } else {
             const teams: Set<Team> = new Set();
-            Array.from(competition.teams.values())
-              .filter((team) => isTeamInCourse(competition, team, day))
-              .forEach((team) => {
-                // capture all teams even if exempt of a tour
-                teams.add(team);
-                team.dayCount = day;
-              });
+            if (!dayCompetition.pf) {
+              Array.from(competition.teams.values())
+                .filter((team) => isTeamInCourse(competition, team, day))
+                .forEach((team) => {
+                  // capture all teams even if exempt of a tour
+                  teams.add(team);
+                  team.dayCount = day;
+                });
+            }
 
             const poolCount = data.length / 3;
             for (let i = 0; i < poolCount; i++) {

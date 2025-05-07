@@ -59,6 +59,7 @@ const getTeamNode = (
   singleDay: boolean,
   qualified: boolean,
 ): string => {
+  const isPF = (day: number) => competition && competition && competition.days[day].pf;
   const isCDF = team.pools.length > 0;
   const stats = getTeamStats(team, day, !singleDay);
   const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
@@ -66,7 +67,7 @@ const getTeamNode = (
   // const eliminated = countLastDayVictories(team) === 0;
   const trophies = getTrophies(competition, team);
   const dayRanking = getDayRanking(competition, team, Math.min(day, competition.lastDay));
-  const eliminated = isCDF && dayRanking !== 1 && dayRanking !== 2;
+  const eliminated = isCDF && dayRanking !== 1 && dayRanking !== 2 && !isPF(day);
   const pre = eliminated ? '<s>' : '';
   const post = eliminated ? '</s>' : '';
   const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
