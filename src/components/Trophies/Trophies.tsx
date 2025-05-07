@@ -29,8 +29,8 @@ interface TrophiesProps {
 }
 
 const Trophies = ({ competition, team, selected }: TrophiesProps) => {
-  const isPF = (day: number) => competition && competition && competition.days[day].pf;
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));

@@ -16,6 +16,7 @@ import {
   poolId2Name,
 } from '@/model/model-helpers';
 import {
+  matchSorter,
   pointSorter,
   poolSorter,
   previousPoolSorter,
@@ -42,7 +43,8 @@ const largeWidth = 120;
 const CompetitionBoard = ({ competition, day, singleDay, qualified, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
 
   const board = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
@@ -95,7 +97,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           : ' ⏴';
         return <small>{delta}</small>;
       },
-      sorter: rankingSorter(day, !singleDay),
+      sorter: rankingSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
       fixed: true,
     },
@@ -134,10 +136,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const isPFday = isPF(day);
+        const stats = getTeamStats(team, day, !singleDay, isPFday);
         if (stats.matchCount === 0) {
           return '-';
         }
+        if (isPFday) return stats.points;
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
         const isCDF = team.pools.length > 0;
         const coef = isCDF ? 2 : 1;
@@ -145,8 +149,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
-      sorter: rankingSorter(day, !singleDay),
+      sorter: rankingSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
+      hidden: isPF(day),
     },
     {
       title: 'Matchs',
@@ -154,9 +159,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, day, !singleDay, isPF(day));
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
+      sorter: matchSorter(day, !singleDay, isPF(day)),
+      showSorterTooltip: false,
     },
     {
       title: 'Sets',
@@ -164,11 +171,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: mediumWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, day, !singleDay, isPF(day));
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
-      sorter: setSorter(day, !singleDay),
+      sorter: setSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
     },
     {
@@ -177,11 +184,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: largeWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, day, !singleDay, isPF(day));
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
-      sorter: pointSorter(day, !singleDay),
+      sorter: pointSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
     },
     {
@@ -192,10 +199,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       ellipsis: true,
       render: (team: Team) => {
         return team.pools[day]
-          ? `${poolId2Name(team.pools[day].name)}${team.pools[day].teams[0] === team ? '*' : ''}`
+          ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
           : '-';
       },
-      sorter: poolSorter(day, !singleDay),
+      sorter: poolSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
     },
     {
@@ -212,7 +219,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         return day >= 1 ? team.ranking.days[day - 1] : '';
       },
       // sorter: day > 1 ? rankingSorter(day - 1, false) : undefined,
-      sorter: previousPoolSorter(day, !singleDay),
+      sorter: previousPoolSorter(day, !singleDay, isPF(day)),
       showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },

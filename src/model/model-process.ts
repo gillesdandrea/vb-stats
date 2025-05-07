@@ -29,8 +29,8 @@ export const createMatch = (competition: Competition, data: any): Match => {
   const teamB = getTeam(competition, data.EQB_no, data.EQB_nom);
   const day = Number(data.Jo);
   const [ssetA, ssetB] = data.Set ? data.Set.split('/') : ['0', '0'];
-  const setA = ssetA === 'F' ? 0 : Number(ssetA);
-  const setB = ssetB === 'F' ? 0 : Number(ssetB);
+  const setA = ssetA === 'F' || ssetA === 'P' ? 0 : Number(ssetA);
+  const setB = ssetB === 'F' || ssetB === 'P' ? 0 : Number(ssetB);
   const [stotalA, stotalB] = data.Total ? data.Total.split('-') : ['0', '0'];
   const totalA = Number(stotalA);
   const totalB = Number(stotalB);
@@ -147,14 +147,14 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
   competition.days[day].matchs.push(match); // idem
   // dstats and gstats are already inited
   addTeamMatch(teamA, teamA.dstats[day], match);
-  addTeamMatch(teamA, teamA.sstats[day], match);
+  // addTeamMatch(teamA, teamA.sstats[day], match);
   addTeamMatch(teamA, teamA.gstats[day], match);
   addTeamMatch(teamB, teamB.dstats[day], match);
-  addTeamMatch(teamB, teamB.sstats[day], match);
+  // addTeamMatch(teamB, teamB.sstats[day], match);
   addTeamMatch(teamB, teamB.gstats[day], match);
 
   updateRating(match, teamA.dstats[day], teamB.dstats[day]);
-  updateRating(match, teamA.sstats[day], teamB.sstats[day]);
+  // updateRating(match, teamA.sstats[day], teamB.sstats[day]);
   updateRating(match, teamA.gstats[day], teamB.gstats[day]);
 };
 
@@ -214,7 +214,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             teams: [],
             matchs: [],
             pools: new Map(),
-            pf: data[0].pf,
+            pf: data[0]?.pf,
           };
           competition.dayCount = day;
           competition.days[day] = dayCompetition;
@@ -230,13 +230,13 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
                 team.dayCount = day;
                 // enforce stats creation
                 getGlobalTeamStats(team, day);
-                getSlidingTeamStats(team, day);
+                // getSlidingTeamStats(team, day);
                 getDayTeamStats(team, day);
               });
             });
           } else {
             const teams: Set<Team> = new Set();
-            if (!dayCompetition.pf) {
+            if (!dayCompetition?.pf) {
               Array.from(competition.teams.values())
                 .filter((team) => isTeamInCourse(competition, team, day))
                 .forEach((team) => {

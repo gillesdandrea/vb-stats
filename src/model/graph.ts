@@ -29,7 +29,7 @@ const getColor = (match: Match) => {
 };
 
 export const getTrophies = (competition: Competition, team: Team): string => {
-  const isPF = (day: number) => competition && competition && competition.days[day].pf;
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
   const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
@@ -59,7 +59,7 @@ const getTeamNode = (
   singleDay: boolean,
   qualified: boolean,
 ): string => {
-  const isPF = (day: number) => competition && competition && competition.days[day].pf;
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
   const isCDF = team.pools.length > 0;
   const stats = getTeamStats(team, day, !singleDay);
   const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
@@ -89,7 +89,7 @@ const getTeamNode = (
 };
 
 const getMatchEdge = (competition: Competition, match: Match) => {
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const teamW = match.winner ? match.winner : Math.round(1000 * match.winProbability) < 500 ? match.teamB : match.teamA;
   const teamL = teamW === match.teamA ? match.teamB : match.teamA;
   const proba = 100 * (teamW === match.teamA ? match.winProbability : 1 - match.winProbability);

@@ -193,7 +193,7 @@ const renderPool = ({
   day: number;
   pushModalTeam: (team: Team) => void;
 }) => {
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const { gold, volcano } = presetDarkPalettes;
   const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
   const firstCount = pool.teams.filter((team) => team.ranking.pools[day - 1] === 1).length;
@@ -233,7 +233,7 @@ const renderPool = ({
 };
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const scrollRef = useRef<HTMLDivElement>(null);
   const allTeams = useMemo(
     () => getBoard(competition, Sorting.POINTS, competition.dayCount, false, false),

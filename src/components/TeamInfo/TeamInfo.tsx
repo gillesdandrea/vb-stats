@@ -190,7 +190,7 @@ interface TeamInfoProps {
 }
 
 const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam }: TeamInfoProps) => {
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   return (
     <Card className="vb-team-info">
       <div className="vb-card">

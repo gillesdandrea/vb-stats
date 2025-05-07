@@ -201,7 +201,7 @@ const Shell = () => {
     }
   };
 
-  const getDay = (day: number) => (competition && competition && competition.days[day].pf ? 'PF' : `J${day}`);
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
   const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [

@@ -2,7 +2,7 @@ import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
 import { type Competition, type Entity, type Match, type Pool, type Stats, type Team } from './model';
-import { rankingSorter, ratingSorter, Sorting } from './model-sorters';
+import { matchSorter, rankingSorter, ratingSorter, Sorting } from './model-sorters';
 
 // mu, sigma, beta, tau, drawProbability
 // this.mu = mu ?? 25;
@@ -120,9 +120,9 @@ export const getGlobalTeamStats = (team: Team, day = team.dayCount): Stats => {
 
 export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4): Stats => {
   if (!team.sstats[day]) {
-    // console.log(`Creating Sliding ${day} Team Stats for ${team.name}`);
+    // console.log(`Creating Sliding from ${Math.max(0, day - maxDays)} to ${day - 1} Team Stats for ${team.name}`);
     team.sstats[day] = createStats(getGlobalTeamStats(team, day).rating);
-    for (let i = Math.max(0, day - maxDays + 1); i <= day; i++) {
+    for (let i = Math.max(0, day - maxDays); i < day; i++) {
       const istats = getDayTeamStats(team, i);
       const sstats = team.sstats[day];
       team.sstats[day] = {
@@ -150,9 +150,9 @@ export const getDayTeamStats = (team: Team, day: number): Stats => {
   return team.dstats[day];
 };
 
-export const getTeamStats = (team: Team, day: number, global = true): Stats => {
-  // return global ? getSlidingTeamStats(team, day, 4) : getDayTeamStats(team, day);
-  return global ? getGlobalTeamStats(team, day) : getDayTeamStats(team, day);
+export const getTeamStats = (team: Team, day: number, global = true, pf = false): Stats => {
+  return global ? (pf ? getSlidingTeamStats(team, day, 4) : getGlobalTeamStats(team, day)) : getDayTeamStats(team, day);
+  // return global ? getGlobalTeamStats(team, day) : getDayTeamStats(team, day);
 };
 
 export const getTeamRating = (team: Team, day: number): Rating => {
@@ -288,11 +288,13 @@ export const getBoard = (
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
 ): Team[] => {
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
   const board = qualified ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
   if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {
-    board.sort(rankingSorter(day, !daily));
+    if (isPF(day)) board.sort(matchSorter(day, !daily, true));
+    else board.sort(rankingSorter(day, !daily));
   }
 
   return board;
