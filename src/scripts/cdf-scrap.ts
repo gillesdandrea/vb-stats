@@ -9,8 +9,8 @@ const competitions = {
 };
 
 (async () => {
-  // const years = [2022, 2023, 2024, 2025];
-  const years = [2025];
+  // const years = [2022, 2023, 2024, 2025, 2026];
+  const years = [2026];
 
   const results = years.flatMap((season) => {
     return Object.entries(competitions).flatMap(([entity, divisions]) => {
