@@ -139,7 +139,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
         const { rating } = getTeamStats(team, statDay, statGlobal, statPF);
         return rating.mu.toFixed(3);
       },
-      sorter: ratingSorter(statDay),
+      sorter: ratingSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -160,7 +160,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       showSorterTooltip: false,
     },
     {
-      title: 'Points',
+      title: 'M.Pts',
       key: 'ranking',
       align: 'center',
       width: smallWidth,
@@ -244,7 +244,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       showSorterTooltip: false,
     },
     {
-      title: getDay(day - 1),
+      title: day <= 1 ? '-' : getDay(day - 1),
       key: 'previous',
       align: 'right',
       width: smallWidth,
@@ -271,7 +271,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
-          ? rankingSorter(statDay, statGlobal)(a, b)
+          ? rankingSorter(statDay, statGlobal, statPF)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
       showSorterTooltip: false,
     },

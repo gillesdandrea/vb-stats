@@ -335,10 +335,11 @@ export const getBoard = (
   sliding = false,
 ): Team[] => {
   const isPFday = (d: number) => competition.days[d]?.pf;
-  const board = qualified || sliding ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
+  const board =
+    qualified || sliding ? [...(competition.days[day]?.teams ?? [])] : Array.from(competition.teams.values());
 
   if (sliding) {
-    let teams = [...board];
+    let teams = board;
     if (isDayPlayed(competition, day)) {
       teams = filterThirdPlace(teams, day);
     }
