@@ -17,6 +17,12 @@
     color: #444;
   }
 
+  .ant-table-thead .ant-table-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .ant-table-cell {
     background-color: #141414;
   }
