@@ -7,6 +7,7 @@ import cx from 'classnames';
 import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Team } from '@/model/model';
 import {
+  computeVirtualPools,
   getBoard,
   getDayRanking,
   getSlidingDay,
@@ -20,7 +21,6 @@ import {
   matchSorter,
   pointSorter,
   poolSorter,
-  previousPoolSorter,
   rankingSorter,
   ratingSorter,
   setSorter,
@@ -70,6 +70,14 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
     [competition, day, singleDay, qualified, sliding],
   );
+  const virtualPools = useMemo(
+    () => (sliding ? computeVirtualPools(board) : new Map<string, string>()),
+    [sliding, board],
+  );
+  const slidingRanks = useMemo(
+    () => (sliding ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
+    [sliding, board],
+  );
   const columns: ColumnsType<Team> = [
     // { title: '', key: 'index', align: 'right', width: 40, render: (value, item, index) => index + 1, fixed: true },
     {
@@ -80,7 +88,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       width: 40,
       render: (team: Team, item, index) => {
         if (sliding) {
-          return index + 1;
+          return slidingRanks.get(team.id) ?? '-';
         }
         if (singleDay) {
           const dranking = getDayRanking(competition, team, day);
@@ -104,7 +112,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
           return '';
         }
         if (sliding) {
-          const slidingRank = index + 1;
+          const slidingRank = slidingRanks.get(team.id) ?? 0;
           const qualifiedRank = getTeamRanking(team, day, false, true);
           return <small>{formatDelta(slidingRank, qualifiedRank)}</small>;
         }
@@ -212,17 +220,27 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       showSorterTooltip: false,
     },
     {
-      title: 'Pool',
+      title: sliding ? 'V.Pool' : 'Pool',
       key: 'pool',
       align: 'center',
       width: smallWidth,
       ellipsis: true,
       render: (team: Team) => {
+        if (sliding) {
+          return virtualPools.get(team.id) ?? '-';
+        }
         return team.pools[day]
           ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
           : '-';
       },
-      sorter: poolSorter(statDay, statGlobal, statPF),
+      sorter: sliding
+        ? (a: Team, b: Team) => {
+            const poolA = virtualPools.get(a.id) ?? 'zzz';
+            const poolB = virtualPools.get(b.id) ?? 'zzz';
+            if (poolA !== poolB) return poolA.localeCompare(poolB);
+            return board.indexOf(a) - board.indexOf(b);
+          }
+        : poolSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -238,8 +256,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
         }
         return day >= 1 ? team.ranking.days[day - 1] : '';
       },
-      // sorter: day > 1 ? rankingSorter(day - 1, false) : undefined,
-      sorter: previousPoolSorter(statDay, statGlobal, statPF),
+      sorter: (a: Team, b: Team) => {
+        const aRank = a.ranking.days[day - 1] ?? Infinity;
+        const bRank = b.ranking.days[day - 1] ?? Infinity;
+        return aRank - bRank;
+      },
       showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },

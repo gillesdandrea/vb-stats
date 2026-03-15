@@ -309,6 +309,23 @@ export const getSlidingDay = (competition: Competition, day: number): number => 
   return effectiveDay + 1;
 };
 
+export const getVirtualPoolName = (index: number): string => {
+  if (index < 26) return String.fromCharCode(65 + index); // A-Z
+  return String(index - 25); // 1, 2, 3, ...
+};
+
+export const computeVirtualPools = (teams: Team[]): Map<string, string> => {
+  const numPools = Math.floor(teams.length / 3);
+  const poolMap = new Map<string, string>();
+  for (let i = 0; i < numPools * 3; i++) {
+    const row = Math.floor(i / numPools);
+    const posInRow = i % numPools;
+    const poolIndex = row % 2 === 0 ? posInRow : numPools - 1 - posInRow;
+    poolMap.set(teams[i].id, getVirtualPoolName(poolIndex));
+  }
+  return poolMap;
+};
+
 export const getBoard = (
   competition: Competition,
   sorting = Sorting.POINTS,
