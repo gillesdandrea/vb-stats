@@ -272,6 +272,22 @@ export const getDayDistance = (competition: Competition, team: Team, day: number
   return '';
 };
 
+export const isDayPlayed = (competition: Competition, day: number): boolean => {
+  const dayData = competition.days[day];
+  if (!dayData || dayData.pools.size === 0) return false;
+  return Array.from(dayData.pools.values()).every((pool) => pool.matchs.every((match) => match.winner));
+};
+
+const filterThirdPlace = (teams: Team[], day: number): Team[] => {
+  const thirdPlace = teams.filter((t) => t.ranking.pools[day] === 3);
+  const others = teams.filter((t) => t.ranking.pools[day] !== 3);
+  const deficit = others.length % 3;
+  if (deficit === 0) return others;
+  const toKeep = 3 - deficit;
+  thirdPlace.sort(rankingSorter(day, false));
+  return [...others, ...thirdPlace.slice(0, toKeep)];
+};
+
 export const isTeamInCourse = (competition: Competition, team: Team, day: number): boolean => {
   // console.log(day, team.stats.dayCount, team.name);
   if (day === 1 || team.dayCount >= day) {
@@ -305,7 +321,12 @@ export const getBoard = (
   const board = qualified || sliding ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
 
   if (sliding) {
-    board.sort(matchSorter(getSlidingDay(competition, day), true, true));
+    let teams = [...board];
+    if (isDayPlayed(competition, day)) {
+      teams = filterThirdPlace(teams, day);
+    }
+    teams.sort(matchSorter(getSlidingDay(competition, day), true, true));
+    return teams;
   } else if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {
