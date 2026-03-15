@@ -1,0 +1,1 @@
+/Users/gilles/dev/gillesdandrea/agent-skills/.claude/plugins/vitest-plugin/agents/vitest-writer.md

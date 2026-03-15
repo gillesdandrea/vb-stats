@@ -23,7 +23,8 @@
     "cdf-scrap": "tsx src/scripts/cdf-scrap.ts",
     "vb-scrap": "tsx src/scripts/vb-scrap.ts",
     "pdf-parse": "tsx src/scripts/pdf-parse.ts",
-    "cdf-update": "run-s cdf-scrap build deploy deploy"
+    "cdf-update": "run-s cdf-scrap build deploy deploy",
+    "codegraph:sync": "codegraph sync"
   },
   "dependencies": {
     "@ant-design/colors": "^8.0.0",
@@ -44,6 +45,7 @@
     "ts-trueskill": "^5.1.0"
   },
   "devDependencies": {
+    "@colbymchenry/codegraph": "^0.6.2",
     "@nabla/vite-plugin-eslint": "^2.0.5",
     "@supercharge/promise-pool": "^3.2.0",
     "@tanstack/eslint-plugin-query": "^5.74.7",
