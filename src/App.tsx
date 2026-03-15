@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider, theme } from 'antd';
 
 import Shell from './app/Shell/Shell';
+import ReloadPrompt from './components/ReloadPrompt/ReloadPrompt';
 
 const queryClient = new QueryClient({});
 
@@ -17,6 +18,7 @@ const App = () => {
         }}
       >
         <Shell />
+        <ReloadPrompt />
       </ConfigProvider>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
