@@ -8,12 +8,12 @@ export enum Sorting {
 
 // Sorting.RATING
 export const ratingSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     // const astats = global ? a.gstats[day] : a.dstats[day];
     // const bstats = global ? b.gstats[day] : b.dstats[day];
-    const astats = getTeamStats(a, day, global, pf);
-    const bstats = getTeamStats(b, day, global, pf);
+    const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
+    const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     if (astats.rating.mu === bstats.rating.mu) {
       return a.name.localeCompare(b.name);
     }
@@ -22,10 +22,10 @@ export const ratingSorter =
 
 // Sorting.POINTS
 export const rankingSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
-    const astats = getTeamStats(a, day, global, pf);
-    const bstats = getTeamStats(b, day, global, pf);
+    const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
+    const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     const aIsCDF = a.pools.length > 0;
     const acoef = aIsCDF ? 2 : 1;
     const adayCount = global ? Math.min(day, a.lastDay) : 1;
@@ -34,14 +34,14 @@ export const rankingSorter =
     const bcoef = bIsCDF ? 2 : 1;
     const bdayCount = global ? Math.min(day, b.lastDay) : 1;
     const bpoints = bstats.matchCount === 0 ? -1 : (bstats.points * bcoef * bdayCount) / bstats.matchCount;
-    return apoints === bpoints ? setSorter(day, global, pf)(a, b) : bpoints - apoints;
+    return apoints === bpoints ? setSorter(day, global, pf, slidingMaxDays)(a, b) : bpoints - apoints;
   };
 
 export const matchSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
-    const astats = getTeamStats(a, day, global, pf);
-    const bstats = getTeamStats(b, day, global, pf);
+    const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
+    const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     const asratio =
       astats.matchCount === 0
         ? -1
@@ -54,26 +54,26 @@ export const matchSorter =
         : bstats.matchLost === 0
           ? Number.MAX_SAFE_INTEGER
           : bstats.matchWon / bstats.matchLost;
-    return asratio === bsratio ? setSorter(day, global, pf)(a, b) : bsratio - asratio;
+    return asratio === bsratio ? setSorter(day, global, pf, slidingMaxDays)(a, b) : bsratio - asratio;
   };
 
 export const setSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
-    const astats = getTeamStats(a, day, global, pf);
-    const bstats = getTeamStats(b, day, global, pf);
+    const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
+    const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     const asratio =
       astats.matchCount === 0 ? -1 : astats.setLost === 0 ? Number.MAX_SAFE_INTEGER : astats.setWon / astats.setLost;
     const bsratio =
       bstats.matchCount === 0 ? -1 : bstats.setLost === 0 ? Number.MAX_SAFE_INTEGER : bstats.setWon / bstats.setLost;
-    return asratio === bsratio ? pointSorter(day, global, pf)(a, b) : bsratio - asratio;
+    return asratio === bsratio ? pointSorter(day, global, pf, slidingMaxDays)(a, b) : bsratio - asratio;
   };
 
 export const pointSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
-    const astats = getTeamStats(a, day, global, pf);
-    const bstats = getTeamStats(b, day, global, pf);
+    const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
+    const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     const apratio =
       astats.matchCount === 0
         ? -1
@@ -86,16 +86,16 @@ export const pointSorter =
         : bstats.pointLost === 0
           ? Number.MAX_SAFE_INTEGER
           : bstats.pointWon / bstats.pointLost;
-    return apratio === bpratio ? ratingSorter(day, global, pf)(a, b) : bpratio - apratio;
+    return apratio === bpratio ? ratingSorter(day, global, pf, slidingMaxDays)(a, b) : bpratio - apratio;
   };
 
 export const poolSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const apool = a.pools[day];
     const bpool = b.pools[day];
     if (!apool && !bpool) {
-      return rankingSorter(day, global, pf)(a, b);
+      return rankingSorter(day, global, pf, slidingMaxDays)(a, b);
     }
     if (!apool) {
       return +1;
@@ -112,12 +112,12 @@ export const poolSorter =
   };
 
 export const previousPoolSorter =
-  (day: number, global = true, pf = false) =>
+  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const apool = a.pools[day];
     const bpool = b.pools[day];
     if (!apool && !bpool) {
-      return rankingSorter(day, global, pf)(a, b);
+      return rankingSorter(day, global, pf, slidingMaxDays)(a, b);
     }
     if (!apool) {
       return +1;

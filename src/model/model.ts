@@ -60,7 +60,7 @@ export interface Team {
   readonly department: Department;
   readonly ranking: Ranking;
   readonly gstats: Stats[]; // global (all days) stats
-  readonly sstats: Stats[]; // sliding (last 4 days) stats
+  readonly sstats: Map<string, Stats>; // sliding stats (keyed by "day:maxDays")
   readonly dstats: Stats[]; // daily stats
   readonly pools: Pool[];
   dayCount: number;

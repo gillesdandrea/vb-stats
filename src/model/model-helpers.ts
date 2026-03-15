@@ -99,7 +99,7 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
       // dayCount: 0,
     },
     gstats: [createStats(rating)],
-    sstats: [createStats(rating)],
+    sstats: new Map<string, Stats>(),
     dstats: [],
     pools: [],
     dayCount: 0,
@@ -119,27 +119,28 @@ export const getGlobalTeamStats = (team: Team, day = team.dayCount): Stats => {
 };
 
 export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4): Stats => {
-  if (!team.sstats[day]) {
-    // console.log(`Creating Sliding from ${Math.max(0, day - maxDays)} to ${day - 1} Team Stats for ${team.name}`);
-    team.sstats[day] = createStats(getGlobalTeamStats(team, day).rating);
-    for (let i = Math.max(0, day - maxDays); i < day; i++) {
-      const istats = getDayTeamStats(team, i);
-      const sstats = team.sstats[day];
-      team.sstats[day] = {
-        ...sstats,
-        points: sstats.points + istats.points,
-        matchCount: sstats.matchCount + istats.matchCount,
-        matchWon: sstats.matchWon + istats.matchWon,
-        matchLost: sstats.matchLost + istats.matchLost,
-        setWon: sstats.setWon + istats.setWon,
-        setLost: sstats.setLost + istats.setLost,
-        pointWon: sstats.pointWon + istats.pointWon,
-        pointLost: sstats.pointLost + istats.pointLost,
-        matchs: [...sstats.matchs, ...istats.matchs],
-      };
-    }
+  const key = `${day}:${maxDays}`;
+  const cached = team.sstats.get(key);
+  if (cached) return cached;
+  // console.log(`Creating Sliding from ${Math.max(0, day - maxDays)} to ${day - 1} Team Stats for ${team.name}`);
+  let stats = createStats(getGlobalTeamStats(team, day).rating);
+  for (let i = Math.max(0, day - maxDays); i < day; i++) {
+    const istats = getDayTeamStats(team, i);
+    stats = {
+      ...stats,
+      points: stats.points + istats.points,
+      matchCount: stats.matchCount + istats.matchCount,
+      matchWon: stats.matchWon + istats.matchWon,
+      matchLost: stats.matchLost + istats.matchLost,
+      setWon: stats.setWon + istats.setWon,
+      setLost: stats.setLost + istats.setLost,
+      pointWon: stats.pointWon + istats.pointWon,
+      pointLost: stats.pointLost + istats.pointLost,
+      matchs: [...stats.matchs, ...istats.matchs],
+    };
   }
-  return team.sstats[day];
+  team.sstats.set(key, stats);
+  return stats;
 };
 
 export const getDayTeamStats = (team: Team, day: number): Stats => {
@@ -150,9 +151,9 @@ export const getDayTeamStats = (team: Team, day: number): Stats => {
   return team.dstats[day];
 };
 
-export const getTeamStats = (team: Team, day: number, global = true, pf = false): Stats => {
+export const getTeamStats = (team: Team, day: number, global = true, pf = false, slidingMaxDays = 4): Stats => {
   if (!global) return getDayTeamStats(team, day);
-  if (pf) return getSlidingTeamStats(team, day, 4);
+  if (pf) return getSlidingTeamStats(team, day, slidingMaxDays);
   return getGlobalTeamStats(team, day);
 };
 
@@ -332,18 +333,18 @@ export const getBoard = (
   day: number,
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
-  sliding = false,
+  sliding = 0,
 ): Team[] => {
   const isPFday = (d: number) => competition.days[d]?.pf;
   const board =
-    qualified || sliding ? [...(competition.days[day]?.teams ?? [])] : Array.from(competition.teams.values());
+    qualified || sliding > 0 ? [...(competition.days[day]?.teams ?? [])] : Array.from(competition.teams.values());
 
-  if (sliding) {
+  if (sliding > 0) {
     let teams = board;
-    if (isDayPlayed(competition, day)) {
+    if (!isPFday(day) && isDayPlayed(competition, day)) {
       teams = filterThirdPlace(teams, day);
     }
-    teams.sort(matchSorter(getSlidingDay(competition, day), true, true));
+    teams.sort(matchSorter(getSlidingDay(competition, day), true, true, sliding));
     return teams;
   } else if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));

@@ -34,7 +34,7 @@ interface Props {
   day: number;
   singleDay: boolean;
   qualified: boolean;
-  sliding?: boolean;
+  sliding?: number;
   className?: string | string[];
 }
 
@@ -42,8 +42,8 @@ const smallWidth = 70;
 const mediumWidth = 100;
 const largeWidth = 120;
 
-function getRankingLabel(sliding: boolean, singleDay: boolean): string {
-  if (sliding) return 'Last 4';
+function getRankingLabel(sliding: number, singleDay: boolean): string {
+  if (sliding > 0) return `Last ${sliding}`;
   if (singleDay) return 'Daily';
   return 'Global';
 }
@@ -55,27 +55,28 @@ function formatDelta(current: number, previous: number | undefined): string {
   return ` ⏷ ${current - previous}`;
 }
 
-const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = false, className }: Props) => {
+const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
   const isPF = (d: number) => competition.days[d]?.pf;
   const getDay = (d: number) => (competition.days[d]?.pf ? 'PF' : `J${d}`);
 
   const isPFday = isPF(day);
-  const statDay = sliding ? getSlidingDay(competition, day) : day;
-  const statGlobal = sliding || !singleDay;
-  const statPF = sliding || !!isPFday;
+  const statDay = sliding > 0 ? getSlidingDay(competition, day) : day;
+  const statGlobal = sliding > 0 || !singleDay;
+  const statPF = sliding > 0 || !!isPFday;
+  const statSlidingMaxDays = sliding > 0 ? sliding : 4;
 
   const board = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
     [competition, day, singleDay, qualified, sliding],
   );
   const virtualPools = useMemo(
-    () => (sliding ? computeVirtualPools(board) : new Map<string, string>()),
+    () => (sliding > 0 ? computeVirtualPools(board) : new Map<string, string>()),
     [sliding, board],
   );
   const slidingRanks = useMemo(
-    () => (sliding ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
+    () => (sliding > 0 ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
     [sliding, board],
   );
   const columns: ColumnsType<Team> = [
@@ -87,7 +88,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'right',
       width: 40,
       render: (team: Team, item, index) => {
-        if (sliding) {
+        if (sliding > 0) {
           return slidingRanks.get(team.id) ?? '-';
         }
         if (singleDay) {
@@ -111,7 +112,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
         if (day === 1) {
           return '';
         }
-        if (sliding) {
+        if (sliding > 0) {
           const slidingRank = slidingRanks.get(team.id) ?? 0;
           const qualifiedRank = getTeamRanking(team, day, false, true);
           return <small>{formatDelta(slidingRank, qualifiedRank)}</small>;
@@ -126,7 +127,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
         const previous = getTeamRanking(team, day - 1, singleDay, qualified);
         return <small>{formatDelta(ranking, previous)}</small>;
       },
-      sorter: rankingSorter(statDay, statGlobal, statPF),
+      sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
       fixed: true,
     },
@@ -136,10 +137,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const { rating } = getTeamStats(team, statDay, statGlobal, statPF);
+        const { rating } = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return rating.mu.toFixed(3);
       },
-      sorter: ratingSorter(statDay, statGlobal, statPF),
+      sorter: ratingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
     },
     {
@@ -165,7 +166,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, statDay, statGlobal, statPF);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         if (stats.matchCount === 0) {
           return '-';
         }
@@ -177,7 +178,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
           coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
-      sorter: rankingSorter(statDay, statGlobal, statPF),
+      sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
       hidden: isPF(day),
     },
@@ -187,10 +188,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, statDay, statGlobal, statPF);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
-      sorter: matchSorter(statDay, statGlobal, statPF),
+      sorter: matchSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
     },
     {
@@ -199,11 +200,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'center',
       width: mediumWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, statDay, statGlobal, statPF);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
-      sorter: setSorter(statDay, statGlobal, statPF),
+      sorter: setSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
     },
     {
@@ -212,35 +213,36 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       align: 'center',
       width: largeWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, statDay, statGlobal, statPF);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
-      sorter: pointSorter(statDay, statGlobal, statPF),
+      sorter: pointSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
     },
     {
-      title: sliding ? 'V.Pool' : 'Pool',
+      title: sliding > 0 ? 'V.Pool' : 'Pool',
       key: 'pool',
       align: 'center',
       width: smallWidth,
       ellipsis: true,
       render: (team: Team) => {
-        if (sliding) {
+        if (sliding > 0) {
           return virtualPools.get(team.id) ?? '-';
         }
         return team.pools[day]
           ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
           : '-';
       },
-      sorter: sliding
-        ? (a: Team, b: Team) => {
-            const poolA = virtualPools.get(a.id) ?? 'zzz';
-            const poolB = virtualPools.get(b.id) ?? 'zzz';
-            if (poolA !== poolB) return poolA.localeCompare(poolB);
-            return board.indexOf(a) - board.indexOf(b);
-          }
-        : poolSorter(statDay, statGlobal, statPF),
+      sorter:
+        sliding > 0
+          ? (a: Team, b: Team) => {
+              const poolA = virtualPools.get(a.id) ?? 'zzz';
+              const poolB = virtualPools.get(b.id) ?? 'zzz';
+              if (poolA !== poolB) return poolA.localeCompare(poolB);
+              return board.indexOf(a) - board.indexOf(b);
+            }
+          : poolSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
       showSorterTooltip: false,
     },
     {
@@ -271,7 +273,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = fa
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
-          ? rankingSorter(statDay, statGlobal, statPF)(a, b)
+          ? rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
       showSorterTooltip: false,
     },

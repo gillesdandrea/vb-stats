@@ -87,7 +87,13 @@ const Shell = () => {
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
-  const [sliding, setSliding] = useState<boolean>(params.sliding === 'true');
+  const [sliding, setSliding] = useState<number>(
+    params.sliding === 'true'
+      ? 4
+      : params.sliding && params.sliding !== 'false'
+        ? Math.max(1, Number.parseInt(params.sliding) || 4)
+        : 0,
+  );
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
   const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
@@ -100,7 +106,7 @@ const Shell = () => {
       const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
       const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${entity === defaultEntity ? '' : `&entity=${entity}`}${category ? `&category=${category}` : ''}${
         day ? `&day=${day === dayCount ? 'last' : day}` : ''
-      }&singleDay=${!!singleDay}&qualified=${!!qualified}&sliding=${!!sliding}${search}`;
+      }&singleDay=${!!singleDay}&qualified=${!!qualified}${sliding > 0 ? `&sliding=${sliding}` : ''}${search}`;
       if (window.location.href !== `${window.location.origin}${url}`) {
         window.history.replaceState({}, '', url);
       }
@@ -180,22 +186,22 @@ const Shell = () => {
               case 'sliding':
                 setQualified(true);
                 setSingleDay(false);
-                setSliding(true);
+                setSliding(4);
                 break;
               case 'qualified':
                 setQualified(true);
                 setSingleDay(false);
-                setSliding(false);
+                setSliding(0);
                 break;
               case 'overall':
                 setQualified(false);
                 setSingleDay(false);
-                setSliding(false);
+                setSliding(0);
                 break;
               case 'single-day':
                 setQualified(true);
                 setSingleDay(true);
-                setSliding(false);
+                setSliding(0);
                 break;
             }
           }
@@ -213,9 +219,10 @@ const Shell = () => {
 
   const getDay = (d: number) => (competition?.days[d]?.pf ? 'PF' : `J${d}`);
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
+  const slidingWindowSize = sliding > 0 ? sliding : 4;
   const slidingDay = competition ? getSlidingDay(competition, day) : day;
   const slidingEnd = slidingDay - 1;
-  const slidingStart = Math.max(1, slidingEnd - 3);
+  const slidingStart = Math.max(1, slidingEnd - (slidingWindowSize - 1));
   const slidingLabel = `${getDay(slidingStart)}-${getDay(slidingEnd)}`;
   const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [
@@ -274,9 +281,9 @@ const Shell = () => {
             !isCDF
               ? null
               : getItem(
-                  `Last 4 days (${slidingLabel})`,
+                  `Last ${slidingWindowSize} days (${slidingLabel})`,
                   'sliding',
-                  <Checked checked={!singleDay && qualified && sliding} />,
+                  <Checked checked={!singleDay && qualified && sliding > 0} />,
                   undefined,
                   undefined,
                   tab !== 'board',
@@ -286,7 +293,7 @@ const Shell = () => {
               : getItem(
                   'Qualified teams',
                   'qualified',
-                  <Checked checked={!singleDay && qualified && !sliding} />,
+                  <Checked checked={!singleDay && qualified && sliding === 0} />,
                   undefined,
                   undefined,
                   tab === 'pools',
