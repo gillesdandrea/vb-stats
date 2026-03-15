@@ -151,16 +151,19 @@ export const getDayTeamStats = (team: Team, day: number): Stats => {
 };
 
 export const getTeamStats = (team: Team, day: number, global = true, pf = false): Stats => {
-  return global ? (pf ? getSlidingTeamStats(team, day, 4) : getGlobalTeamStats(team, day)) : getDayTeamStats(team, day);
-  // return global ? getGlobalTeamStats(team, day) : getDayTeamStats(team, day);
+  if (!global) return getDayTeamStats(team, day);
+  if (pf) return getSlidingTeamStats(team, day, 4);
+  return getGlobalTeamStats(team, day);
 };
 
 export const getTeamRating = (team: Team, day: number): Rating => {
   return team.dstats[day]?.rating ?? getGlobalTeamStats(team, day).rating;
 };
 
-export const getTeamRanking = (team: Team, day: number, daily: boolean, qualified: boolean) => {
-  return daily ? team.ranking.days[day] : qualified ? team.ranking.qualifieds[day] : team.ranking.globals[day];
+export const getTeamRanking = (team: Team, day: number, daily: boolean, qualified: boolean): number => {
+  if (daily) return team.ranking.days[day];
+  if (qualified) return team.ranking.qualifieds[day];
+  return team.ranking.globals[day];
 };
 
 export const getTeamMatch = (team: Team, match: Match): Match => {
@@ -281,19 +284,32 @@ export const isTeamInCourse = (competition: Competition, team: Team, day: number
   return false;
 };
 
+/**
+ * Computes the adjusted day for sliding window stats (last 4 pool days).
+ * Skips PF day by using the previous day as the effective last pool day.
+ */
+export const getSlidingDay = (competition: Competition, day: number): number => {
+  const effectiveDay = competition.days[day]?.pf ? day - 1 : Math.min(day, competition.lastDay);
+  return effectiveDay + 1;
+};
+
 export const getBoard = (
   competition: Competition,
   sorting = Sorting.POINTS,
   day: number,
   daily: boolean, // for sorting
   qualified: boolean, // for filtering
+  sliding = false,
 ): Team[] => {
-  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
-  const board = qualified ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
-  if (sorting === Sorting.RATING) {
+  const isPFday = (d: number) => competition.days[d]?.pf;
+  const board = qualified || sliding ? (competition.days[day]?.teams ?? []) : Array.from(competition.teams.values());
+
+  if (sliding) {
+    board.sort(matchSorter(getSlidingDay(competition, day), true, true));
+  } else if (sorting === Sorting.RATING) {
     board.sort(ratingSorter(day, !daily));
   } else {
-    if (isPF(day)) board.sort(matchSorter(day, !daily, true));
+    if (isPFday(day)) board.sort(matchSorter(day, !daily, true));
     else board.sort(rankingSorter(day, !daily));
   }
 

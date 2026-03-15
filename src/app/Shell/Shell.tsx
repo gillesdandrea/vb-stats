@@ -19,6 +19,7 @@ import {
   seasonToNumber,
   seasonToString,
 } from '@/model/model';
+import { getSlidingDay } from '@/model/model-helpers';
 import useCompetition from '@/utils/useCompetition';
 
 import './Shell.scss';
@@ -86,6 +87,7 @@ const Shell = () => {
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
+  const [sliding, setSliding] = useState<boolean>(params.sliding === 'true');
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
   const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
@@ -98,12 +100,12 @@ const Shell = () => {
       const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
       const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${entity === defaultEntity ? '' : `&entity=${entity}`}${category ? `&category=${category}` : ''}${
         day ? `&day=${day === dayCount ? 'last' : day}` : ''
-      }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`;
+      }&singleDay=${!!singleDay}&qualified=${!!qualified}&sliding=${!!sliding}${search}`;
       if (window.location.href !== `${window.location.origin}${url}`) {
         window.history.replaceState({}, '', url);
       }
     }
-  }, [fetched, tab, season, entity, category, dayCount, day, singleDay, qualified, tokens]);
+  }, [fetched, tab, season, entity, category, dayCount, day, singleDay, qualified, sliding, tokens]);
 
   if (isLoading) {
     return (
@@ -175,17 +177,25 @@ const Shell = () => {
             setDay(nday);
           } else {
             switch (e.key) {
+              case 'sliding':
+                setQualified(true);
+                setSingleDay(false);
+                setSliding(true);
+                break;
               case 'qualified':
                 setQualified(true);
                 setSingleDay(false);
+                setSliding(false);
                 break;
               case 'overall':
                 setQualified(false);
                 setSingleDay(false);
+                setSliding(false);
                 break;
               case 'single-day':
                 setQualified(true);
                 setSingleDay(true);
+                setSliding(false);
                 break;
             }
           }
@@ -201,8 +211,12 @@ const Shell = () => {
     }
   };
 
-  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
+  const getDay = (d: number) => (competition?.days[d]?.pf ? 'PF' : `J${d}`);
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
+  const slidingDay = competition ? getSlidingDay(competition, day) : day;
+  const slidingEnd = slidingDay - 1;
+  const slidingStart = Math.max(1, slidingEnd - 3);
+  const slidingLabel = `${getDay(slidingStart)}-${getDay(slidingEnd)}`;
   const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [
     ...(width < BREAKPOINT
@@ -260,9 +274,19 @@ const Shell = () => {
             !isCDF
               ? null
               : getItem(
+                  `Last 4 days (${slidingLabel})`,
+                  'sliding',
+                  <Checked checked={!singleDay && qualified && sliding} />,
+                  undefined,
+                  undefined,
+                  tab !== 'board',
+                ),
+            !isCDF
+              ? null
+              : getItem(
                   'Qualified teams',
                   'qualified',
-                  <Checked checked={!singleDay && qualified} />,
+                  <Checked checked={!singleDay && qualified && !sliding} />,
                   undefined,
                   undefined,
                   tab === 'pools',
@@ -350,6 +374,7 @@ const Shell = () => {
             day={day}
             singleDay={singleDay}
             qualified={qualified}
+            sliding={sliding}
           />
         )}
         {competition && tab === 'graph' && (

@@ -9,6 +9,7 @@ import { type Competition, type Team } from '@/model/model';
 import {
   getBoard,
   getDayRanking,
+  getSlidingDay,
   getTeamOpposition,
   getTeamRanking,
   getTeamStats,
@@ -33,6 +34,7 @@ interface Props {
   day: number;
   singleDay: boolean;
   qualified: boolean;
+  sliding?: boolean;
   className?: string | string[];
 }
 
@@ -40,15 +42,33 @@ const smallWidth = 70;
 const mediumWidth = 100;
 const largeWidth = 120;
 
-const CompetitionBoard = ({ competition, day, singleDay, qualified, className }: Props) => {
+function getRankingLabel(sliding: boolean, singleDay: boolean): string {
+  if (sliding) return 'Last 4';
+  if (singleDay) return 'Daily';
+  return 'Global';
+}
+
+function formatDelta(current: number, previous: number | undefined): string {
+  if (!previous) return ' ⏴';
+  if (current === previous) return '';
+  if (current < previous) return ` ⏶ ${previous - current}`;
+  return ` ⏷ ${current - previous}`;
+}
+
+const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = false, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
-  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
-  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
+  const isPF = (d: number) => competition.days[d]?.pf;
+  const getDay = (d: number) => (competition.days[d]?.pf ? 'PF' : `J${d}`);
+
+  const isPFday = isPF(day);
+  const statDay = sliding ? getSlidingDay(competition, day) : day;
+  const statGlobal = sliding || !singleDay;
+  const statPF = sliding || !!isPFday;
 
   const board = useMemo(
-    () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
-    [competition, day, singleDay, qualified],
+    () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
+    [competition, day, singleDay, qualified, sliding],
   );
   const columns: ColumnsType<Team> = [
     // { title: '', key: 'index', align: 'right', width: 40, render: (value, item, index) => index + 1, fixed: true },
@@ -59,6 +79,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'right',
       width: 40,
       render: (team: Team, item, index) => {
+        if (sliding) {
+          return index + 1;
+        }
         if (singleDay) {
           const dranking = getDayRanking(competition, team, day);
           if (dranking === 0) {
@@ -71,7 +94,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       fixed: true,
     },
     {
-      title: singleDay ? 'Daily' : 'Global',
+      title: getRankingLabel(sliding, singleDay),
       colSpan: 2,
       key: 'delta',
       align: 'left',
@@ -79,6 +102,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       render: (team: Team, item, index) => {
         if (day === 1) {
           return '';
+        }
+        if (sliding) {
+          const slidingRank = index + 1;
+          const qualifiedRank = getTeamRanking(team, day, false, true);
+          return <small>{formatDelta(slidingRank, qualifiedRank)}</small>;
         }
         if (singleDay) {
           const dranking = getDayRanking(competition, team, day);
@@ -88,16 +116,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         }
         const ranking = getTeamRanking(team, day, singleDay, qualified);
         const previous = getTeamRanking(team, day - 1, singleDay, qualified);
-        const delta = previous
-          ? ranking === previous
-            ? ''
-            : ranking < previous
-              ? ` ⏶ ${previous - ranking}`
-              : ` ⏷ ${ranking - previous}`
-          : ' ⏴';
-        return <small>{delta}</small>;
+        return <small>{formatDelta(ranking, previous)}</small>;
       },
-      sorter: rankingSorter(day, !singleDay, isPF(day)),
+      sorter: rankingSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
       fixed: true,
     },
@@ -107,10 +128,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const { rating } = getTeamStats(team, day);
+        const { rating } = getTeamStats(team, statDay, statGlobal, statPF);
         return rating.mu.toFixed(3);
       },
-      sorter: ratingSorter(day),
+      sorter: ratingSorter(statDay),
       showSorterTooltip: false,
     },
     {
@@ -119,13 +140,13 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
+        const [mean, stdev] = getTeamOpposition(competition, team, statDay, statGlobal);
         // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
         return isNaN(mean) ? '-' : `${(100 * mean).toFixed(1)}%`;
       },
       sorter: (a: Team, b: Team) => {
-        const [amean, astdev] = getTeamOpposition(competition, a, day, !singleDay);
-        const [bmean, bstdev] = getTeamOpposition(competition, b, day, !singleDay);
+        const [amean, astdev] = getTeamOpposition(competition, a, statDay, statGlobal);
+        const [bmean, bstdev] = getTeamOpposition(competition, b, statDay, statGlobal);
         return amean === bmean ? bstdev - astdev : bmean - amean;
       },
       showSorterTooltip: false,
@@ -136,12 +157,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const isPFday = isPF(day);
-        const stats = getTeamStats(team, day, !singleDay, isPFday);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF);
         if (stats.matchCount === 0) {
           return '-';
         }
-        if (isPFday) return stats.points;
+        if (statPF) return stats.points;
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
         const isCDF = team.pools.length > 0;
         const coef = isCDF ? 2 : 1;
@@ -149,7 +169,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
-      sorter: rankingSorter(day, !singleDay, isPF(day)),
+      sorter: rankingSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
       hidden: isPF(day),
     },
@@ -159,10 +179,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay, isPF(day));
+        const stats = getTeamStats(team, statDay, statGlobal, statPF);
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
-      sorter: matchSorter(day, !singleDay, isPF(day)),
+      sorter: matchSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -171,11 +191,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: mediumWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay, isPF(day));
+        const stats = getTeamStats(team, statDay, statGlobal, statPF);
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
-      sorter: setSorter(day, !singleDay, isPF(day)),
+      sorter: setSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -184,11 +204,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: largeWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay, isPF(day));
+        const stats = getTeamStats(team, statDay, statGlobal, statPF);
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
-      sorter: pointSorter(day, !singleDay, isPF(day)),
+      sorter: pointSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -202,7 +222,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
           : '-';
       },
-      sorter: poolSorter(day, !singleDay, isPF(day)),
+      sorter: poolSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     {
@@ -219,7 +239,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         return day >= 1 ? team.ranking.days[day - 1] : '';
       },
       // sorter: day > 1 ? rankingSorter(day - 1, false) : undefined,
-      sorter: previousPoolSorter(day, !singleDay, isPF(day)),
+      sorter: previousPoolSorter(statDay, statGlobal, statPF),
       showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
@@ -230,7 +250,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
-          ? rankingSorter(day, !singleDay)(a, b)
+          ? rankingSorter(statDay, statGlobal)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
       showSorterTooltip: false,
     },
@@ -247,7 +267,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
 
   // console.log('rendering CompetitionBoard');
   return (
-    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}`}>
+    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
       <Table<Team>
         dataSource={board}
         columns={columns}
