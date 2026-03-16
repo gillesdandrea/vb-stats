@@ -23,6 +23,8 @@
     "cdf-scrap": "tsx src/scripts/cdf-scrap.ts",
     "vb-scrap": "tsx src/scripts/vb-scrap.ts",
     "pdf-parse": "tsx src/scripts/pdf-parse.ts",
+    "cdf-analysis": "tsx src/scripts/cdf-pool-analysis.ts",
+    "cdf-geocode": "tsx src/scripts/cdf-geocode.ts",
     "cdf-update": "run-s cdf-scrap build deploy deploy",
     "codegraph:sync": "codegraph sync"
   },
