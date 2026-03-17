@@ -19,6 +19,7 @@ import {
   isTeamInCourse,
   poolId2Name,
 } from '@/model/model-helpers';
+import { getTeamDistance } from '@/model/model-geography';
 import { type PoolApproach, predictPools } from '@/model/model-pools';
 import {
   matchSorter,
@@ -65,6 +66,7 @@ const approachLabels: Record<PoolApproach, string> = {
   'greedy-geographic': 'Geo',
   'swap-optimization': 'Swap',
   'geographic-clustering': 'Cluster',
+  'role-priority': 'Role',
 };
 
 const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
@@ -279,27 +281,67 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       sortOrder: getColumnSortOrder('pool'),
       showSorterTooltip: false,
     },
-    {
-      title: day <= 1 ? '-' : getDay(day - 1),
-      key: 'previous',
-      align: 'right',
-      width: smallWidth,
-      ellipsis: true,
-      render: (team: Team) => {
-        const dranking = getDayRanking(competition, team, day - 1);
-        if (dranking === 0) {
-          return '';
+    clubLocations
+      ? {
+          title: 'Km',
+          key: 'distance',
+          align: 'right',
+          width: smallWidth,
+          ellipsis: true,
+          render: (team: Team) => {
+            if (prediction) {
+              const pool = prediction.pools.find((p) => p.some((t) => t.id === team.id));
+              if (!pool || pool.length === 0) return '-';
+              const host = pool[0];
+              if (host.id === team.id) return '-';
+              const dist = getTeamDistance(team, host, clubLocations);
+              return dist >= 0 ? Math.round(dist) : '-';
+            }
+            const pool = team.pools[day];
+            if (!pool || pool.teams.length === 0) return '-';
+            const host = pool.teams[0];
+            if (host.id === team.id) return '-';
+            const dist = getTeamDistance(team, host, clubLocations);
+            return dist >= 0 ? Math.round(dist) : '-';
+          },
+          sorter: (a: Team, b: Team) => {
+            const getHostDist = (t: Team): number => {
+              if (prediction) {
+                const pool = prediction.pools.find((p) => p.some((m) => m.id === t.id));
+                if (pool && pool[0].id !== t.id) return getTeamDistance(t, pool[0], clubLocations) ?? -1;
+                return -1;
+              }
+              const pool = t.pools[day];
+              if (pool && pool.teams.length > 0 && pool.teams[0].id !== t.id)
+                return getTeamDistance(t, pool.teams[0], clubLocations) ?? -1;
+              return -1;
+            };
+            return getHostDist(a) - getHostDist(b);
+          },
+          sortOrder: getColumnSortOrder('distance'),
+          showSorterTooltip: false,
         }
-        return day >= 1 ? team.ranking.days[day - 1] : '';
-      },
-      sorter: (a: Team, b: Team) => {
-        const aRank = a.ranking.days[day - 1] ?? Infinity;
-        const bRank = b.ranking.days[day - 1] ?? Infinity;
-        return aRank - bRank;
-      },
-      sortOrder: getColumnSortOrder('previous'),
-      showSorterTooltip: false,
-    },
+      : {
+          title: day <= 1 ? '-' : getDay(day - 1),
+          key: 'previous',
+          align: 'right',
+          width: smallWidth,
+          ellipsis: true,
+          render: (team: Team) => {
+            const dranking = getDayRanking(competition, team, day - 1);
+            if (dranking === 0) {
+              return '';
+            }
+            return day >= 1 ? team.ranking.days[day - 1] : '';
+          },
+          sorter: (a: Team, b: Team) => {
+            const aRank = a.ranking.days[day - 1] ?? Infinity;
+            const bRank = b.ranking.days[day - 1] ?? Infinity;
+            return aRank - bRank;
+          },
+          sortOrder: getColumnSortOrder('previous'),
+          showSorterTooltip: false,
+        },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
     {
       title: 'Region',
@@ -347,7 +389,8 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
               {prediction && (
                 <small style={{ opacity: 0.7 }}>
                   Avg: {Math.round(prediction.metrics.avgPairDistance)} km | Host:{' '}
-                  {Math.round(prediction.metrics.avgHostDistance)} km
+                  {Math.round(prediction.metrics.avgHostDistance)} km | ±{' '}
+                  {Math.round(prediction.metrics.distanceStdDev)} km
                   {prediction.metrics.constraintViolations > 0 &&
                     ` | ${prediction.metrics.constraintViolations} violation(s)`}
                 </small>

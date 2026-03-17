@@ -5,7 +5,7 @@ import { matchSorter } from './model-sorters';
 
 // --- Types ---
 
-export type PoolApproach = 'greedy-geographic' | 'swap-optimization' | 'geographic-clustering';
+export type PoolApproach = 'greedy-geographic' | 'swap-optimization' | 'geographic-clustering' | 'role-priority';
 
 export interface RoleHistory {
   readonly host: number;
@@ -50,6 +50,7 @@ export interface PoolPrediction {
     readonly avgPairDistance: number;
     readonly avgHostDistance: number;
     readonly constraintViolations: number;
+    readonly distanceStdDev: number;
   };
 }
 
@@ -63,6 +64,12 @@ const haveSharedPool = (a: Team, b: Team, day: number): boolean => {
     if (poolA && poolB && poolA === poolB) return true;
   }
   return false;
+};
+
+const hasNoFirst = (pool: Team[], day: number): boolean => {
+  if (day < 2) return false;
+  const firstCount = pool.filter((t) => t.ranking.pools[day] === 1).length;
+  return firstCount === 0;
 };
 
 const hasThreeFirsts = (pool: Team[], day: number): boolean => {
@@ -81,7 +88,8 @@ const countViolations = (pools: Team[][], day: number): number => {
         if (haveSharedPool(pool[i], pool[j], day)) violations++;
       }
     }
-    // Check 3 firsts constraint
+    // Check firsts distribution (at least 1, at most 2)
+    if (hasNoFirst(pool, day)) violations++;
     if (hasThreeFirsts(pool, day)) violations++;
   }
   return violations;
@@ -100,26 +108,26 @@ const computeMetrics = (pools: Team[][], clubLocations: ClubLocations, day: numb
     const host = pool[0];
     for (let i = 0; i < pool.length; i++) {
       for (let j = i + 1; j < pool.length; j++) {
-        const d = getTeamDistance(pool[i], pool[j], clubLocations);
-        if (d >= 0) {
-          totalPairDist += d;
-          pairCount++;
-        }
+        totalPairDist += getTeamDistance(pool[i], pool[j], clubLocations);
+        pairCount++;
       }
       if (i > 0) {
-        const d = getTeamDistance(host, pool[i], clubLocations);
-        if (d >= 0) {
-          totalHostDist += d;
-          hostCount++;
-        }
+        totalHostDist += getTeamDistance(host, pool[i], clubLocations);
+        hostCount++;
       }
     }
   }
+
+  const poolDistances = pools.map((p) => poolHostDistance(p, clubLocations));
+  const poolMean = poolDistances.length > 1 ? poolDistances.reduce((s, d) => s + d, 0) / poolDistances.length : 0;
+  const poolVariance =
+    poolDistances.length > 1 ? poolDistances.reduce((s, d) => s + (d - poolMean) ** 2, 0) / poolDistances.length : 0;
 
   return {
     avgPairDistance: pairCount > 0 ? totalPairDist / pairCount : 0,
     avgHostDistance: hostCount > 0 ? totalHostDist / hostCount : 0,
     constraintViolations: countViolations(pools, day),
+    distanceStdDev: Math.sqrt(poolVariance),
   };
 };
 
@@ -132,6 +140,7 @@ const POOL_CONFIG = {
   repairMaxIter: 200,
   swapMaxIter: 100,
   clusterMaxIter: 50,
+  balanceWeight: 1.5, // penalty per km of stddev between pool host distances
 } as const;
 
 // --- Asymmetric Travel Cost ---
@@ -144,11 +153,9 @@ const travelCost = (pool: Team[], clubLocations: ClubLocations): number => {
   const distances: number[] = [];
   for (let i = 0; i < pool.length; i++) {
     for (let j = i + 1; j < pool.length; j++) {
-      const d = getTeamDistance(pool[i], pool[j], clubLocations);
-      if (d >= 0) distances.push(d);
+      distances.push(getTeamDistance(pool[i], pool[j], clubLocations));
     }
   }
-  if (distances.length === 0) return 0;
   if (distances.length === 1) return distances[0];
   distances.sort((a, b) => a - b);
   let cost = 0;
@@ -164,6 +171,27 @@ const totalTravelCost = (pools: Team[][], clubLocations: ClubLocations): number 
     total += travelCost(pool, clubLocations);
   }
   return total;
+};
+
+// --- Distance Balance ---
+// Penalizes variance in per-pool host distances to balance travel across pools.
+
+const poolHostDistance = (pool: Team[], clubLocations: ClubLocations): number => {
+  if (pool.length < 2) return 0;
+  const host = pool[0];
+  let total = 0;
+  for (let i = 1; i < pool.length; i++) {
+    total += getTeamDistance(host, pool[i], clubLocations);
+  }
+  return total;
+};
+
+const distanceBalancePenalty = (pools: Team[][], clubLocations: ClubLocations): number => {
+  const distances = pools.map((p) => poolHostDistance(p, clubLocations));
+  if (distances.length < 2) return 0;
+  const mean = distances.reduce((s, d) => s + d, 0) / distances.length;
+  const variance = distances.reduce((s, d) => s + (d - mean) ** 2, 0) / distances.length;
+  return Math.sqrt(variance) * POOL_CONFIG.balanceWeight;
 };
 
 // --- Role Equity ---
@@ -196,11 +224,6 @@ const computeRoleHistory = (
 
       const d1 = getTeamDistance(host, pool.teams[1], clubLocations);
       const d2 = getTeamDistance(host, pool.teams[2], clubLocations);
-      if (d1 < 0 || d2 < 0) {
-        ensure(pool.teams[1].id).nearby++;
-        ensure(pool.teams[2].id).nearby++;
-        continue;
-      }
       if (d1 <= d2) {
         ensure(pool.teams[1].id).nearby++;
         ensure(pool.teams[2].id).far++;
@@ -212,6 +235,80 @@ const computeRoleHistory = (
   }
 
   return history;
+};
+
+// --- Per-Day Role Tracking ---
+// Returns per-team roles for the last N days: 'host' | 'nearby' | 'far' | undefined
+// Most recent day first in the array (index 0 = most recent)
+
+type DayRole = 'host' | 'nearby' | 'far' | undefined;
+
+const computePerDayRoles = (
+  competition: Competition,
+  day: number,
+  clubLocations: ClubLocations,
+  lookback: number = 3,
+): Map<string, DayRole[]> => {
+  const result = new Map<string, DayRole[]>();
+  const startDay = Math.max(1, day - lookback + 1);
+
+  // Collect roles for each day in the lookback window
+  const dayRoles: Map<string, DayRole>[] = [];
+  for (let d = startDay; d <= day; d++) {
+    const dayData = competition.days[d];
+    const roles = new Map<string, DayRole>();
+    if (dayData && !dayData.pf) {
+      for (const pool of dayData.pools.values()) {
+        if (pool.teams.length < 3) continue;
+        const host = pool.teams[0];
+        roles.set(host.id, 'host');
+
+        const d1 = getTeamDistance(host, pool.teams[1], clubLocations);
+        const d2 = getTeamDistance(host, pool.teams[2], clubLocations);
+        if (d1 <= d2) {
+          roles.set(pool.teams[1].id, 'nearby');
+          roles.set(pool.teams[2].id, 'far');
+        } else {
+          roles.set(pool.teams[1].id, 'far');
+          roles.set(pool.teams[2].id, 'nearby');
+        }
+      }
+    }
+    dayRoles.push(roles);
+  }
+
+  // Build per-team arrays, most recent day first
+  const allTeamIds = new Set<string>();
+  for (const roles of dayRoles) {
+    for (const id of roles.keys()) allTeamIds.add(id);
+  }
+  for (const id of allTeamIds) {
+    const roles: DayRole[] = [];
+    for (let i = dayRoles.length - 1; i >= 0; i--) {
+      roles.push(dayRoles[i].get(id));
+    }
+    result.set(id, roles);
+  }
+
+  return result;
+};
+
+// --- Host Need Score ---
+// Higher score = team has traveled more recently = higher priority to host
+
+const ROLE_WEIGHTS: Record<string, number> = { far: 2, nearby: 1, host: 0 };
+const RECENCY_WEIGHTS = [1.0, 0.5, 0.25];
+const DEFAULT_ROLE_WEIGHT = 1; // neutral for teams without history
+
+const computeHostNeedScore = (roles: DayRole[]): number => {
+  let score = 0;
+  for (let i = 0; i < roles.length; i++) {
+    const role = roles[i];
+    const roleW = role !== undefined ? (ROLE_WEIGHTS[role] ?? DEFAULT_ROLE_WEIGHT) : DEFAULT_ROLE_WEIGHT;
+    const recencyW = i < RECENCY_WEIGHTS.length ? RECENCY_WEIGHTS[i] : 0;
+    score += roleW * recencyW;
+  }
+  return score;
 };
 
 const poolEquityPenalty = (
@@ -230,13 +327,7 @@ const poolEquityPenalty = (
   // Classify visitors as nearby/far
   const d1 = getTeamDistance(host, pool[1], clubLocations);
   const d2 = getTeamDistance(host, pool[2], clubLocations);
-  let nearTeam: Team;
-  let farTeam: Team;
-  if (d1 >= 0 && d2 >= 0) {
-    [nearTeam, farTeam] = d1 <= d2 ? [pool[1], pool[2]] : [pool[2], pool[1]];
-  } else {
-    return hostPenalty * POOL_CONFIG.equityWeight;
-  }
+  const [nearTeam, farTeam] = d1 <= d2 ? [pool[1], pool[2]] : [pool[2], pool[1]];
 
   const nearHistory = roleHistory.get(nearTeam.id) ?? { host: 0, nearby: 0, far: 0 };
   const farHistory = roleHistory.get(farTeam.id) ?? { host: 0, nearby: 0, far: 0 };
@@ -387,13 +478,11 @@ const selectHosts = (
   roleHistory?: Map<string, RoleHistory>,
   currentDayHosts?: Set<string>,
   trace: Trace = nullTrace,
+  day?: number,
 ): void => {
   for (const [poolIdx, pool] of pools.entries()) {
     if (pool.length < 2) continue;
-    const coords = pool
-      .map((t) => getTeamCoords(t, clubLocations))
-      .filter((c): c is [number, number] => c !== undefined);
-    if (coords.length === 0) continue;
+    const coords = pool.map((t) => getTeamCoords(t, clubLocations));
     const centroidLat = coords.reduce((s, c) => s + c[0], 0) / coords.length;
     const centroidLon = coords.reduce((s, c) => s + c[1], 0) / coords.length;
 
@@ -442,7 +531,7 @@ const selectHosts = (
     if (currentDayHosts?.has(pool[0].id) && pool.length >= 3) {
       const d1 = getTeamDistance(pool[0], pool[1], clubLocations);
       const d2 = getTeamDistance(pool[0], pool[2], clubLocations);
-      const nearbyIdx = d1 >= 0 && d2 >= 0 ? (d1 <= d2 ? 1 : 2) : 1;
+      const nearbyIdx = d1 <= d2 ? 1 : 2;
       if (!currentDayHosts.has(pool[nearbyIdx].id)) {
         reason += ` → escape hatch: swapped with nearby ${pool[nearbyIdx].name}`;
         [pool[0], pool[nearbyIdx]] = [pool[nearbyIdx], pool[0]];
@@ -450,6 +539,81 @@ const selectHosts = (
     }
 
     trace.log(`Pool ${getVirtualPoolName(poolIdx)}: picked ${pool[0].name} (${reason})`);
+  }
+
+  // --- Cross-pool repair pass: eliminate remaining consecutive hostings ---
+  // Evaluate all valid candidates and pick the one with the least distance penalty
+  if (currentDayHosts && currentDayHosts.size > 0) {
+    const problemPools = pools
+      .map((pool, idx) => ({ pool, idx }))
+      .filter(({ pool }) => pool.length >= 2 && currentDayHosts.has(pool[0].id));
+
+    for (const { pool: problemPool, idx: problemIdx } of problemPools) {
+      interface Candidate {
+        donorIdx: number;
+        k: number;
+        costDelta: number;
+      }
+      const candidates: Candidate[] = [];
+      const stuckHost = problemPool[0];
+      const preProblemCost = travelCost(problemPool, clubLocations);
+
+      for (const [donorIdx, donorPool] of pools.entries()) {
+        if (donorIdx === problemIdx || donorPool.length < 2) continue;
+        if (currentDayHosts.has(donorPool[0].id)) continue;
+
+        const preDonorCost = travelCost(donorPool, clubLocations);
+        const preViolations = day !== undefined ? countViolations([problemPool, donorPool], day) : 0;
+
+        for (let k = 1; k < donorPool.length; k++) {
+          if (currentDayHosts.has(donorPool[k].id)) continue;
+
+          // Tentatively swap
+          const donorTeam = donorPool[k];
+          problemPool[0] = donorTeam;
+          donorPool[k] = stuckHost;
+
+          // Check hard constraints
+          if (day !== undefined) {
+            const postViolations = countViolations([problemPool, donorPool], day);
+            if (postViolations > preViolations) {
+              problemPool[0] = stuckHost;
+              donorPool[k] = donorTeam;
+              continue;
+            }
+          }
+
+          const costDelta =
+            travelCost(problemPool, clubLocations) +
+            travelCost(donorPool, clubLocations) -
+            preProblemCost -
+            preDonorCost;
+
+          // Revert — we'll apply the best candidate later
+          problemPool[0] = stuckHost;
+          donorPool[k] = donorTeam;
+
+          candidates.push({ donorIdx, k, costDelta });
+        }
+      }
+
+      if (candidates.length > 0) {
+        // Pick the candidate with the least distance penalty
+        candidates.sort((a, b) => a.costDelta - b.costDelta);
+        const best = candidates[0];
+        const donorPool = pools[best.donorIdx];
+        const donorTeam = donorPool[best.k];
+        problemPool[0] = donorTeam;
+        donorPool[best.k] = stuckHost;
+        trace.log(
+          `Cross-pool repair: Pool ${getVirtualPoolName(problemIdx)} host ${stuckHost.name} ↔ Pool ${getVirtualPoolName(best.donorIdx)} member ${donorTeam.name} (cost delta: ${best.costDelta >= 0 ? '+' : ''}${Math.round(best.costDelta)}km)`,
+        );
+      } else {
+        trace.log(
+          `Cross-pool repair: Pool ${getVirtualPoolName(problemIdx)} host ${stuckHost.name} — no valid donor found, consecutive host remains`,
+        );
+      }
+    }
   }
 };
 
@@ -465,9 +629,7 @@ const greedyGeographic = (
   // teams are already sorted by ranking from predictPools
 
   // Select hosts: spread by latitude
-  const withCoords = teams
-    .map((t) => ({ team: t, coords: getTeamCoords(t, clubLocations) }))
-    .filter((x) => x.coords !== undefined) as Array<{ team: Team; coords: [number, number] }>;
+  const withCoords = teams.map((t) => ({ team: t, coords: getTeamCoords(t, clubLocations) }));
 
   withCoords.sort((a, b) => a.coords[0] - b.coords[0]);
 
@@ -506,8 +668,7 @@ const greedyGeographic = (
   // Remaining teams sorted by distance to nearest host
   const remaining = teams.filter((t: Team) => !assigned.has(t.id));
   const minHostDist = (team: Team): number => {
-    const distances = pools.map((p) => getTeamDistance(team, p[0], clubLocations)).filter((d) => d >= 0);
-    return distances.length > 0 ? Math.min(...distances) : Infinity;
+    return Math.min(...pools.map((p) => getTeamDistance(team, p[0], clubLocations)));
   };
   remaining.sort((a: Team, b: Team) => {
     const aDist = minHostDist(a);
@@ -571,6 +732,7 @@ const swapOptimization = (
   const combinedCost = (ps: Team[][]): number => {
     let cost = totalTravelCost(ps, clubLocations);
     if (roleHistory) cost += totalEquityPenalty(ps, roleHistory, clubLocations);
+    cost += distanceBalancePenalty(ps, clubLocations);
     return cost;
   };
 
@@ -606,7 +768,7 @@ const swapOptimization = (
 
   // Set host: closest-to-centroid, with equity and consecutive-hosting avoidance
   trace.group('Host selection');
-  selectHosts(pools, clubLocations, roleHistory, currentDayHosts, trace);
+  selectHosts(pools, clubLocations, roleHistory, currentDayHosts, trace, day);
   trace.groupEnd();
 
   return pools;
@@ -624,10 +786,7 @@ const geographicClustering = (
   trace: Trace = nullTrace,
 ): Team[][] => {
   // Sort teams by latitude
-  const withCoords = teams
-    .map((t) => ({ team: t, coords: getTeamCoords(t, clubLocations) }))
-    .filter((x) => x.coords !== undefined) as Array<{ team: Team; coords: [number, number] }>;
-  const withoutCoords = teams.filter((t) => getTeamCoords(t, clubLocations) === undefined);
+  const withCoords = teams.map((t) => ({ team: t, coords: getTeamCoords(t, clubLocations) }));
 
   withCoords.sort((a, b) => a.coords[0] - b.coords[0]);
 
@@ -642,20 +801,13 @@ const geographicClustering = (
     pools.push(chunk);
   }
 
-  // Add teams without coordinates to smallest pools
-  for (const team of withoutCoords) {
-    const smallest = pools.reduce((min, pool, idx) => (pool.length < pools[min].length ? idx : min), 0);
-    if (pools[smallest].length < 3) {
-      pools[smallest].push(team);
-    }
-  }
-
   const pairCost = (p: number, q: number): number => {
     let cost = travelCost(pools[p], clubLocations) + travelCost(pools[q], clubLocations);
     if (roleHistory) {
       cost += poolEquityPenalty(pools[p], roleHistory, clubLocations);
       cost += poolEquityPenalty(pools[q], roleHistory, clubLocations);
     }
+    cost += distanceBalancePenalty(pools, clubLocations);
     return cost;
   };
 
@@ -695,7 +847,204 @@ const geographicClustering = (
 
   // Select host per pool with equity and consecutive-hosting avoidance
   trace.group('Host selection');
-  selectHosts(pools, clubLocations, roleHistory, currentDayHosts, trace);
+  selectHosts(pools, clubLocations, roleHistory, currentDayHosts, trace, day);
+  trace.groupEnd();
+
+  return pools;
+};
+
+// --- Approach D: Role-Priority Pools ---
+// Primary driver: role fairness (teams that traveled far should host next)
+// Secondary: geographic spreading + swap optimization
+
+const rolePriorityPools = (
+  teams: Team[],
+  numPools: number,
+  day: number,
+  clubLocations: ClubLocations,
+  competition: Competition,
+  roleHistory?: Map<string, RoleHistory>,
+  currentDayHosts?: Set<string>,
+  trace: Trace = nullTrace,
+): Team[][] => {
+  // --- Phase A: Host selection by role-priority + geographic spreading ---
+  const perDayRoles = computePerDayRoles(competition, day, clubLocations);
+
+  // Score all teams by host need
+  const teamScores = teams.map((t) => ({
+    team: t,
+    hostNeed: computeHostNeedScore(perDayRoles.get(t.id) ?? []),
+    coords: getTeamCoords(t, clubLocations),
+  }));
+
+  // Sort by hostNeed descending, then by ranking as tie-breaker
+  teamScores.sort((a, b) => {
+    if (b.hostNeed !== a.hostNeed) return b.hostNeed - a.hostNeed;
+    return 0; // preserve original ranking order
+  });
+
+  // Select hosts: walk sorted list with geographic spreading
+  const hosts: Team[] = [];
+  const usedDepts = new Set<string>();
+
+  // First pass: pick hosts from highest need, spread by department
+  for (const entry of teamScores) {
+    if (hosts.length >= numPools) break;
+    // Skip teams that hosted yesterday (soft constraint)
+    if (currentDayHosts?.has(entry.team.id)) continue;
+    // Geographic spread: skip same department
+    if (usedDepts.has(entry.team.department.num_dep)) continue;
+    usedDepts.add(entry.team.department.num_dep);
+    hosts.push(entry.team);
+  }
+
+  // Fallback: relax department constraint if not enough hosts
+  if (hosts.length < numPools) {
+    for (const entry of teamScores) {
+      if (hosts.length >= numPools) break;
+      if (hosts.includes(entry.team)) continue;
+      if (currentDayHosts?.has(entry.team.id)) continue;
+      hosts.push(entry.team);
+    }
+  }
+
+  // Last resort: allow yesterday's hosts
+  if (hosts.length < numPools) {
+    for (const entry of teamScores) {
+      if (hosts.length >= numPools) break;
+      if (hosts.includes(entry.team)) continue;
+      hosts.push(entry.team);
+    }
+  }
+
+  trace.log(
+    `Host selection (role-priority): ${hosts.map((h) => `${h.name}(need=${computeHostNeedScore(perDayRoles.get(h.id) ?? []).toFixed(2)})`).join(', ')}`,
+  );
+
+  // Initialize pools with hosts
+  const pools: Team[][] = hosts.slice(0, numPools).map((h) => [h]);
+  const assigned = new Set(hosts.slice(0, numPools).map((h) => h.id));
+
+  // --- Phase B: Round-robin nearby assignment (2nd team per pool) ---
+  const remaining = teams.filter((t) => !assigned.has(t.id));
+
+  // Sort remaining by distance to nearest host for efficient assignment
+  const assignTeamToPool = (team: Team, slot: 'nearby' | 'far', roundOffset: number): void => {
+    // Evaluate all non-full pools, rotating start to prevent bias
+    const poolOrder: number[] = [];
+    for (let k = 0; k < numPools; k++) {
+      poolOrder.push((k + roundOffset) % numPools);
+    }
+
+    let bestPool = -1;
+    let bestDist = Infinity;
+    let bestViolation = true;
+    let bestThreeFirsts = true;
+
+    for (const pIdx of poolOrder) {
+      const targetSize = slot === 'nearby' ? 2 : 3;
+      if (pools[pIdx].length >= targetSize) continue;
+      if (slot === 'far' && pools[pIdx].length < 2) continue;
+
+      const hasViolation = pools[pIdx].some((member) => haveSharedPool(team, member, day));
+      const wouldHaveThreeFirsts = hasThreeFirsts([...pools[pIdx], team], day);
+      const dist = getTeamDistance(team, pools[pIdx][0], clubLocations);
+
+      // Prefer: no violation > no three-firsts > closest (for nearby) or farthest (for far)
+      const isBetter =
+        (!hasViolation && bestViolation) ||
+        (hasViolation === bestViolation && !wouldHaveThreeFirsts && bestThreeFirsts) ||
+        (hasViolation === bestViolation &&
+          wouldHaveThreeFirsts === bestThreeFirsts &&
+          (slot === 'nearby' ? dist < bestDist : dist > bestDist));
+
+      if (isBetter) {
+        bestPool = pIdx;
+        bestDist = dist;
+        bestViolation = hasViolation;
+        bestThreeFirsts = wouldHaveThreeFirsts;
+      }
+    }
+
+    if (bestPool >= 0) {
+      pools[bestPool].push(team);
+      assigned.add(team.id);
+      trace.log(
+        `Assign ${slot} ${team.name} → Pool ${getVirtualPoolName(bestPool)} (dist=${Math.round(bestDist)}km${bestViolation ? ', ⚠ violation' : ''})`,
+      );
+    }
+  };
+
+  // Sort remaining by distance to nearest host (closest first for nearby assignment)
+  const nearbyQueue = [...remaining].sort((a, b) => {
+    const aDist = Math.min(...pools.map((p) => getTeamDistance(a, p[0], clubLocations)));
+    const bDist = Math.min(...pools.map((p) => getTeamDistance(b, p[0], clubLocations)));
+    return aDist - bDist;
+  });
+
+  // Assign nearby teams (2nd slot) with round-robin offset
+  for (let i = 0; i < nearbyQueue.length; i++) {
+    const team = nearbyQueue[i];
+    if (assigned.has(team.id)) continue;
+    assignTeamToPool(team, 'nearby', i);
+  }
+
+  // --- Phase C: Round-robin far assignment (3rd team per pool) ---
+  // Sort remaining unassigned by distance to nearest host (farthest first for far assignment)
+  const farQueue = teams
+    .filter((t) => !assigned.has(t.id))
+    .sort((a, b) => {
+      const aDist = Math.min(...pools.map((p) => getTeamDistance(a, p[0], clubLocations)));
+      const bDist = Math.min(...pools.map((p) => getTeamDistance(b, p[0], clubLocations)));
+      return bDist - aDist; // farthest first
+    });
+
+  for (let i = 0; i < farQueue.length; i++) {
+    const team = farQueue[i];
+    if (assigned.has(team.id)) continue;
+    assignTeamToPool(team, 'far', i);
+  }
+
+  // --- Phase D: Swap optimization ---
+  const combinedCost = (ps: Team[][]): number => {
+    let cost = totalTravelCost(ps, clubLocations);
+    if (roleHistory) cost += totalEquityPenalty(ps, roleHistory, clubLocations);
+    cost += distanceBalancePenalty(ps, clubLocations);
+    return cost;
+  };
+
+  let currentCost = combinedCost(pools);
+  let currentViolations = countViolations(pools, day);
+  let swapCount = 0;
+
+  improveBySwapping(pools, POOL_CONFIG.swapMaxIter, (p, q, _i, _j, ti, tj) => {
+    const newViolations = countViolations(pools, day);
+    const newCost = combinedCost(pools);
+    const fewerViolations = newViolations < currentViolations;
+    const betterCost = newViolations <= currentViolations && newCost < currentCost;
+    if (fewerViolations || betterCost) {
+      swapCount++;
+      if (fewerViolations) {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${currentViolations}→${newViolations}`,
+        );
+      } else {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — cost ${Math.round(currentCost)}→${Math.round(newCost)} (violations=${newViolations})`,
+        );
+      }
+      currentViolations = newViolations;
+      currentCost = newCost;
+      return true;
+    }
+    return false;
+  });
+
+  trace.log(`Total: ${swapCount} accepted swaps, violations=${currentViolations}, cost=${Math.round(currentCost)}`);
+
+  // --- Phase E: Host confirmation ---
+  trace.group('Host confirmation');
+  selectHosts(pools, clubLocations, roleHistory, currentDayHosts, trace, day);
   trace.groupEnd();
 
   return pools;
@@ -732,21 +1081,17 @@ const auditPools = (
     if (pool.length >= 3) {
       const d1 = getTeamDistance(host, pool[1], clubLocations);
       const d2 = getTeamDistance(host, pool[2], clubLocations);
-      if (d1 >= 0 && d2 >= 0) {
-        if (d1 <= d2) {
-          nearbyTeam = pool[1];
-          roles.push(`Nearby(${Math.round(d1)}km)`, `Far(${Math.round(d2)}km)`);
-        } else {
-          nearbyTeam = pool[2];
-          roles.push(`Nearby(${Math.round(d2)}km)`, `Far(${Math.round(d1)}km)`);
-        }
+      if (d1 <= d2) {
+        nearbyTeam = pool[1];
+        roles.push(`Nearby(${Math.round(d1)}km)`, `Far(${Math.round(d2)}km)`);
       } else {
-        roles.push(`?(${Math.round(Math.max(d1, 0))}km)`, `?(${Math.round(Math.max(d2, 0))}km)`);
+        nearbyTeam = pool[2];
+        roles.push(`Nearby(${Math.round(d2)}km)`, `Far(${Math.round(d1)}km)`);
       }
     } else if (pool.length === 2) {
       const d = getTeamDistance(host, pool[1], clubLocations);
       nearbyTeam = pool[1];
-      roles.push(d >= 0 ? `Visitor(${Math.round(d)}km)` : '?');
+      roles.push(`Visitor(${Math.round(d)}km)`);
     }
 
     const warnings: string[] = [];
@@ -795,23 +1140,30 @@ const auditPools = (
       totalEquityPenalty += penalty;
     }
 
-    // Travel cost
+    // Travel cost and host distance
     const cost = travelCost(pool, clubLocations);
     totalTravel += cost;
+    const hostDist = poolHostDistance(pool, clubLocations);
 
     const teamNames = pool.map((t) => t.name).join(', ');
     const roleStr = roles.join(', ');
     const status = warnings.length === 0 ? 'OK' : warnings.map((w) => `⚠ ${w}`).join(', ');
-    trace.log(`Pool ${poolName}: [${roleStr}] ${teamNames} — ${status}`);
+    trace.log(`Pool ${poolName}: [${roleStr}] hostDist=${Math.round(hostDist)}km ${teamNames} — ${status}`);
   }
   trace.groupEnd();
+
+  const poolDistances = pools.filter((p) => p.length >= 2).map((p) => poolHostDistance(p, clubLocations));
+  const distMean = poolDistances.length > 1 ? poolDistances.reduce((s, d) => s + d, 0) / poolDistances.length : 0;
+  const distVariance =
+    poolDistances.length > 1 ? poolDistances.reduce((s, d) => s + (d - distMean) ** 2, 0) / poolDistances.length : 0;
+  const distStdDev = Math.sqrt(distVariance);
 
   trace.group('Summary');
   trace.log(
     `Hard rules:  shared_pool=${totalSharedPool}  no_first=${totalNoFirst}  three_firsts=${totalThreeFirsts}  total_violations=${totalSharedPool + totalNoFirst + totalThreeFirsts}`,
   );
   trace.log(
-    `Soft rules:  consecutive_hosting=${totalConsecutiveHost}  equity_penalty=${totalEquityPenalty.toFixed(1)}km  avg_travel=${poolCount > 0 ? Math.round(totalTravel / poolCount) : 0}km`,
+    `Soft rules:  consecutive_hosting=${totalConsecutiveHost}  equity_penalty=${totalEquityPenalty.toFixed(1)}km  avg_travel=${poolCount > 0 ? Math.round(totalTravel / poolCount) : 0}km  distance_balance=±${Math.round(distStdDev)}km`,
   );
   trace.groupEnd();
 };
@@ -849,7 +1201,7 @@ export const predictPools = (competition: Competition, day: number, config: Pool
     return {
       poolMap: new Map(),
       pools: [],
-      metrics: { avgPairDistance: 0, avgHostDistance: 0, constraintViolations: 0 },
+      metrics: { avgPairDistance: 0, avgHostDistance: 0, constraintViolations: 0, distanceStdDev: 0 },
     };
   }
 
@@ -888,7 +1240,7 @@ export const predictPools = (competition: Competition, day: number, config: Pool
       pools = greedyGeographic(eligible, numPools, lastPoolDay, config.clubLocations, trace);
       trace.groupEnd();
       trace.group('Host selection (post-hoc)');
-      selectHosts(pools, config.clubLocations, roleHistory, currentDayHosts, trace);
+      selectHosts(pools, config.clubLocations, roleHistory, currentDayHosts, trace, lastPoolDay);
       trace.groupEnd();
       break;
     case 'swap-optimization':
@@ -917,6 +1269,20 @@ export const predictPools = (competition: Competition, day: number, config: Pool
       );
       trace.groupEnd();
       break;
+    case 'role-priority':
+      trace.group('Role-priority');
+      pools = rolePriorityPools(
+        eligible,
+        numPools,
+        lastPoolDay,
+        config.clubLocations,
+        competition,
+        roleHistory,
+        currentDayHosts,
+        trace,
+      );
+      trace.groupEnd();
+      break;
   }
 
   // Final repair pass to eliminate any remaining constraint violations
@@ -924,6 +1290,12 @@ export const predictPools = (competition: Competition, day: number, config: Pool
   if (preRepairViolations > 0) {
     trace.group(`Repair violations (${preRepairViolations} remaining)`);
     repairViolations(pools, lastPoolDay, trace);
+    trace.groupEnd();
+
+    // Re-select hosts after repair — swaps may have moved yesterday-hosts into position 0
+    // Safe: only reorders within each pool, cannot introduce hard constraint violations
+    trace.group('Host re-selection (post-repair)');
+    selectHosts(pools, config.clubLocations, roleHistory, currentDayHosts, trace, lastPoolDay);
     trace.groupEnd();
   }
 
