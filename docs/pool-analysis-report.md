@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This report presents a comprehensive, data-driven investigation into how the French Volleyball Federation (FFVB) assembles pools of three teams for the merit-based rounds (day 5 onward) of the Coupe de France (CDF) youth volleyball competition. Analyzing 5 seasons (2022--2026), 6 categories, 88 merit days, 833 pools, and 2,499 team pairs -- with 607 geocoded clubs -- we tested 15 distinct hypotheses spanning ranking-based ordering, constraint enforcement, statistical distribution, and geographic proximity. The central finding is that geography is the dominant factor: actual pools are on average 27% closer in distance than randomly assembled pools (distance ratio 0.734), with an asymmetric "1 close + 1 far" visitor pattern (avg 202 km vs 398 km), while no ranking-based method predicts pool composition above random chance. Two hard constraints -- no-repeat matchups and no-three-firsts -- are perfectly enforced. The system is competitively fair: host selection is ranking-neutral, and ranking spread within pools is statistically indistinguishable from random.
+This report presents a comprehensive, data-driven investigation into how the French Volleyball Federation (FFVB) assembles pools of three teams for the national rounds (day 5 onward) of the Coupe de France (CDF) youth volleyball competition. Analyzing 5 seasons (2022--2026), 6 categories, 88 national days, 833 pools, and 2,499 team pairs -- with 607 geocoded clubs -- we tested 15 distinct hypotheses spanning ranking-based ordering, constraint enforcement, statistical distribution, and geographic proximity. The central finding is that geography is the dominant factor: actual pools are on average 27% closer in distance than randomly assembled pools (distance ratio 0.734), with an asymmetric "1 close + 1 far" visitor pattern (avg 202 km vs 398 km), while no ranking-based method predicts pool composition above random chance. Two hard constraints -- no-repeat matchups and no-three-firsts -- are perfectly enforced. The system is competitively fair: host selection is ranking-neutral, and ranking spread within pools is statistically indistinguishable from random.
 
 ---
 
@@ -12,7 +12,7 @@ This report presents a comprehensive, data-driven investigation into how the Fre
 
 The FFVB organizes the Coupe de France (CDF) for youth categories across France. The competition spans multiple "days" (rounds), each consisting of pools of 3 teams. Within each pool, every team plays the other two, producing 3 matches per pool. After each day, teams are ranked and a subset is eliminated; the remaining teams advance to the next round.
 
-The early days (days 1--4) are organized regionally: teams are grouped within their geographic area. From day 5 onward, the competition becomes national and merit-based -- only teams that have performed well enough continue. These later rounds raise a fundamental question: **how does the FFVB decide which three teams form a pool?**
+The early days (days 1--4) are organized regionally: teams are grouped within their geographic area. From day 5 onward, the competition becomes national -- only teams that have performed well enough continue. These later rounds raise a fundamental question: **how does the FFVB decide which three teams form a pool?**
 
 ### 1.2 Motivation
 
@@ -26,7 +26,7 @@ This investigation systematically tests every plausible pool-formation mechanism
 
 ### 1.3 Scope
 
-The analysis focuses on merit-based days only (day >= 5), excluding:
+The analysis focuses on national days only (day >= 5), excluding:
 
 - Regional preliminary rounds (days 1--4), where geography is the explicit organizing principle
 - Final phases (day 99 / playoffs), which follow bracket-style elimination
@@ -36,15 +36,15 @@ The analysis focuses on merit-based days only (day >= 5), excluding:
 
 ## 2. Data Scope
 
-| Dimension           | Value                                  |
-| ------------------- | -------------------------------------- |
-| Seasons             | 5 (2022, 2023, 2024, 2025, 2026)       |
-| Categories          | 6 (M15F, M15M, M18F, M18M, M21F, M21M) |
-| Merit days analyzed | 88                                     |
-| Pools analyzed      | 833                                    |
-| Team pairs analyzed | 2,499 (3 pairs per pool of 3)          |
-| Geocoded clubs      | 607                                    |
-| Data format         | CSV files (one per season/category)    |
+| Dimension              | Value                                  |
+| ---------------------- | -------------------------------------- |
+| Seasons                | 5 (2022, 2023, 2024, 2025, 2026)       |
+| Categories             | 6 (M15F, M15M, M18F, M18M, M21F, M21M) |
+| National days analyzed | 88                                     |
+| Pools analyzed         | 833                                    |
+| Team pairs analyzed    | 2,499 (3 pairs per pool of 3)          |
+| Geocoded clubs         | 607                                    |
+| Data format            | CSV files (one per season/category)    |
 
 Each CSV file follows the naming convention `FFVB-{season}-CDF-{category}.CSV` and contains match-level records with team identifiers, scores, set results, pool codes, and day numbers.
 
@@ -70,7 +70,7 @@ For each hypothesis, we compared the observed pool compositions against a null m
 
 **Hypothesis**: Teams are sorted by their ranking from the previous day, then assigned to pools in a serpentine (zigzag) pattern: pool 1 gets ranks 1, 6, 7; pool 2 gets ranks 2, 5, 8; pool 3 gets ranks 3, 4, 9; and so on.
 
-**Method**: For each merit day, we sorted teams by their previous-day ranking and generated the serpentine assignment. We then compared the predicted pools to the actual pools.
+**Method**: For each national day, we sorted teams by their previous-day ranking and generated the serpentine assignment. We then compared the predicted pools to the actual pools.
 
 **Result**: Match rates were no better than random. Serpentine ordering does not explain pool composition.
 
@@ -110,7 +110,7 @@ For each hypothesis, we compared the observed pool compositions against a null m
 
 **Hypothesis**: If pools are formed based on ranking, the pool assignments should show a monotonic relationship with rankings -- e.g., higher-ranked teams systematically appear in lower-numbered pools.
 
-**Method**: We computed the Spearman rank correlation coefficient between team ranking and pool number across all merit days.
+**Method**: We computed the Spearman rank correlation coefficient between team ranking and pool number across all national days.
 
 **Result**: Correlation values were near zero, confirming no systematic relationship between ranking and pool assignment.
 
@@ -120,9 +120,9 @@ For each hypothesis, we compared the observed pool compositions against a null m
 
 **Hypothesis**: Two teams that have already been in the same pool in a previous day will never be placed in the same pool again.
 
-**Method**: For every pair of teams sharing a pool on a given merit day, we checked whether they had previously shared a pool on any earlier day in the same season.
+**Method**: For every pair of teams sharing a pool on a given national day, we checked whether they had previously shared a pool on any earlier day in the same season.
 
-**Result**: **Perfectly enforced.** Across all 2,499 pairs in all 833 pools across all 88 merit days and 5 seasons, there is not a single instance of two teams sharing a pool twice. This is a hard constraint.
+**Result**: **Perfectly enforced.** Across all 2,499 pairs in all 833 pools across all 88 national days and 5 seasons, there is not a single instance of two teams sharing a pool twice. This is a hard constraint.
 
 #### 3.3.2 No Three Firsts
 
@@ -154,7 +154,7 @@ For each hypothesis, we compared the observed pool compositions against a null m
 
 **Hypothesis**: If ranking matters for pool formation, the variance of rankings between pools should exceed the variance within pools.
 
-**Method**: We computed between-pool and within-pool variance of team rankings for each merit day and compared the F-ratios against the random baseline.
+**Method**: We computed between-pool and within-pool variance of team rankings for each national day and compared the F-ratios against the random baseline.
 
 **Result**: F-ratios are consistent with random assignment. There is no evidence that ranking influences pool composition.
 
@@ -168,7 +168,7 @@ For each hypothesis, we compared the observed pool compositions against a null m
 
 #### 3.4.4 Monte Carlo Baseline
 
-**Method**: To establish the random baseline, we performed Monte Carlo simulations of pool assignment. For each merit day, we randomly shuffled the list of eligible teams and assigned them to pools of 3, subject to the no-repeat constraint. We repeated this 10,000 times per day to build robust null distributions for ranking spread, distance, and other metrics.
+**Method**: To establish the random baseline, we performed Monte Carlo simulations of pool assignment. For each national day, we randomly shuffled the list of eligible teams and assigned them to pools of 3, subject to the no-repeat constraint. We repeated this 10,000 times per day to build robust null distributions for ranking spread, distance, and other metrics.
 
 **Result**: The Monte Carlo baseline confirms that the only dimension on which actual pools deviate from random is geography. All ranking-based metrics fall squarely within the random distribution.
 

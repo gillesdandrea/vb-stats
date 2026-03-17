@@ -34,11 +34,11 @@ J'ai décidé d'arrêter de râler et de compter.
 
 Voici ce que j'ai fait, concrètement.
 
-J'ai récupéré l'intégralité des résultats de la Coupe de France jeunes sur cinq saisons, de 2022 à 2026. Six catégories : M15F, M15M, M18F, M18M, M21F, M21M. Je me suis concentré sur les journées au mérite -- à partir de la journée 5, là où la composition des poules n'est plus géographique par définition mais supposément basée sur le classement.
+J'ai récupéré l'intégralité des résultats de la Coupe de France jeunes sur cinq saisons, de 2022 à 2026. Six catégories : M15F, M15M, M18F, M18M, M21F, M21M. Je me suis concentré sur les journées nationales -- à partir de la journée 5, là où la composition des poules n'est plus géographique par définition mais supposément basée sur le classement.
 
 Ça représente :
 
-- **88 journées** au mérite
+- **88 journées** nationales
 - **833 poules**
 - **2 499 paires d'équipes** à analyser
 

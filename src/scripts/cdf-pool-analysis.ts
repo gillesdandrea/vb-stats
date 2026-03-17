@@ -54,7 +54,7 @@ const analyzeConsecutiveHosting = (
   category: string,
 ): ConsecutiveHostViolation[] => {
   const violations: ConsecutiveHostViolation[] = [];
-  // Track which team hosted on which day (all days, not just merit)
+  // Track which team hosted on which day (all days, not just national)
   const teamHostDays = new Map<string, { name: string; days: number[] }>();
 
   for (let day = 1; day <= competition.dayCount; day++) {
@@ -101,11 +101,11 @@ const analyzeConsecutiveHosting = (
 
 interface RoleEquityResult {
   readonly teamRoles: Map<string, RoleCounts>; // teamId → accumulated role counts
-  readonly teamsWithEnoughDays: number; // teams with 2+ merit days
+  readonly teamsWithEnoughDays: number; // teams with 2+ national days
   readonly teamsWithAllRoles: number; // teams with 3+ days that got all 3 roles
 }
 
-const analyzeRoleEquity = (competition: Competition, meritDays: number[]): RoleEquityResult => {
+const analyzeRoleEquity = (competition: Competition, nationalDays: number[]): RoleEquityResult => {
   const teamRoles = new Map<string, RoleCounts>();
 
   const ensureEntry = (teamId: string): RoleCounts => {
@@ -117,7 +117,7 @@ const analyzeRoleEquity = (competition: Competition, meritDays: number[]): RoleE
     return entry;
   };
 
-  for (const day of meritDays) {
+  for (const day of nationalDays) {
     const pools = getActualPoolTeams(competition, day);
     for (const pool of pools) {
       if (pool.length < 3) continue;
@@ -473,7 +473,7 @@ const analyzeRankingSpread = (
 };
 
 // --- ANALYSIS 6: Geographic Persistence ---
-// Do teams in the same pool share geography more than expected on merit days?
+// Do teams in the same pool share geography more than expected on national days?
 
 const analyzeGeography = (
   competition: Competition,
@@ -553,7 +553,7 @@ const computeAllPairsBaseline = (competition: Competition, day: number): number 
   return distances.length > 0 ? distances.reduce((s, d) => s + d, 0) / distances.length : 0;
 };
 
-// Compare early (geographic) days vs merit days
+// Compare early (geographic) days vs national days
 const analyzeEarlyDaysGeo = (competition: Competition): GeoDistanceResult => {
   const pairDistances: number[] = [];
   const hostDistances: number[] = [];
@@ -906,7 +906,7 @@ const monteCarloRandomBaseline = (
 };
 
 // --- ANALYSIS 12: Between-Pool Ranking Variance ---
-// Low variance = balanced pools (strong mixed with weak). High variance = clustered by merit.
+// Low variance = balanced pools (strong mixed with weak). High variance = clustered by level.
 
 const analyzeBetweenPoolVariance = (
   competition: Competition,
@@ -1039,7 +1039,7 @@ const main = async (): Promise<void> => {
   await loadClubLocations();
   console.log('CDF Pool Assembly Analysis v2 - Creative Pattern Search');
   console.log(`Location source: ${locationSource}`);
-  console.log(`Seasons: ${SEASONS.join(', ')} | Categories: ${CATEGORIES.join(', ')} | Merit days >= ${MIN_DAY}`);
+  console.log(`Seasons: ${SEASONS.join(', ')} | Categories: ${CATEGORIES.join(', ')} | National days >= ${MIN_DAY}`);
   console.log('='.repeat(100));
 
   // Accumulators
@@ -1058,14 +1058,14 @@ const main = async (): Promise<void> => {
   const varianceStats: Array<{ between: number; within: number }> = [];
   const carryoverStats = { same: 0, total: 0 };
   // Deep geo accumulators
-  const meritGeoDists: number[] = [];
-  const meritHostDists: number[] = [];
+  const nationalGeoDists: number[] = [];
+  const nationalHostDists: number[] = [];
   const earlyGeoDists: number[] = [];
   const earlyHostDists: number[] = [];
   // Near/far visitor accumulators
-  const meritNearDists: number[] = [];
-  const meritFarDists: number[] = [];
-  const meritNearFarRatios: number[] = [];
+  const nationalNearDists: number[] = [];
+  const nationalFarDists: number[] = [];
+  const nationalNearFarRatios: number[] = [];
   // Role equity accumulators
   const allRoleCounts: RoleCounts[] = []; // per-team role counts (across all competitions)
   let totalTeamsWithEnoughDays = 0;
@@ -1090,12 +1090,12 @@ const main = async (): Promise<void> => {
       }
       if (competition.dayCount === 0) continue;
 
-      const meritDays: number[] = [];
+      const nationalDays: number[] = [];
       for (let day = MIN_DAY; day <= competition.dayCount; day++) {
         const dayData = competition.days[day];
-        if (dayData && !dayData.pf && dayData.pools.size > 0) meritDays.push(day);
+        if (dayData && !dayData.pf && dayData.pools.size > 0) nationalDays.push(day);
       }
-      if (meritDays.length === 0) continue;
+      if (nationalDays.length === 0) continue;
       processedComps++;
 
       // Collect early days (1-4) geographic distances
@@ -1104,9 +1104,9 @@ const main = async (): Promise<void> => {
       earlyHostDists.push(...earlyGeo.hostDistances);
 
       const label = `${seasonToString(season)} ${category}`;
-      console.log(`\n--- ${label} (${meritDays.length} merit days) ---`);
+      console.log(`\n--- ${label} (${nationalDays.length} national days) ---`);
 
-      for (const day of meritDays) {
+      for (const day of nationalDays) {
         totalDays++;
         const actualPools = getActualPoolTeams(competition, day);
         if (actualPools.length === 0) continue;
@@ -1154,8 +1154,8 @@ const main = async (): Promise<void> => {
 
         // ANALYSIS 14: Deep geographic distances
         const poolDist = analyzePoolDistances(competition, day);
-        meritGeoDists.push(...poolDist.pairDistances);
-        meritHostDists.push(...poolDist.hostDistances);
+        nationalGeoDists.push(...poolDist.pairDistances);
+        nationalHostDists.push(...poolDist.hostDistances);
         const bl = computeAllPairsBaseline(competition, day);
         baselineDists.push(bl);
         const mcGeo = monteCarloGeoBaseline(competition, day, 100);
@@ -1170,9 +1170,9 @@ const main = async (): Promise<void> => {
 
         // ANALYSIS 15: Near/far visitor decomposition
         const nearFar = analyzeNearFarVisitors(competition, day);
-        meritNearDists.push(...nearFar.nearDistances);
-        meritFarDists.push(...nearFar.farDistances);
-        meritNearFarRatios.push(...nearFar.ratios);
+        nationalNearDists.push(...nearFar.nearDistances);
+        nationalFarDists.push(...nearFar.farDistances);
+        nationalNearFarRatios.push(...nearFar.ratios);
 
         // Per-method analyses
         for (const method of rankingMethods) {
@@ -1241,8 +1241,8 @@ const main = async (): Promise<void> => {
         );
       }
 
-      // ANALYSIS 16: Role equity (per competition, across merit days)
-      const roleEquity = analyzeRoleEquity(competition, meritDays);
+      // ANALYSIS 16: Role equity (per competition, across national days)
+      const roleEquity = analyzeRoleEquity(competition, nationalDays);
       totalTeamsWithEnoughDays += roleEquity.teamsWithEnoughDays;
       totalTeamsWithAllRoles += roleEquity.teamsWithAllRoles;
       for (const counts of roleEquity.teamRoles.values()) {
@@ -1250,7 +1250,7 @@ const main = async (): Promise<void> => {
         if (counts.total >= 3) totalTeamsWith3PlusDays++;
       }
 
-      // ANALYSIS 17: Consecutive hosting violations (all days, not just merit)
+      // ANALYSIS 17: Consecutive hosting violations (all days, not just national)
       const consecutiveViolations = analyzeConsecutiveHosting(competition, season, category);
       allConsecutiveHostViolations.push(...consecutiveViolations);
     }
@@ -1259,7 +1259,7 @@ const main = async (): Promise<void> => {
   // --- AGGREGATE REPORT ---
 
   console.log(`\n${'='.repeat(100)}`);
-  console.log(`AGGREGATE RESULTS (${totalDays} merit days, ${processedComps} competitions)`);
+  console.log(`AGGREGATE RESULTS (${totalDays} national days, ${processedComps} competitions)`);
   console.log('='.repeat(100));
 
   // 1. Previous pool finish composition
@@ -1336,7 +1336,7 @@ const main = async (): Promise<void> => {
   }
 
   // 8. Geographic persistence
-  console.log('\n[8] GEOGRAPHIC PERSISTENCE ON MERIT DAYS');
+  console.log('\n[8] GEOGRAPHIC PERSISTENCE ON NATIONAL DAYS');
   console.log(
     `  Same region pairs: ${geoStats.sameRegion}/${geoStats.totalPairs} (${pct(geoStats.sameRegion, geoStats.totalPairs)})`,
   );
@@ -1401,7 +1401,7 @@ const main = async (): Promise<void> => {
     console.log(`  Between-pool variance: ${avgBetween.toFixed(1)} (higher = pools differ in avg quality)`);
     console.log(`  Within-pool variance: ${avgWithin.toFixed(1)} (higher = teams in same pool differ in quality)`);
     console.log(
-      `  Ratio between/within: ${(avgBetween / avgWithin).toFixed(3)} (high = merit-clustered, low = balanced/mixed)`,
+      `  Ratio between/within: ${(avgBetween / avgWithin).toFixed(3)} (high = level-clustered, low = balanced/mixed)`,
     );
   }
 
@@ -1413,9 +1413,9 @@ const main = async (): Promise<void> => {
 
   // 14. Deep geographic distance analysis
   console.log('\n[14] DEEP GEOGRAPHIC DISTANCE ANALYSIS');
-  if (meritGeoDists.length > 0) {
-    const meritAvgPair = avg(meritGeoDists);
-    const meritMedianPair = median(meritGeoDists);
+  if (nationalGeoDists.length > 0) {
+    const nationalAvgPair = avg(nationalGeoDists);
+    const nationalMedianPair = median(nationalGeoDists);
     const earlyAvgPair = earlyGeoDists.length > 0 ? avg(earlyGeoDists) : 0;
     const earlyMedianPair = earlyGeoDists.length > 0 ? median(earlyGeoDists) : 0;
     const allPairsBaseline = avg(baselineDists);
@@ -1426,30 +1426,30 @@ const main = async (): Promise<void> => {
       `    Early days (1-4):  avg=${earlyAvgPair.toFixed(0)}  median=${earlyMedianPair.toFixed(0)}  (${earlyGeoDists.length} pairs)`,
     );
     console.log(
-      `    Merit days (>=5):  avg=${meritAvgPair.toFixed(0)}  median=${meritMedianPair.toFixed(0)}  (${meritGeoDists.length} pairs)`,
+      `    National days (>=5):  avg=${nationalAvgPair.toFixed(0)}  median=${nationalMedianPair.toFixed(0)}  (${nationalGeoDists.length} pairs)`,
     );
     console.log(
       `    All-pairs baseline: avg=${allPairsBaseline.toFixed(0)} (avg distance between any 2 teams in course)`,
     );
     console.log(`    Monte Carlo random: avg=${mcGeoAvg.toFixed(0)} (random pool assignment)`);
     console.log(
-      `    Merit/Baseline ratio: ${(meritAvgPair / allPairsBaseline).toFixed(3)} (1.0 = no geo influence, <1.0 = geo clustering)`,
+      `    National/Baseline ratio: ${(nationalAvgPair / allPairsBaseline).toFixed(3)} (1.0 = no geo influence, <1.0 = geo clustering)`,
     );
-    console.log(`    Merit/Random ratio:   ${(meritAvgPair / mcGeoAvg).toFixed(3)}`);
+    console.log(`    National/Random ratio:   ${(nationalAvgPair / mcGeoAvg).toFixed(3)}`);
     console.log(`    Early/Baseline ratio: ${(earlyAvgPair / allPairsBaseline).toFixed(3)}`);
 
-    const meritAvgHost = avg(meritHostDists);
+    const nationalAvgHost = avg(nationalHostDists);
     const earlyAvgHost = earlyHostDists.length > 0 ? avg(earlyHostDists) : 0;
     console.log('\n  Host-to-visitor distances (km):');
     console.log(`    Early days (1-4):  avg=${earlyAvgHost.toFixed(0)}  (${earlyHostDists.length} pairs)`);
-    console.log(`    Merit days (>=5):  avg=${meritAvgHost.toFixed(0)}  (${meritHostDists.length} pairs)`);
+    console.log(`    National days (>=5):  avg=${nationalAvgHost.toFixed(0)}  (${nationalHostDists.length} pairs)`);
 
     // Distance histogram
-    console.log('\n  Merit days pair distance distribution:');
+    console.log('\n  National days pair distance distribution:');
     const bucketSize = 100;
     const maxBucket = 1000;
     const buckets: number[] = Array(maxBucket / bucketSize + 1).fill(0);
-    for (const d of meritGeoDists) {
+    for (const d of nationalGeoDists) {
       const idx = Math.min(Math.floor(d / bucketSize), buckets.length - 1);
       buckets[idx]++;
     }
@@ -1457,14 +1457,14 @@ const main = async (): Promise<void> => {
       const lo = i * bucketSize;
       const hi = lo + bucketSize;
       const label = i === buckets.length - 1 ? `${lo}+` : `${lo}-${hi}`;
-      const bar = '#'.repeat(Math.round((buckets[i] / meritGeoDists.length) * 60));
+      const bar = '#'.repeat(Math.round((buckets[i] / nationalGeoDists.length) * 60));
       console.log(
-        `    ${label.padEnd(10)} ${buckets[i].toString().padStart(5)} (${pct(buckets[i], meritGeoDists.length).padEnd(6)}) ${bar}`,
+        `    ${label.padEnd(10)} ${buckets[i].toString().padStart(5)} (${pct(buckets[i], nationalGeoDists.length).padEnd(6)}) ${bar}`,
       );
     }
 
     // Per-day detail: flag days with unusually low/high distance ratios
-    console.log('\n  Per-day distance ratios (merit/baseline):');
+    console.log('\n  Per-day distance ratios (national/baseline):');
     const sortedDays = [...dayAvgDistances].sort((a, b) => {
       const ra = a.baseline > 0 ? a.avgDist / a.baseline : 1;
       const rb = b.baseline > 0 ? b.avgDist / b.baseline : 1;
@@ -1479,46 +1479,46 @@ const main = async (): Promise<void> => {
   }
 
   // ── ANALYSIS 15: NEAR/FAR VISITOR DECOMPOSITION ──
-  if (meritNearDists.length > 0) {
+  if (nationalNearDists.length > 0) {
     console.log('\n[15] NEAR/FAR VISITOR ANALYSIS');
-    console.log(`  Pools analyzed: ${meritNearDists.length}`);
+    console.log(`  Pools analyzed: ${nationalNearDists.length}`);
     console.log(
-      `  Closer visitor:  avg=${avg(meritNearDists).toFixed(0)}km  median=${median(meritNearDists).toFixed(0)}km`,
+      `  Closer visitor:  avg=${avg(nationalNearDists).toFixed(0)}km  median=${median(nationalNearDists).toFixed(0)}km`,
     );
     console.log(
-      `  Farther visitor: avg=${avg(meritFarDists).toFixed(0)}km  median=${median(meritFarDists).toFixed(0)}km`,
+      `  Farther visitor: avg=${avg(nationalFarDists).toFixed(0)}km  median=${median(nationalFarDists).toFixed(0)}km`,
     );
     console.log(
-      `  Ratio (far/near): avg=${avg(meritNearFarRatios).toFixed(2)}  median=${median(meritNearFarRatios).toFixed(2)}`,
+      `  Ratio (far/near): avg=${avg(nationalNearFarRatios).toFixed(2)}  median=${median(nationalNearFarRatios).toFixed(2)}`,
     );
     // Histogram of near distances
     console.log('  Near visitor distance distribution:');
     const nearBuckets: number[] = Array(11).fill(0) as number[];
-    for (const d of meritNearDists) {
+    for (const d of nationalNearDists) {
       const idx = Math.min(Math.floor(d / 50), nearBuckets.length - 1);
       nearBuckets[idx]++;
     }
     for (let i = 0; i < nearBuckets.length; i++) {
       const lo = i * 50;
       const label = i === nearBuckets.length - 1 ? `${lo}+` : `${lo}-${lo + 50}`;
-      const bar = '#'.repeat(Math.round((nearBuckets[i] / meritNearDists.length) * 60));
+      const bar = '#'.repeat(Math.round((nearBuckets[i] / nationalNearDists.length) * 60));
       console.log(
-        `    ${label.padEnd(10)} ${nearBuckets[i].toString().padStart(5)} (${pct(nearBuckets[i], meritNearDists.length).padEnd(6)}) ${bar}`,
+        `    ${label.padEnd(10)} ${nearBuckets[i].toString().padStart(5)} (${pct(nearBuckets[i], nationalNearDists.length).padEnd(6)}) ${bar}`,
       );
     }
     // Histogram of far distances
     console.log('  Far visitor distance distribution:');
     const farBuckets: number[] = Array(11).fill(0) as number[];
-    for (const d of meritFarDists) {
+    for (const d of nationalFarDists) {
       const idx = Math.min(Math.floor(d / 50), farBuckets.length - 1);
       farBuckets[idx]++;
     }
     for (let i = 0; i < farBuckets.length; i++) {
       const lo = i * 50;
       const label = i === farBuckets.length - 1 ? `${lo}+` : `${lo}-${lo + 50}`;
-      const bar = '#'.repeat(Math.round((farBuckets[i] / meritFarDists.length) * 60));
+      const bar = '#'.repeat(Math.round((farBuckets[i] / nationalFarDists.length) * 60));
       console.log(
-        `    ${label.padEnd(10)} ${farBuckets[i].toString().padStart(5)} (${pct(farBuckets[i], meritFarDists.length).padEnd(6)}) ${bar}`,
+        `    ${label.padEnd(10)} ${farBuckets[i].toString().padStart(5)} (${pct(farBuckets[i], nationalFarDists.length).padEnd(6)}) ${bar}`,
       );
     }
   }
@@ -1526,8 +1526,8 @@ const main = async (): Promise<void> => {
   // 16. Role equity
   if (allRoleCounts.length > 0) {
     console.log('\n[16] ROLE EQUITY ANALYSIS (host / nearby visitor / far visitor)');
-    console.log(`  Teams with 2+ merit days: ${totalTeamsWithEnoughDays}`);
-    console.log(`  Teams with 3+ merit days: ${totalTeamsWith3PlusDays}`);
+    console.log(`  Teams with 2+ national days: ${totalTeamsWithEnoughDays}`);
+    console.log(`  Teams with 3+ national days: ${totalTeamsWith3PlusDays}`);
     console.log(
       `  Teams with all 3 roles (among 3+ day teams): ${totalTeamsWithAllRoles}/${totalTeamsWith3PlusDays} (${pct(totalTeamsWithAllRoles, totalTeamsWith3PlusDays)})`,
     );
@@ -1685,7 +1685,7 @@ const main = async (): Promise<void> => {
     }
   }
 
-  console.log(`\nDone. ${processedComps} competitions, ${totalDays} merit days.`);
+  console.log(`\nDone. ${processedComps} competitions, ${totalDays} national days.`);
 };
 
 // --- Utility ---
