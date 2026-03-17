@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { Segmented, Table } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Modal, Segmented, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { SortOrder } from 'antd/es/table/interface';
 import cx from 'classnames';
@@ -8,6 +9,7 @@ import cx from 'classnames';
 import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Team } from '@/model/model';
 import {
+  compareVirtualPoolNames,
   getBoard,
   getDayRanking,
   getSlidingDay,
@@ -60,14 +62,15 @@ function formatDelta(current: number | undefined, previous: number | undefined):
 }
 
 const approachLabels: Record<PoolApproach, string> = {
-  'greedy-geographic': 'Géo',
-  'swap-optimization': 'Optimisé',
-  'geographic-clustering': 'Clusters',
+  'greedy-geographic': 'Geo',
+  'swap-optimization': 'Swap',
+  'geographic-clustering': 'Cluster',
 };
 
 const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [approach, setApproach] = useState<PoolApproach>('greedy-geographic');
+  const [helpOpen, setHelpOpen] = useState(false);
   const [sortKey, setSortKey] = useState<React.Key | undefined>(undefined);
   const [sortOrder, setSortOrder] = useState<SortOrder>(null);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
@@ -269,7 +272,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         ? (a: Team, b: Team) => {
             const poolA = virtualPools.get(a.id) ?? 'zzz';
             const poolB = virtualPools.get(b.id) ?? 'zzz';
-            if (poolA !== poolB) return poolA.localeCompare(poolB);
+            if (poolA !== poolB) return compareVirtualPoolNames(poolA, poolB);
             return board.indexOf(a) - board.indexOf(b);
           }
         : poolSorter(...statParams),
@@ -322,31 +325,38 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   ];
 
   return (
-    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
-      {sliding > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-          <Segmented
-            value={approach}
-            onChange={(value) => setApproach(value as PoolApproach)}
-            options={Object.entries(approachLabels).map(([value, label]) => ({ value, label }))}
-            size="small"
-          />
-          {prediction && (
-            <small style={{ opacity: 0.7 }}>
-              Avg: {Math.round(prediction.metrics.avgPairDistance)} km | Host:{' '}
-              {Math.round(prediction.metrics.avgHostDistance)} km
-              {prediction.metrics.constraintViolations > 0 &&
-                ` | ${prediction.metrics.constraintViolations} violation(s)`}
-            </small>
-          )}
-        </div>
-      )}
+    <div
+      className={cx('vb-board', { 'has-toolbar': sliding > 0 }, className)}
+      key={`${day}-${singleDay}-${qualified}-${sliding}`}
+    >
       <Table<Team>
         dataSource={board}
         columns={columns}
         sortDirections={['ascend']}
         pagination={false}
-        footer={() => <div />}
+        footer={() =>
+          sliding > 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Segmented
+                value={approach}
+                onChange={(value) => setApproach(value as PoolApproach)}
+                options={Object.entries(approachLabels).map(([value, label]) => ({ value, label }))}
+                size="small"
+              />
+              <Button type="text" size="small" icon={<QuestionCircleOutlined />} onClick={() => setHelpOpen(true)} />
+              {prediction && (
+                <small style={{ opacity: 0.7 }}>
+                  Avg: {Math.round(prediction.metrics.avgPairDistance)} km | Host:{' '}
+                  {Math.round(prediction.metrics.avgHostDistance)} km
+                  {prediction.metrics.constraintViolations > 0 &&
+                    ` | ${prediction.metrics.constraintViolations} violation(s)`}
+                </small>
+              )}
+            </div>
+          ) : (
+            <div />
+          )
+        }
         scroll={{ y: 1280 }}
         size="small"
         // bordered
@@ -372,6 +382,47 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
           },
         })}
       />
+      <Modal
+        title="Composition des poules virtuelles"
+        open={helpOpen}
+        onCancel={() => setHelpOpen(false)}
+        footer={null}
+        width={640}
+      >
+        <p>
+          Les poules virtuelles simulent la composition des poules pour la prochaine journée en se basant sur le
+          classement glissant actuel.
+        </p>
+        <h4>Règles dures (obligatoires)</h4>
+        <ul>
+          <li>Deux équipes du même club ne peuvent pas être dans la même poule</li>
+          <li>Deux équipes qui se sont déjà rencontrées récemment sont évitées si possible</li>
+        </ul>
+        <h4>Règles souples (optimisation)</h4>
+        <ul>
+          <li>Minimiser les distances de déplacement entre les équipes d'une même poule</li>
+          <li>Équilibrer le niveau des poules (ratings proches)</li>
+          <li>Alterner les rôles recevant/visiteur</li>
+        </ul>
+        <h4>Algorithmes disponibles</h4>
+        <ul>
+          <li>
+            <strong>Geo</strong> — Approche gloutonne géographique : construit les poules en priorisant la proximité
+            géographique
+          </li>
+          <li>
+            <strong>Optimized</strong> — Optimisation par échanges : part d'une solution initiale et améliore par
+            échanges successifs entre poules
+          </li>
+          <li>
+            <strong>Cluster</strong> — Clustering géographique : regroupe d'abord les équipes par zone géographique puis
+            forme les poules
+          </li>
+        </ul>
+        <p>
+          <small>* indique l'équipe receveuse de la poule</small>
+        </p>
+      </Modal>
     </div>
   );
 };

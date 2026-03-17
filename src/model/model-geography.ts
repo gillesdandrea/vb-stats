@@ -103,6 +103,12 @@ export const departmentCentroids: Record<string, [lat: number, lon: number]> = {
   '93': [48.9, 2.5],
   '94': [48.8, 2.5],
   '95': [49.1, 2.2],
+  // Overseas departments
+  '971': [16.2, -61.5], // Guadeloupe
+  '972': [14.6, -61.0], // Martinique
+  '973': [4.0, -53.0], // Guyane
+  '974': [-21.1, 55.5], // La Réunion
+  '976': [-12.8, 45.2], // Mayotte
 };
 
 // Haversine distance in km
@@ -116,16 +122,17 @@ export const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: numb
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-export const getTeamCoords = (team: Team, clubLocations: ClubLocations): [lat: number, lon: number] | undefined => {
+const FRANCE_CENTROID: [number, number] = [46.6, 2.5];
+
+export const getTeamCoords = (team: Team, clubLocations: ClubLocations): [lat: number, lon: number] => {
   const club = clubLocations[team.id];
   if (club) return [club.lat, club.lon];
-  return departmentCentroids[team.department.num_dep];
+  return departmentCentroids[team.department.num_dep] ?? FRANCE_CENTROID;
 };
 
 export const getTeamDistance = (a: Team, b: Team, clubLocations: ClubLocations): number => {
   const ca = getTeamCoords(a, clubLocations);
   const cb = getTeamCoords(b, clubLocations);
-  if (!ca || !cb) return -1;
   return haversineKm(ca[0], ca[1], cb[0], cb[1]);
 };
 
@@ -134,8 +141,7 @@ export const computePoolsTotalDistance = (pools: Team[][], clubLocations: ClubLo
   for (const pool of pools) {
     for (let i = 0; i < pool.length; i++) {
       for (let j = i + 1; j < pool.length; j++) {
-        const d = getTeamDistance(pool[i], pool[j], clubLocations);
-        if (d >= 0) total += d;
+        total += getTeamDistance(pool[i], pool[j], clubLocations);
       }
     }
   }

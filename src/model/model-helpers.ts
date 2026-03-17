@@ -304,6 +304,15 @@ export const getVirtualPoolName = (index: number): string => {
   return String(index - 25); // 1, 2, 3, ...
 };
 
+export const compareVirtualPoolNames = (a: string, b: string): number => {
+  const aIsLetter = /^[A-Z]$/.test(a);
+  const bIsLetter = /^[A-Z]$/.test(b);
+  if (aIsLetter && bIsLetter) return a.localeCompare(b);
+  if (aIsLetter) return -1; // letters before numbers
+  if (bIsLetter) return 1;
+  return Number(a) - Number(b); // natural numeric sort
+};
+
 export const computeVirtualPools = (teams: Team[]): Map<string, string> => {
   const numPools = Math.floor(teams.length / 3);
   const poolMap = new Map<string, string>();
