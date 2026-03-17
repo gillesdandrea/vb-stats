@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 
-import { Table } from 'antd';
+import { Segmented, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { SortOrder } from 'antd/es/table/interface';
 import cx from 'classnames';
 
 import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Team } from '@/model/model';
 import {
-  computeVirtualPools,
   getBoard,
   getDayRanking,
   getSlidingDay,
@@ -17,6 +17,7 @@ import {
   isTeamInCourse,
   poolId2Name,
 } from '@/model/model-helpers';
+import { type PoolApproach, predictPools } from '@/model/model-pools';
 import {
   matchSorter,
   pointSorter,
@@ -26,6 +27,7 @@ import {
   setSorter,
   Sorting,
 } from '@/model/model-sorters';
+import useClubLocations from '@/utils/useClubLocations';
 
 import './CompetitionBoard.scss';
 
@@ -55,8 +57,17 @@ function formatDelta(current: number, previous: number | undefined): string {
   return ` ⏷ ${current - previous}`;
 }
 
+const approachLabels: Record<PoolApproach, string> = {
+  'greedy-geographic': 'Géo',
+  'swap-optimization': 'Optimisé',
+  'geographic-clustering': 'Clusters',
+};
+
 const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+  const [approach, setApproach] = useState<PoolApproach>('greedy-geographic');
+  const [sortKey, setSortKey] = useState<React.Key | undefined>(undefined);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
   const isPF = (d: number) => competition.days[d]?.pf;
   const getDay = (d: number) => (competition.days[d]?.pf ? 'PF' : `J${d}`);
@@ -67,14 +78,21 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   const statPF = sliding > 0 || !!isPFday;
   const statSlidingMaxDays = sliding > 0 ? sliding : 4;
 
+  const { data: clubLocations } = useClubLocations();
+
   const board = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
     [competition, day, singleDay, qualified, sliding],
   );
-  const virtualPools = useMemo(
-    () => (sliding > 0 ? computeVirtualPools(board) : new Map<string, string>()),
-    [sliding, board],
-  );
+  const prediction = useMemo(() => {
+    if (sliding <= 0 || !clubLocations) return undefined;
+    // Don't predict if the current day has no pool data at all
+    const dayData = competition.days[day];
+    if (!dayData || dayData.pools.size === 0) return undefined;
+    return predictPools(competition, day, { approach, clubLocations, enableRoleEquity: true, debug: true });
+  }, [sliding, competition, day, approach, clubLocations]);
+  const virtualPools = prediction?.poolMap ?? new Map<string, string>();
+  const getColumnSortOrder = (key: string): SortOrder => (sortKey === key ? sortOrder : null);
   const slidingRanks = useMemo(
     () => (sliding > 0 ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
     [sliding, board],
@@ -128,6 +146,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         return <small>{formatDelta(ranking, previous)}</small>;
       },
       sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('delta'),
       showSorterTooltip: false,
       fixed: true,
     },
@@ -141,6 +160,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         return rating.mu.toFixed(3);
       },
       sorter: ratingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('rating'),
       showSorterTooltip: false,
     },
     {
@@ -158,6 +178,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const [bmean, bstdev] = getTeamOpposition(competition, b, statDay, statGlobal);
         return amean === bmean ? bstdev - astdev : bmean - amean;
       },
+      sortOrder: getColumnSortOrder('difficulty'),
       showSorterTooltip: false,
     },
     {
@@ -179,6 +200,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         }`;
       },
       sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('ranking'),
       showSorterTooltip: false,
       hidden: isPF(day),
     },
@@ -192,6 +214,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
       sorter: matchSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('matchs'),
       showSorterTooltip: false,
     },
     {
@@ -205,6 +228,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
       sorter: setSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('sets'),
       showSorterTooltip: false,
     },
     {
@@ -218,31 +242,35 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
       sorter: pointSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('points'),
       showSorterTooltip: false,
     },
     {
-      title: sliding > 0 ? 'V.Pool' : 'Pool',
+      title: prediction ? 'V.Pool' : 'Pool',
       key: 'pool',
       align: 'center',
       width: smallWidth,
       ellipsis: true,
       render: (team: Team) => {
-        if (sliding > 0) {
-          return virtualPools.get(team.id) ?? '-';
+        if (prediction) {
+          const poolName = virtualPools.get(team.id);
+          if (!poolName) return '-';
+          const isHost = prediction.pools.some((pool) => pool.length > 0 && pool[0] === team);
+          return `${poolName}${isHost ? '*' : ''}`;
         }
         return team.pools[day]
           ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
           : '-';
       },
-      sorter:
-        sliding > 0
-          ? (a: Team, b: Team) => {
-              const poolA = virtualPools.get(a.id) ?? 'zzz';
-              const poolB = virtualPools.get(b.id) ?? 'zzz';
-              if (poolA !== poolB) return poolA.localeCompare(poolB);
-              return board.indexOf(a) - board.indexOf(b);
-            }
-          : poolSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: prediction
+        ? (a: Team, b: Team) => {
+            const poolA = virtualPools.get(a.id) ?? 'zzz';
+            const poolB = virtualPools.get(b.id) ?? 'zzz';
+            if (poolA !== poolB) return poolA.localeCompare(poolB);
+            return board.indexOf(a) - board.indexOf(b);
+          }
+        : poolSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sortOrder: getColumnSortOrder('pool'),
       showSorterTooltip: false,
     },
     {
@@ -263,6 +291,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const bRank = b.ranking.days[day - 1] ?? Infinity;
         return aRank - bRank;
       },
+      sortOrder: getColumnSortOrder('previous'),
       showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
@@ -275,6 +304,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         a.department.region_name === b.department.region_name
           ? rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
+      sortOrder: getColumnSortOrder('region'),
       showSorterTooltip: false,
     },
     {
@@ -291,16 +321,39 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   // console.log('rendering CompetitionBoard');
   return (
     <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
+      {sliding > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+          <Segmented
+            value={approach}
+            onChange={(value) => setApproach(value as PoolApproach)}
+            options={Object.entries(approachLabels).map(([value, label]) => ({ value, label }))}
+            size="small"
+          />
+          {prediction && (
+            <small style={{ opacity: 0.7 }}>
+              Avg: {Math.round(prediction.metrics.avgPairDistance)} km | Host:{' '}
+              {Math.round(prediction.metrics.avgHostDistance)} km
+              {prediction.metrics.constraintViolations > 0 &&
+                ` | ${prediction.metrics.constraintViolations} violation(s)`}
+            </small>
+          )}
+        </div>
+      )}
       <Table<Team>
         dataSource={board}
         columns={columns}
         sortDirections={['ascend']}
         pagination={false}
-        footer={(data) => <div />}
+        footer={() => <div />}
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) =>
+        onChange={(_pagination, _filters, sorter) => {
+          const s = Array.isArray(sorter) ? sorter[0] : sorter;
+          setSortKey(s.columnKey);
+          setSortOrder(s.order ?? null);
+        }}
+        rowClassName={(team: Team) =>
           cx({
             'table-row-disabled': !isTeamInCourse(competition, team, day),
             'ant-table-row-selected': selectedKeys.includes(team.id),

@@ -279,7 +279,7 @@ export const isDayPlayed = (competition: Competition, day: number): boolean => {
   return Array.from(dayData.pools.values()).every((pool) => pool.matchs.every((match) => match.winner));
 };
 
-const filterThirdPlace = (teams: Team[], day: number): Team[] => {
+export const filterThirdPlace = (teams: Team[], day: number): Team[] => {
   const thirdPlace = teams.filter((t) => t.ranking.pools[day] === 3);
   const others = teams.filter((t) => t.ranking.pools[day] !== 3);
   const deficit = others.length % 3;

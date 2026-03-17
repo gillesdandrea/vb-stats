@@ -157,6 +157,173 @@ const getTeamDistance = (a: Team, b: Team): number => {
   return haversineKm(ca[0], ca[1], cb[0], cb[1]);
 };
 
+// --- Role Equity Analysis ---
+
+interface RoleCounts {
+  host: number;
+  nearby: number;
+  far: number;
+  total: number;
+}
+
+interface ConsecutiveHostViolation {
+  readonly season: number;
+  readonly category: string;
+  readonly teamName: string;
+  readonly teamId: string;
+  readonly days: number[]; // consecutive days where team hosted
+}
+
+const analyzeConsecutiveHosting = (
+  competition: Competition,
+  season: number,
+  category: string,
+): ConsecutiveHostViolation[] => {
+  const violations: ConsecutiveHostViolation[] = [];
+  // Track which team hosted on which day (all days, not just merit)
+  const teamHostDays = new Map<string, { name: string; days: number[] }>();
+
+  for (let day = 1; day <= competition.dayCount; day++) {
+    const dayData = competition.days[day];
+    if (!dayData || dayData.pf || dayData.pools.size === 0) continue;
+    for (const pool of dayData.pools.values()) {
+      if (pool.teams.length < 3) continue;
+      const host = pool.teams[0];
+      let entry = teamHostDays.get(host.id);
+      if (!entry) {
+        entry = { name: host.name, days: [] };
+        teamHostDays.set(host.id, entry);
+      }
+      entry.days.push(day);
+    }
+  }
+
+  // Find consecutive hosting
+  for (const [teamId, entry] of teamHostDays) {
+    const sorted = [...entry.days].sort((a, b) => a - b);
+    for (let i = 0; i < sorted.length - 1; i++) {
+      if (sorted[i + 1] === sorted[i] + 1) {
+        // Found consecutive hosting — collect the full streak
+        const streak = [sorted[i]];
+        let j = i + 1;
+        while (j < sorted.length && sorted[j] === sorted[j - 1] + 1) {
+          streak.push(sorted[j]);
+          j++;
+        }
+        violations.push({
+          season,
+          category,
+          teamName: entry.name,
+          teamId,
+          days: streak,
+        });
+        i = j - 1; // skip past this streak
+      }
+    }
+  }
+
+  return violations;
+};
+
+interface RoleEquityResult {
+  readonly teamRoles: Map<string, RoleCounts>; // teamId → accumulated role counts
+  readonly teamsWithEnoughDays: number; // teams with 2+ merit days
+  readonly teamsWithAllRoles: number; // teams with 3+ days that got all 3 roles
+}
+
+const analyzeRoleEquity = (competition: Competition, meritDays: number[]): RoleEquityResult => {
+  const teamRoles = new Map<string, RoleCounts>();
+
+  const ensureEntry = (teamId: string): RoleCounts => {
+    let entry = teamRoles.get(teamId);
+    if (!entry) {
+      entry = { host: 0, nearby: 0, far: 0, total: 0 };
+      teamRoles.set(teamId, entry);
+    }
+    return entry;
+  };
+
+  for (const day of meritDays) {
+    const pools = getActualPoolTeams(competition, day);
+    for (const pool of pools) {
+      if (pool.length < 3) continue;
+      const host = pool[0];
+      const d1 = getTeamDistance(host, pool[1]);
+      const d2 = getTeamDistance(host, pool[2]);
+
+      // Host role
+      const hostEntry = ensureEntry(host.id);
+      hostEntry.host++;
+      hostEntry.total++;
+
+      if (d1 < 0 || d2 < 0) {
+        // Can't determine near/far without distances, count both as "nearby"
+        const e1 = ensureEntry(pool[1].id);
+        e1.nearby++;
+        e1.total++;
+        const e2 = ensureEntry(pool[2].id);
+        e2.nearby++;
+        e2.total++;
+        continue;
+      }
+
+      if (d1 <= d2) {
+        const nearEntry = ensureEntry(pool[1].id);
+        nearEntry.nearby++;
+        nearEntry.total++;
+        const farEntry = ensureEntry(pool[2].id);
+        farEntry.far++;
+        farEntry.total++;
+      } else {
+        const farEntry = ensureEntry(pool[1].id);
+        farEntry.far++;
+        farEntry.total++;
+        const nearEntry = ensureEntry(pool[2].id);
+        nearEntry.nearby++;
+        nearEntry.total++;
+      }
+    }
+  }
+
+  let teamsWithEnoughDays = 0;
+  let teamsWithAllRoles = 0;
+  for (const counts of teamRoles.values()) {
+    if (counts.total >= 2) teamsWithEnoughDays++;
+    if (counts.total >= 3 && counts.host > 0 && counts.nearby > 0 && counts.far > 0) teamsWithAllRoles++;
+  }
+
+  return { teamRoles, teamsWithEnoughDays, teamsWithAllRoles };
+};
+
+// --- Near/Far Visitor Analysis ---
+
+interface NearFarResult {
+  readonly nearDistances: number[]; // min(host-v1, host-v2) per pool
+  readonly farDistances: number[]; // max(host-v1, host-v2) per pool
+  readonly ratios: number[]; // d_far / d_near per pool (when d_near > 0)
+}
+
+const analyzeNearFarVisitors = (competition: Competition, day: number): NearFarResult => {
+  const actualPools = getActualPoolTeams(competition, day);
+  const nearDistances: number[] = [];
+  const farDistances: number[] = [];
+  const ratios: number[] = [];
+
+  for (const pool of actualPools) {
+    if (pool.length < 3) continue;
+    const host = pool[0];
+    const d1 = getTeamDistance(host, pool[1]);
+    const d2 = getTeamDistance(host, pool[2]);
+    if (d1 < 0 || d2 < 0) continue;
+    const dNear = Math.min(d1, d2);
+    const dFar = Math.max(d1, d2);
+    nearDistances.push(dNear);
+    farDistances.push(dFar);
+    if (dNear > 10) ratios.push(dFar / dNear); // skip same-city pools
+  }
+  return { nearDistances, farDistances, ratios };
+};
+
 // --- Types ---
 
 interface RankingMethod {
@@ -1021,6 +1188,17 @@ const main = async (): Promise<void> => {
   const meritHostDists: number[] = [];
   const earlyGeoDists: number[] = [];
   const earlyHostDists: number[] = [];
+  // Near/far visitor accumulators
+  const meritNearDists: number[] = [];
+  const meritFarDists: number[] = [];
+  const meritNearFarRatios: number[] = [];
+  // Role equity accumulators
+  const allRoleCounts: RoleCounts[] = []; // per-team role counts (across all competitions)
+  let totalTeamsWithEnoughDays = 0;
+  let totalTeamsWithAllRoles = 0;
+  let totalTeamsWith3PlusDays = 0;
+  // Consecutive hosting violations
+  const allConsecutiveHostViolations: ConsecutiveHostViolation[] = [];
   const baselineDists: number[] = [];
   const mcGeoDists: number[] = [];
   const dayAvgDistances: Array<{ season: number; category: string; day: number; avgDist: number; baseline: number }> =
@@ -1116,6 +1294,12 @@ const main = async (): Promise<void> => {
           baseline: bl,
         });
 
+        // ANALYSIS 15: Near/far visitor decomposition
+        const nearFar = analyzeNearFarVisitors(competition, day);
+        meritNearDists.push(...nearFar.nearDistances);
+        meritFarDists.push(...nearFar.farDistances);
+        meritNearFarRatios.push(...nearFar.ratios);
+
         // Per-method analyses
         for (const method of rankingMethods) {
           const sorter = method.getSorter(competition, day);
@@ -1182,6 +1366,19 @@ const main = async (): Promise<void> => {
           `  Day ${day}: ${actualPools.length} pools | avg dist: ${poolDist.avgPoolDistance.toFixed(0)}km (baseline: ${bl.toFixed(0)}km, ratio: ${distRatio}) | host dist: ${poolDist.avgHostDistance.toFixed(0)}km`,
         );
       }
+
+      // ANALYSIS 16: Role equity (per competition, across merit days)
+      const roleEquity = analyzeRoleEquity(competition, meritDays);
+      totalTeamsWithEnoughDays += roleEquity.teamsWithEnoughDays;
+      totalTeamsWithAllRoles += roleEquity.teamsWithAllRoles;
+      for (const counts of roleEquity.teamRoles.values()) {
+        if (counts.total >= 2) allRoleCounts.push(counts);
+        if (counts.total >= 3) totalTeamsWith3PlusDays++;
+      }
+
+      // ANALYSIS 17: Consecutive hosting violations (all days, not just merit)
+      const consecutiveViolations = analyzeConsecutiveHosting(competition, season, category);
+      allConsecutiveHostViolations.push(...consecutiveViolations);
     }
   }
 
@@ -1404,6 +1601,213 @@ const main = async (): Promise<void> => {
       console.log(
         `    ${seasonToString(d.season)} ${d.category} Day ${d.day}: ${d.avgDist.toFixed(0)}km / ${d.baseline.toFixed(0)}km = ${ratio}`,
       );
+    }
+  }
+
+  // ── ANALYSIS 15: NEAR/FAR VISITOR DECOMPOSITION ──
+  if (meritNearDists.length > 0) {
+    console.log('\n[15] NEAR/FAR VISITOR ANALYSIS');
+    console.log(`  Pools analyzed: ${meritNearDists.length}`);
+    console.log(
+      `  Closer visitor:  avg=${avg(meritNearDists).toFixed(0)}km  median=${median(meritNearDists).toFixed(0)}km`,
+    );
+    console.log(
+      `  Farther visitor: avg=${avg(meritFarDists).toFixed(0)}km  median=${median(meritFarDists).toFixed(0)}km`,
+    );
+    console.log(
+      `  Ratio (far/near): avg=${avg(meritNearFarRatios).toFixed(2)}  median=${median(meritNearFarRatios).toFixed(2)}`,
+    );
+    // Histogram of near distances
+    console.log('  Near visitor distance distribution:');
+    const nearBuckets: number[] = Array(11).fill(0) as number[];
+    for (const d of meritNearDists) {
+      const idx = Math.min(Math.floor(d / 50), nearBuckets.length - 1);
+      nearBuckets[idx]++;
+    }
+    for (let i = 0; i < nearBuckets.length; i++) {
+      const lo = i * 50;
+      const label = i === nearBuckets.length - 1 ? `${lo}+` : `${lo}-${lo + 50}`;
+      const bar = '#'.repeat(Math.round((nearBuckets[i] / meritNearDists.length) * 60));
+      console.log(
+        `    ${label.padEnd(10)} ${nearBuckets[i].toString().padStart(5)} (${pct(nearBuckets[i], meritNearDists.length).padEnd(6)}) ${bar}`,
+      );
+    }
+    // Histogram of far distances
+    console.log('  Far visitor distance distribution:');
+    const farBuckets: number[] = Array(11).fill(0) as number[];
+    for (const d of meritFarDists) {
+      const idx = Math.min(Math.floor(d / 50), farBuckets.length - 1);
+      farBuckets[idx]++;
+    }
+    for (let i = 0; i < farBuckets.length; i++) {
+      const lo = i * 50;
+      const label = i === farBuckets.length - 1 ? `${lo}+` : `${lo}-${lo + 50}`;
+      const bar = '#'.repeat(Math.round((farBuckets[i] / meritFarDists.length) * 60));
+      console.log(
+        `    ${label.padEnd(10)} ${farBuckets[i].toString().padStart(5)} (${pct(farBuckets[i], meritFarDists.length).padEnd(6)}) ${bar}`,
+      );
+    }
+  }
+
+  // 16. Role equity
+  if (allRoleCounts.length > 0) {
+    console.log('\n[16] ROLE EQUITY ANALYSIS (host / nearby visitor / far visitor)');
+    console.log(`  Teams with 2+ merit days: ${totalTeamsWithEnoughDays}`);
+    console.log(`  Teams with 3+ merit days: ${totalTeamsWith3PlusDays}`);
+    console.log(
+      `  Teams with all 3 roles (among 3+ day teams): ${totalTeamsWithAllRoles}/${totalTeamsWith3PlusDays} (${pct(totalTeamsWithAllRoles, totalTeamsWith3PlusDays)})`,
+    );
+
+    // Distribution summary
+    const hostCounts = allRoleCounts.map((c) => c.host);
+    const nearbyCounts = allRoleCounts.map((c) => c.nearby);
+    const farCounts = allRoleCounts.map((c) => c.far);
+    const totalCounts = allRoleCounts.map((c) => c.total);
+    console.log('  Distribution summary (teams with 2+ days):');
+    console.log(`    Days played: avg=${avg(totalCounts).toFixed(1)}  median=${median(totalCounts).toFixed(0)}`);
+    console.log(`    Host count:  avg=${avg(hostCounts).toFixed(2)}  median=${median(hostCounts).toFixed(0)}`);
+    console.log(`    Nearby count: avg=${avg(nearbyCounts).toFixed(2)}  median=${median(nearbyCounts).toFixed(0)}`);
+    console.log(`    Far count:   avg=${avg(farCounts).toFixed(2)}  median=${median(farCounts).toFixed(0)}`);
+
+    // Ideal vs actual deviation
+    const deviations: number[] = [];
+    for (const c of allRoleCounts) {
+      const ideal = c.total / 3;
+      const dev = Math.abs(c.host - ideal) + Math.abs(c.nearby - ideal) + Math.abs(c.far - ideal);
+      deviations.push(dev);
+    }
+    console.log(
+      `  Deviation from ideal (sum |actual - N/3|): avg=${avg(deviations).toFixed(2)}  median=${median(deviations).toFixed(2)}`,
+    );
+
+    // Extreme imbalances
+    const neverHosted = allRoleCounts.filter((c) => c.host === 0 && c.total >= 3);
+    const neverNearby = allRoleCounts.filter((c) => c.nearby === 0 && c.total >= 3);
+    const neverFar = allRoleCounts.filter((c) => c.far === 0 && c.total >= 3);
+    const alwaysHost = allRoleCounts.filter((c) => c.host === c.total && c.total >= 3);
+    const alwaysFar = allRoleCounts.filter((c) => c.far === c.total && c.total >= 3);
+    console.log(`  Extreme imbalances (among ${totalTeamsWith3PlusDays} teams with 3+ days):`);
+    console.log(`    Never hosted:     ${neverHosted.length} (${pct(neverHosted.length, totalTeamsWith3PlusDays)})`);
+    console.log(`    Never nearby:     ${neverNearby.length} (${pct(neverNearby.length, totalTeamsWith3PlusDays)})`);
+    console.log(`    Never far:        ${neverFar.length} (${pct(neverFar.length, totalTeamsWith3PlusDays)})`);
+    console.log(`    Always host:      ${alwaysHost.length} (${pct(alwaysHost.length, totalTeamsWith3PlusDays)})`);
+    console.log(`    Always far:       ${alwaysFar.length} (${pct(alwaysFar.length, totalTeamsWith3PlusDays)})`);
+
+    // Role streaks (max consecutive same role)
+    // We need to re-analyze streaks — compute from allRoleCounts proportions as proxy
+    // Instead, compute role concentration: max(host, nearby, far) / total
+    const concentrations = allRoleCounts
+      .filter((c) => c.total >= 3)
+      .map((c) => Math.max(c.host, c.nearby, c.far) / c.total);
+    if (concentrations.length > 0) {
+      console.log(
+        `  Role concentration (max_role/total, 3+ days): avg=${avg(concentrations).toFixed(2)}  median=${median(concentrations).toFixed(2)}  (ideal=0.33)`,
+      );
+    }
+
+    // Chi-square test: is the distribution significantly different from uniform?
+    let chiSquareTotal = 0;
+    let chiSquareCount = 0;
+    for (const c of allRoleCounts) {
+      if (c.total < 3) continue;
+      const expected = c.total / 3;
+      const chi =
+        (c.host - expected) ** 2 / expected +
+        (c.nearby - expected) ** 2 / expected +
+        (c.far - expected) ** 2 / expected;
+      chiSquareTotal += chi;
+      chiSquareCount++;
+    }
+    if (chiSquareCount > 0) {
+      const avgChi = chiSquareTotal / chiSquareCount;
+      // df=2, critical values: 5.99 (p=0.05), 9.21 (p=0.01)
+      console.log(`  Chi-square (df=2): avg=${avgChi.toFixed(2)}  (critical: 5.99 at p=0.05, 9.21 at p=0.01)`);
+      const significantCount = allRoleCounts.filter((c) => {
+        if (c.total < 3) return false;
+        const expected = c.total / 3;
+        const chi =
+          (c.host - expected) ** 2 / expected +
+          (c.nearby - expected) ** 2 / expected +
+          (c.far - expected) ** 2 / expected;
+        return chi > 5.99;
+      }).length;
+      console.log(
+        `    Teams with significant imbalance (p<0.05): ${significantCount}/${chiSquareCount} (${pct(significantCount, chiSquareCount)})`,
+      );
+    }
+
+    // Monte Carlo random baseline: randomly assign roles, measure equity
+    const MC_RUNS = 1000;
+    const mcDeviations: number[] = [];
+    const mcAllRoles: number[] = [];
+    for (let run = 0; run < MC_RUNS; run++) {
+      let mcDevSum = 0;
+      let mcDevCount = 0;
+      let mcAllRolesCount = 0;
+      let mc3PlusCount = 0;
+      for (const c of allRoleCounts) {
+        // Randomly assign c.total days to 3 roles
+        let h = 0;
+        let n = 0;
+        let f = 0;
+        for (let d = 0; d < c.total; d++) {
+          const r = Math.random();
+          if (r < 1 / 3) h++;
+          else if (r < 2 / 3) n++;
+          else f++;
+        }
+        const ideal = c.total / 3;
+        mcDevSum += Math.abs(h - ideal) + Math.abs(n - ideal) + Math.abs(f - ideal);
+        mcDevCount++;
+        if (c.total >= 3) {
+          mc3PlusCount++;
+          if (h > 0 && n > 0 && f > 0) mcAllRolesCount++;
+        }
+      }
+      if (mcDevCount > 0) mcDeviations.push(mcDevSum / mcDevCount);
+      if (mc3PlusCount > 0) mcAllRoles.push(mcAllRolesCount / mc3PlusCount);
+    }
+    console.log('  Monte Carlo random baseline (1000 runs):');
+    console.log(`    Random deviation: avg=${avg(mcDeviations).toFixed(2)}  (actual: ${avg(deviations).toFixed(2)})`);
+    console.log(
+      `    Random all-3-roles rate: avg=${(avg(mcAllRoles) * 100).toFixed(1)}%  (actual: ${pct(totalTeamsWithAllRoles, totalTeamsWith3PlusDays)})`,
+    );
+
+    // Role distribution histogram (for teams with 3+ days)
+    console.log('  Host count distribution (teams with 3+ days):');
+    const hostHist = new Map<number, number>();
+    for (const c of allRoleCounts) {
+      if (c.total < 3) continue;
+      hostHist.set(c.host, (hostHist.get(c.host) ?? 0) + 1);
+    }
+    for (const [count, freq] of [...hostHist.entries()].sort((a, b) => a[0] - b[0])) {
+      const bar = '#'.repeat(Math.round((freq / totalTeamsWith3PlusDays) * 60));
+      console.log(
+        `    ${count} times: ${freq.toString().padStart(4)} (${pct(freq, totalTeamsWith3PlusDays).padEnd(6)}) ${bar}`,
+      );
+    }
+  }
+
+  // 17. Consecutive hosting violations
+  console.log('\n[17] CONSECUTIVE HOSTING VIOLATIONS (same team hosts on consecutive days)');
+  if (allConsecutiveHostViolations.length === 0) {
+    console.log('  No consecutive hosting violations found.');
+  } else {
+    console.log(`  Total violations: ${allConsecutiveHostViolations.length}`);
+    for (const v of allConsecutiveHostViolations) {
+      console.log(`    ${seasonToString(v.season)} ${v.category}: ${v.teamName} hosted days ${v.days.join(', ')}`);
+    }
+    // Summarize by day position
+    const dayPositions = new Map<string, number>();
+    for (const v of allConsecutiveHostViolations) {
+      for (const d of v.days) {
+        const label = `day ${d}`;
+        dayPositions.set(label, (dayPositions.get(label) ?? 0) + 1);
+      }
+    }
+    console.log('  Days involved in consecutive hosting:');
+    for (const [label, count] of [...dayPositions.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+      console.log(`    ${label}: ${count} occurrences`);
     }
   }
 
