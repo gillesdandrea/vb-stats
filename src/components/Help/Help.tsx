@@ -38,7 +38,7 @@ const updateStats = ({
   day: number;
   stats: Stats;
 }): Stats => {
-  const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
+  const [probabilities, orders] = getPoolProbabilities(pool, day);
   pool.teams.forEach((team, index) => {
     const rank = orders[index];
     const dayRanking = getDayRanking(competition, team, day);

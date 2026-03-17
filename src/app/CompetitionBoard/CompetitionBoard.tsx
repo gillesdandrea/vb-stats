@@ -51,8 +51,9 @@ function getRankingLabel(sliding: number, singleDay: boolean): string {
   return 'Global';
 }
 
-function formatDelta(current: number, previous: number | undefined): string {
-  if (!previous) return ' ⏴';
+function formatDelta(current: number | undefined, previous: number | undefined): string {
+  if (current === undefined) return '';
+  if (previous === undefined || previous === 0) return ' ⏴';
   if (current === previous) return '';
   if (current < previous) return ` ⏶ ${previous - current}`;
   return ` ⏷ ${current - previous}`;
@@ -106,7 +107,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       key: 'index',
       align: 'right',
       width: 40,
-      render: (team: Team, item, index) => {
+      render: (team: Team) => {
         if (sliding > 0) {
           return slidingRanks.get(team.id) ?? '-';
         }
@@ -127,7 +128,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       key: 'delta',
       align: 'left',
       width: 40,
-      render: (team: Team, item, index) => {
+      render: (team: Team) => {
         if (day === 1) {
           return '';
         }
@@ -170,7 +171,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const [mean, stdev] = getTeamOpposition(competition, team, statDay, statGlobal);
+        const [mean] = getTeamOpposition(competition, team, statDay, statGlobal);
         // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
         return isNaN(mean) ? '-' : `${(100 * mean).toFixed(1)}%`;
       },
@@ -192,7 +193,8 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         if (stats.matchCount === 0) {
           return '-';
         }
-        if (statPF) return stats.points;
+        if (statPF) return stats.points; // sliding or PF day: raw points only
+        // Below is only reachable for regular board view (no sliding, no PF)
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
         const isCDF = team.pools.length > 0;
         const coef = isCDF ? 2 : 1;

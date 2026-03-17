@@ -121,7 +121,7 @@ export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4
   const cached = team.sstats.get(key);
   if (cached) return cached;
   let stats = createStats(getGlobalTeamStats(team, day).rating);
-  for (let i = Math.max(0, day - maxDays); i < day; i++) {
+  for (let i = Math.max(1, day - maxDays); i < day; i++) {
     const istats = getDayTeamStats(team, i);
     stats = {
       ...stats,
@@ -157,7 +157,7 @@ export const getTeamRating = (team: Team, day: number): Rating => {
   return team.dstats[day]?.rating ?? getGlobalTeamStats(team, day).rating;
 };
 
-export const getTeamRanking = (team: Team, day: number, daily: boolean, qualified: boolean): number => {
+export const getTeamRanking = (team: Team, day: number, daily: boolean, qualified: boolean): number | undefined => {
   if (daily) return team.ranking.days[day];
   if (qualified) return team.ranking.qualifieds[day];
   return team.ranking.globals[day];
@@ -191,7 +191,7 @@ export const poolId2Name = (id: string): string => {
   return '' + ((id.charCodeAt(0) - 'X'.charCodeAt(0)) * 35 + chars.indexOf(id.charAt(1)));
 };
 
-export const getPoolProbabilities = (competition: Competition, pool: Pool, day: number): number[][] => {
+export const getPoolProbabilities = (pool: Pool, day: number): number[][] => {
   if (day === 1) {
     return [
       [1 / 3.0, 1 / 3.0, 1 / 3.0],
@@ -234,14 +234,14 @@ export const getDayRanking = (competition: Competition, team: Team, day: number)
   return day > competition.lastDay ? 0 : (team.ranking.pools[day] ?? 0);
 };
 
-export const getFirstCountInPreviousDay = (competition: Competition, team: Team, day: number): number => {
+export const getFirstCountInCurrentDay = (team: Team, day: number): number => {
   if (day <= 1) {
     return 0;
   }
-  return team.pools[day - 1]?.teams.filter((team) => team.ranking.pools[day] === 1).length;
+  return team.pools[day - 1]?.teams.filter((t) => t.ranking.pools[day] === 1).length;
 };
 
-export const getDayDistance = (competition: Competition, team: Team, day: number): string => {
+export const getDayDistance = (team: Team, day: number): string => {
   const pool = team.pools[day]?.teams;
   if (pool?.length === 3) {
     const host = pool[0];

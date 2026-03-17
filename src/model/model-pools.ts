@@ -167,7 +167,7 @@ const totalTravelCost = (pools: Team[][], clubLocations: ClubLocations): number 
 };
 
 // --- Role Equity ---
-// Computes each team's cumulative host/nearby/far counts from actual pools in days 1..day-1.
+// Computes each team's cumulative host/nearby/far counts from actual pools in days 1..day.
 
 const computeRoleHistory = (
   competition: Competition,
@@ -472,11 +472,10 @@ const greedyGeographic = (
   withCoords.sort((a, b) => a.coords[0] - b.coords[0]);
 
   const hosts: Team[] = [];
-  const step = Math.max(1, Math.floor(withCoords.length / numPools));
+  const stride = Math.max(1, Math.floor(withCoords.length / numPools));
   const usedDepts = new Set<string>();
 
-  for (let i = 0; i < withCoords.length && hosts.length < numPools; i++) {
-    const idx = Math.min(hosts.length * step + Math.floor(step / 2), withCoords.length - 1);
+  for (let idx = Math.floor(stride / 2); idx < withCoords.length && hosts.length < numPools; idx += stride) {
     const candidate = withCoords[idx];
     if (!usedDepts.has(candidate.team.department.num_dep)) {
       usedDepts.add(candidate.team.department.num_dep);
@@ -484,7 +483,7 @@ const greedyGeographic = (
     }
   }
 
-  // Fallback: if not enough unique-dept hosts, relax constraint
+  // Second pass: fill remaining slots skipping already-selected teams
   if (hosts.length < numPools) {
     for (const entry of withCoords) {
       if (hosts.length >= numPools) break;
@@ -506,9 +505,14 @@ const greedyGeographic = (
 
   // Remaining teams sorted by distance to nearest host
   const remaining = teams.filter((t: Team) => !assigned.has(t.id));
+  const minHostDist = (team: Team): number => {
+    const distances = pools.map((p) => getTeamDistance(team, p[0], clubLocations)).filter((d) => d >= 0);
+    return distances.length > 0 ? Math.min(...distances) : Infinity;
+  };
   remaining.sort((a: Team, b: Team) => {
-    const aDist = Math.min(...pools.map((p) => getTeamDistance(a, p[0], clubLocations)).filter((d) => d >= 0));
-    const bDist = Math.min(...pools.map((p) => getTeamDistance(b, p[0], clubLocations)).filter((d) => d >= 0));
+    const aDist = minHostDist(a);
+    const bDist = minHostDist(b);
+    if (!isFinite(aDist) && !isFinite(bDist)) return 0;
     return aDist - bDist;
   });
 
@@ -921,8 +925,6 @@ export const predictPools = (competition: Competition, day: number, config: Pool
     trace.group(`Repair violations (${preRepairViolations} remaining)`);
     repairViolations(pools, lastPoolDay, trace);
     trace.groupEnd();
-  } else {
-    repairViolations(pools, lastPoolDay, trace);
   }
 
   auditPools(pools, lastPoolDay, config.clubLocations, roleHistory, currentDayHosts, trace);

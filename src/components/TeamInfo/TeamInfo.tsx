@@ -28,7 +28,7 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
   const ranking = getTeamRanking(team, day, false, true);
   const previous = getTeamRanking(team, day - 1, false, true);
   const delta =
-    previous && !isNaN(ranking)
+    previous && ranking !== undefined
       ? ranking === previous
         ? ''
         : ranking < previous
@@ -39,7 +39,7 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
 
   return (
     <div className={cx('vb-card-header-content', { eliminated })}>
-      {ranking && (
+      {ranking !== undefined && (
         <Avatar size="large" className={cx('ranking', { 'ranking-low': !displayRanking })}>
           {ranking}
         </Avatar>
@@ -100,7 +100,7 @@ const renderMatchs = (
     const ranking = getTeamRanking(teamB, day, false, true);
     const previous = getTeamRanking(teamB, day - 1, false, true);
     const delta =
-      previous && !isNaN(ranking)
+      previous && ranking !== undefined
         ? ranking === previous
           ? ''
           : ranking < previous

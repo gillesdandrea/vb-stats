@@ -3,7 +3,7 @@ import {
   getBoard,
   getDayDistance,
   getDayRanking,
-  getFirstCountInPreviousDay,
+  getFirstCountInCurrentDay,
   getTeamOpposition,
   getTeamRanking,
   getTeamStats,
@@ -35,7 +35,7 @@ export const getTrophies = (competition: Competition, team: Team): string => {
     .map((_, index) => getDayRanking(competition, team, index + 1));
   const firsts = Array(competition.lastDay)
     .fill(0)
-    .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
+    .map((_, index) => getFirstCountInCurrentDay(team, index + 1));
   const trophies =
     rankings.length > 0
       ? rankings
@@ -43,9 +43,7 @@ export const getTrophies = (competition: Competition, team: Team): string => {
           .map((rank, index) =>
             isPF(index + 1)
               ? `PF${medals[rank]}`
-              : `J${index + 1}${getDayDistance(competition, team, index + 1)}${firsts[index] === 2 ? '*' : ''}${
-                  medals[rank]
-                }`,
+              : `J${index + 1}${getDayDistance(team, index + 1)}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`,
           )
           .join(' ')
       : ' ';
@@ -72,7 +70,7 @@ const getTeamNode = (
   const post = eliminated ? '</s>' : '';
   const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
-  const ranking = getTeamRanking(team, day, singleDay, qualified);
+  const ranking = getTeamRanking(team, day, singleDay, qualified) ?? '-';
   return (
     // `T${team.id} [label="${index + 1}\\n${team.name} (${stats.rating.mu.toFixed(3)})\\n\\n` +
     // `matchs: ${stats.matchWon}/${stats.matchCount}, sets: ${stats.setWon}/${stats.setLost}=${sratio}, points: ${stats.pointWon}/${stats.pointLost}=${pratio}"]`

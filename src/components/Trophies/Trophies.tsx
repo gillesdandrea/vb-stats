@@ -4,7 +4,7 @@ import { type Competition, type Match, type Score, type Team } from '@/model/mod
 import {
   getDayDistance,
   getDayRanking,
-  getFirstCountInPreviousDay,
+  getFirstCountInCurrentDay,
   getGlobalTeamStats,
   getWinProbability,
 } from '@/model/model-helpers';
@@ -36,7 +36,7 @@ const Trophies = ({ competition, team, selected }: TrophiesProps) => {
     .map((_, index) => getDayRanking(competition, team, index + 1));
   const firsts = Array(competition.lastDay)
     .fill(0)
-    .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
+    .map((_, index) => getFirstCountInCurrentDay(team, index + 1));
   if (selected && selected !== team) {
     const matchs = getGlobalTeamStats(selected).matchs.filter(
       (match: Match) => match.teamA === team || match.teamB === team,
@@ -51,7 +51,7 @@ const Trophies = ({ competition, team, selected }: TrophiesProps) => {
     return matchs.map((match) => (
       <div key={match.id} className="match">
         {getDay(match.day)}
-        {!isPF(match.day) && getDayDistance(competition, selected, match.day)}
+        {!isPF(match.day) && getDayDistance(selected, match.day)}
         {!isPF(match.day) && firsts[match.day - 1] === 2 ? '*' : ''}
         &nbsp;
         {match.winner === undefined ? (
@@ -75,11 +75,7 @@ const Trophies = ({ competition, team, selected }: TrophiesProps) => {
             <div key={`${team.id}J${index + 1}`} className="trophy">
               {isPF(index + 1)
                 ? `PF${medals[rank]}`
-                : `J${index + 1}${getDayDistance(
-                    competition,
-                    team,
-                    index + 1,
-                  )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}
+                : `J${index + 1}${getDayDistance(team, index + 1)}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}
             </div>
           ))
       : null;

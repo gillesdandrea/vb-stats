@@ -72,11 +72,11 @@ const getItem = (
 
 const Shell = () => {
   const params = parseQueryParameters(window.location.search);
-  const { width, height } = useWindowSize();
+  const { width } = useWindowSize();
 
   const pday: number = Number.parseInt(params.day);
   const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
-  const [entity, setEntity] = useState<Entity>((params.entity as Entity) ?? defaultEntity);
+  const [entity] = useState<Entity>((params.entity as Entity) ?? defaultEntity);
   const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
