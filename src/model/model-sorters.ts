@@ -6,12 +6,13 @@ export enum Sorting {
   RATING,
 }
 
+export type SorterParams = [day: number, global?: boolean, pf?: boolean, slidingMaxDays?: number];
+export type TeamSorter = (...params: SorterParams) => (a: Team, b: Team) => number;
+
 // Sorting.RATING
-export const ratingSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const ratingSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
-    // const astats = global ? a.gstats[day] : a.dstats[day];
-    // const bstats = global ? b.gstats[day] : b.dstats[day];
     const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
     const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
     if (astats.rating.mu === bstats.rating.mu) {
@@ -21,8 +22,8 @@ export const ratingSorter =
   };
 
 // Sorting.POINTS
-export const rankingSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const rankingSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
     const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
@@ -37,8 +38,8 @@ export const rankingSorter =
     return apoints === bpoints ? setSorter(day, global, pf, slidingMaxDays)(a, b) : bpoints - apoints;
   };
 
-export const matchSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const matchSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
     const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
@@ -57,8 +58,8 @@ export const matchSorter =
     return asratio === bsratio ? setSorter(day, global, pf, slidingMaxDays)(a, b) : bsratio - asratio;
   };
 
-export const setSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const setSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
     const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
@@ -69,8 +70,8 @@ export const setSorter =
     return asratio === bsratio ? pointSorter(day, global, pf, slidingMaxDays)(a, b) : bsratio - asratio;
   };
 
-export const pointSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const pointSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const astats = getTeamStats(a, day, global, pf, slidingMaxDays);
     const bstats = getTeamStats(b, day, global, pf, slidingMaxDays);
@@ -89,8 +90,8 @@ export const pointSorter =
     return apratio === bpratio ? ratingSorter(day, global, pf, slidingMaxDays)(a, b) : bpratio - apratio;
   };
 
-export const poolSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const poolSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const apool = a.pools[day];
     const bpool = b.pools[day];
@@ -111,8 +112,8 @@ export const poolSorter =
     return apool.name.localeCompare(bpool.name);
   };
 
-export const previousPoolSorter =
-  (day: number, global = true, pf = false, slidingMaxDays = 4) =>
+export const previousPoolSorter: TeamSorter =
+  (day, global = true, pf = false, slidingMaxDays = 4) =>
   (a: Team, b: Team) => {
     const apool = a.pools[day];
     const bpool = b.pools[day];

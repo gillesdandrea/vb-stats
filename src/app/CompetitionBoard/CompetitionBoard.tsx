@@ -25,6 +25,7 @@ import {
   rankingSorter,
   ratingSorter,
   setSorter,
+  type SorterParams,
   Sorting,
 } from '@/model/model-sorters';
 import useClubLocations from '@/utils/useClubLocations';
@@ -77,6 +78,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   const statGlobal = sliding > 0 || !singleDay;
   const statPF = sliding > 0 || !!isPFday;
   const statSlidingMaxDays = sliding > 0 ? sliding : 4;
+  const statParams: SorterParams = [statDay, statGlobal, statPF, statSlidingMaxDays];
 
   const { data: clubLocations } = useClubLocations();
 
@@ -98,7 +100,6 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
     [sliding, board],
   );
   const columns: ColumnsType<Team> = [
-    // { title: '', key: 'index', align: 'right', width: 40, render: (value, item, index) => index + 1, fixed: true },
     {
       title: '',
       colSpan: 0,
@@ -145,7 +146,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const previous = getTeamRanking(team, day - 1, singleDay, qualified);
         return <small>{formatDelta(ranking, previous)}</small>;
       },
-      sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: rankingSorter(...statParams),
       sortOrder: getColumnSortOrder('delta'),
       showSorterTooltip: false,
       fixed: true,
@@ -159,7 +160,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const { rating } = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return rating.mu.toFixed(3);
       },
-      sorter: ratingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: ratingSorter(...statParams),
       sortOrder: getColumnSortOrder('rating'),
       showSorterTooltip: false,
     },
@@ -199,7 +200,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
           coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
-      sorter: rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: rankingSorter(...statParams),
       sortOrder: getColumnSortOrder('ranking'),
       showSorterTooltip: false,
       hidden: isPF(day),
@@ -213,7 +214,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
-      sorter: matchSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: matchSorter(...statParams),
       sortOrder: getColumnSortOrder('matchs'),
       showSorterTooltip: false,
     },
@@ -227,7 +228,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
-      sorter: setSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: setSorter(...statParams),
       sortOrder: getColumnSortOrder('sets'),
       showSorterTooltip: false,
     },
@@ -241,7 +242,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
-      sorter: pointSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+      sorter: pointSorter(...statParams),
       sortOrder: getColumnSortOrder('points'),
       showSorterTooltip: false,
     },
@@ -269,7 +270,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
             if (poolA !== poolB) return poolA.localeCompare(poolB);
             return board.indexOf(a) - board.indexOf(b);
           }
-        : poolSorter(statDay, statGlobal, statPF, statSlidingMaxDays),
+        : poolSorter(...statParams),
       sortOrder: getColumnSortOrder('pool'),
       showSorterTooltip: false,
     },
@@ -302,7 +303,7 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
-          ? rankingSorter(statDay, statGlobal, statPF, statSlidingMaxDays)(a, b)
+          ? rankingSorter(...statParams)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
       sortOrder: getColumnSortOrder('region'),
       showSorterTooltip: false,
@@ -318,7 +319,6 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
     },
   ];
 
-  // console.log('rendering CompetitionBoard');
   return (
     <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
       {sliding > 0 && (

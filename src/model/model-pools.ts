@@ -123,12 +123,21 @@ const computeMetrics = (pools: Team[][], clubLocations: ClubLocations, day: numb
   };
 };
 
+// --- Algorithm Config ---
+
+const POOL_CONFIG = {
+  nearFarWeights: [2.0, 1.0, 0.5] as const,
+  equityWeight: 30,
+  hostEquityThreshold: 20,
+  repairMaxIter: 200,
+  swapMaxIter: 100,
+  clusterMaxIter: 50,
+} as const;
+
 // --- Asymmetric Travel Cost ---
 // Rewards "1 close + 1 far" pools over "all medium" pools.
 // For 3 pairwise distances sorted ascending, weights [2.0, 1.0, 0.5] make the optimizer
 // prioritize having at least one short distance while tolerating one long one.
-
-const NEAR_FAR_WEIGHTS = [2.0, 1.0, 0.5] as const;
 
 const travelCost = (pool: Team[], clubLocations: ClubLocations): number => {
   if (pool.length < 2) return 0;
@@ -144,7 +153,7 @@ const travelCost = (pool: Team[], clubLocations: ClubLocations): number => {
   distances.sort((a, b) => a - b);
   let cost = 0;
   for (let i = 0; i < distances.length; i++) {
-    cost += distances[i] * NEAR_FAR_WEIGHTS[Math.min(i, NEAR_FAR_WEIGHTS.length - 1)];
+    cost += distances[i] * POOL_CONFIG.nearFarWeights[Math.min(i, POOL_CONFIG.nearFarWeights.length - 1)];
   }
   return cost;
 };
@@ -205,10 +214,6 @@ const computeRoleHistory = (
   return history;
 };
 
-// Equity penalty for a pool assignment: measures how imbalanced roles are after this assignment.
-// Returns a penalty in "km-equivalent" units, scaled to be a soft secondary factor.
-const EQUITY_WEIGHT = 30; // km penalty per unit of imbalance — keeps it secondary to geography
-
 const poolEquityPenalty = (
   pool: Team[],
   roleHistory: Map<string, RoleHistory>,
@@ -230,7 +235,7 @@ const poolEquityPenalty = (
   if (d1 >= 0 && d2 >= 0) {
     [nearTeam, farTeam] = d1 <= d2 ? [pool[1], pool[2]] : [pool[2], pool[1]];
   } else {
-    return hostPenalty * EQUITY_WEIGHT;
+    return hostPenalty * POOL_CONFIG.equityWeight;
   }
 
   const nearHistory = roleHistory.get(nearTeam.id) ?? { host: 0, nearby: 0, far: 0 };
@@ -243,7 +248,7 @@ const poolEquityPenalty = (
   // Penalty if the "far" team already has too many far roles
   const farPenalty = totalFar > 0 ? Math.max(0, farHistory.far / totalFar - 1 / 3) : 0;
 
-  return (hostPenalty + nearPenalty + farPenalty) * EQUITY_WEIGHT;
+  return (hostPenalty + nearPenalty + farPenalty) * POOL_CONFIG.equityWeight;
 };
 
 const totalEquityPenalty = (
@@ -258,31 +263,29 @@ const totalEquityPenalty = (
   return total;
 };
 
-// --- Constraint Repair ---
-// Swaps teams between pools to eliminate violations, even at the cost of distance.
+// --- Swap Improvement Loop ---
+// Shared loop: tentatively swap every pair of teams between pools, accept via callback.
+// The callback sees the post-swap state and returns true to keep or false to revert.
 
-const repairViolations = (pools: Team[][], day: number, trace: Trace): void => {
+const improveBySwapping = (
+  pools: Team[][],
+  maxIter: number,
+  shouldAccept: (p: number, q: number, i: number, j: number, ti: Team, tj: Team) => boolean,
+  breakOnFirst = false,
+): number => {
   let swapCount = 0;
-  for (let iter = 0; iter < 200; iter++) {
-    const violations = countViolations(pools, day);
-    if (violations === 0) break;
-
+  for (let iter = 0; iter < maxIter; iter++) {
     let improved = false;
-    for (let p = 0; p < pools.length && !improved; p++) {
-      for (let q = p + 1; q < pools.length && !improved; q++) {
-        for (let i = 0; i < pools[p].length && !improved; i++) {
-          for (let j = 0; j < pools[q].length && !improved; j++) {
+    for (let p = 0; p < pools.length && !(breakOnFirst && improved); p++) {
+      for (let q = p + 1; q < pools.length && !(breakOnFirst && improved); q++) {
+        for (let i = 0; i < pools[p].length && !(breakOnFirst && improved); i++) {
+          for (let j = 0; j < pools[q].length && !(breakOnFirst && improved); j++) {
             const ti = pools[p][i];
             const tj = pools[q][j];
             pools[p][i] = tj;
             pools[q][j] = ti;
-
-            const newViolations = countViolations(pools, day);
-            if (newViolations < violations) {
+            if (shouldAccept(p, q, i, j, ti, tj)) {
               swapCount++;
-              trace.log(
-                `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${violations}→${newViolations}`,
-              );
               improved = true;
             } else {
               pools[p][i] = ti;
@@ -294,6 +297,32 @@ const repairViolations = (pools: Team[][], day: number, trace: Trace): void => {
     }
     if (!improved) break;
   }
+  return swapCount;
+};
+
+// --- Constraint Repair ---
+// Swaps teams between pools to eliminate violations, even at the cost of distance.
+
+const repairViolations = (pools: Team[][], day: number, trace: Trace): void => {
+  let violations = countViolations(pools, day);
+  let swapCount = 0;
+  improveBySwapping(
+    pools,
+    POOL_CONFIG.repairMaxIter,
+    (p, q, _i, _j, ti, tj) => {
+      const newViolations = countViolations(pools, day);
+      if (newViolations < violations) {
+        swapCount++;
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${violations}→${newViolations}`,
+        );
+        violations = newViolations;
+        return true;
+      }
+      return false;
+    },
+    true,
+  );
 };
 
 // --- Pool map builder ---
@@ -312,8 +341,6 @@ const buildPoolMap = (pools: Team[][]): Map<string, string> => {
 // 1. Avoid consecutive hosting: skip teams that hosted on the previous day
 // 2. Role equity tie-breaking: within 20km threshold, prefer least-hosted team
 
-const HOST_EQUITY_THRESHOLD = 20; // km — max centroid-distance penalty to accept for better equity
-
 const getDayHosts = (competition: Competition, day: number, trace: Trace = nullTrace): Set<string> => {
   const hosts = new Set<string>();
   const dayData = competition.days[day];
@@ -328,6 +355,30 @@ const getDayHosts = (competition: Competition, day: number, trace: Trace = nullT
   }
   trace.log(`getDayHosts: day ${day} — ${hosts.size} hosts from ${dayData.pools.size} pools`);
   return hosts;
+};
+
+// Among candidates within threshold of the best, pick the team with fewest prior hostings.
+const pickLeastHosted = (
+  candidates: { idx: number; dist: number }[],
+  pool: Team[],
+  roleHistory: Map<string, RoleHistory>,
+): { idx: number; reason: string } | undefined => {
+  if (candidates.length < 2) return undefined;
+  const bestDist = candidates[0].dist;
+  const withinThreshold = candidates.filter((c) => c.dist <= bestDist + POOL_CONFIG.hostEquityThreshold);
+  if (withinThreshold.length <= 1) return undefined;
+  let minHostCount = Infinity;
+  let bestIdx = candidates[0].idx;
+  for (const c of withinThreshold) {
+    const h = roleHistory.get(pool[c.idx].id);
+    const hostCount = h ? h.host : 0;
+    if (hostCount < minHostCount) {
+      minHostCount = hostCount;
+      bestIdx = c.idx;
+    }
+  }
+  const chosen = roleHistory.get(pool[bestIdx].id);
+  return { idx: bestIdx, reason: `equity pick host_count=${chosen?.host ?? 0}` };
 };
 
 const selectHosts = (
@@ -360,49 +411,26 @@ const selectHosts = (
     if (currentDayHosts) {
       const nonConsecutive = centroidDists.filter((c) => !currentDayHosts.has(pool[c.idx].id));
       if (nonConsecutive.length > 0) {
-        // Use non-consecutive candidates, falling back to closest among them
         bestIdx = nonConsecutive[0].idx;
         const skipped = centroidDists.filter((c) => currentDayHosts.has(pool[c.idx].id));
         if (skipped.length > 0) {
           reason = `centroid: ${Math.round(nonConsecutive[0].dist)}km — skipped ${skipped.map((c) => pool[c.idx].name).join(', ')} (hosted yesterday)`;
         }
-
-        if (roleHistory && nonConsecutive.length > 1) {
-          const bestDist = nonConsecutive[0].dist;
-          const candidates = nonConsecutive.filter((c) => c.dist <= bestDist + HOST_EQUITY_THRESHOLD);
-          if (candidates.length > 1) {
-            let minHostCount = Infinity;
-            for (const c of candidates) {
-              const h = roleHistory.get(pool[c.idx].id);
-              const hostCount = h ? h.host : 0;
-              if (hostCount < minHostCount) {
-                minHostCount = hostCount;
-                bestIdx = c.idx;
-              }
-            }
-            const chosen = roleHistory.get(pool[bestIdx].id);
-            reason += ` — equity pick host_count=${chosen?.host ?? 0}`;
+        if (roleHistory) {
+          const equity = pickLeastHosted(nonConsecutive, pool, roleHistory);
+          if (equity) {
+            bestIdx = equity.idx;
+            reason += ` — ${equity.reason}`;
           }
         }
       } else {
         reason += ' — all candidates hosted yesterday, using centroid-closest';
       }
-      // If all candidates hosted yesterday, fall through to centroid-closest
-    } else if (roleHistory && centroidDists.length >= 2) {
-      const bestDist = centroidDists[0].dist;
-      const candidates = centroidDists.filter((c) => c.dist <= bestDist + HOST_EQUITY_THRESHOLD);
-      if (candidates.length > 1) {
-        let minHostCount = Infinity;
-        for (const c of candidates) {
-          const h = roleHistory.get(pool[c.idx].id);
-          const hostCount = h ? h.host : 0;
-          if (hostCount < minHostCount) {
-            minHostCount = hostCount;
-            bestIdx = c.idx;
-          }
-        }
-        const chosen = roleHistory.get(pool[bestIdx].id);
-        reason = `centroid: ${Math.round(centroidDists[0].dist)}km — equity pick host_count=${chosen?.host ?? 0}`;
+    } else if (roleHistory) {
+      const equity = pickLeastHosted(centroidDists, pool, roleHistory);
+      if (equity) {
+        bestIdx = equity.idx;
+        reason = `centroid: ${Math.round(centroidDists[0].dist)}km — ${equity.reason}`;
       }
     }
 
@@ -547,47 +575,28 @@ const swapOptimization = (
   let swapCount = 0;
 
   // Iterative swap improvement: prioritize violation reduction, then combined cost
-  for (let iter = 0; iter < 100; iter++) {
-    let improved = false;
-    for (let p = 0; p < pools.length; p++) {
-      for (let q = p + 1; q < pools.length; q++) {
-        for (let i = 0; i < pools[p].length; i++) {
-          for (let j = 0; j < pools[q].length; j++) {
-            const ti = pools[p][i];
-            const tj = pools[q][j];
-            pools[p][i] = tj;
-            pools[q][j] = ti;
-
-            const newViolations = countViolations(pools, day);
-            const newCost = combinedCost(pools);
-
-            const fewerViolations = newViolations < currentViolations;
-            const betterCost = newViolations <= currentViolations && newCost < currentCost;
-
-            if (fewerViolations || betterCost) {
-              swapCount++;
-              if (fewerViolations) {
-                trace.log(
-                  `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${currentViolations}→${newViolations}`,
-                );
-              } else {
-                trace.log(
-                  `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — cost ${Math.round(currentCost)}→${Math.round(newCost)} (violations=${newViolations})`,
-                );
-              }
-              currentViolations = newViolations;
-              currentCost = newCost;
-              improved = true;
-            } else {
-              pools[p][i] = ti;
-              pools[q][j] = tj;
-            }
-          }
-        }
+  improveBySwapping(pools, POOL_CONFIG.swapMaxIter, (p, q, _i, _j, ti, tj) => {
+    const newViolations = countViolations(pools, day);
+    const newCost = combinedCost(pools);
+    const fewerViolations = newViolations < currentViolations;
+    const betterCost = newViolations <= currentViolations && newCost < currentCost;
+    if (fewerViolations || betterCost) {
+      swapCount++;
+      if (fewerViolations) {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${currentViolations}→${newViolations}`,
+        );
+      } else {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — cost ${Math.round(currentCost)}→${Math.round(newCost)} (violations=${newViolations})`,
+        );
       }
+      currentViolations = newViolations;
+      currentCost = newCost;
+      return true;
     }
-    if (!improved) break;
-  }
+    return false;
+  });
 
   trace.log(`Total: ${swapCount} accepted swaps, violations=${currentViolations}, cost=${Math.round(currentCost)}`);
 
@@ -649,48 +658,34 @@ const geographicClustering = (
   // Refinement: local swap optimization using asymmetric travel cost + equity
   let currentTotalViolations = countViolations(pools, day);
   let swapCount = 0;
-  for (let iter = 0; iter < 50; iter++) {
-    let improved = false;
-    for (let p = 0; p < pools.length; p++) {
-      for (let q = p + 1; q < pools.length; q++) {
-        for (let i = 0; i < pools[p].length; i++) {
-          for (let j = 0; j < pools[q].length; j++) {
-            const currentCost = pairCost(p, q);
+  improveBySwapping(pools, POOL_CONFIG.clusterMaxIter, (p, q, i, j, ti, tj) => {
+    // Compute pre-swap pair cost by temporarily reverting
+    pools[p][i] = ti;
+    pools[q][j] = tj;
+    const oldCost = pairCost(p, q);
+    pools[p][i] = tj;
+    pools[q][j] = ti;
 
-            const ti = pools[p][i];
-            const tj = pools[q][j];
-            pools[p][i] = tj;
-            pools[q][j] = ti;
-
-            const newViolations = countViolations(pools, day);
-            const newCost = pairCost(p, q);
-
-            const fewerViolations = newViolations < currentTotalViolations;
-            const betterCost = newViolations <= currentTotalViolations && newCost < currentCost;
-
-            if (fewerViolations || betterCost) {
-              swapCount++;
-              if (fewerViolations) {
-                trace.log(
-                  `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${currentTotalViolations}→${newViolations}`,
-                );
-              } else {
-                trace.log(
-                  `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — cost ${Math.round(currentCost)}→${Math.round(newCost)} (violations=${newViolations})`,
-                );
-              }
-              currentTotalViolations = newViolations;
-              improved = true;
-            } else {
-              pools[p][i] = ti;
-              pools[q][j] = tj;
-            }
-          }
-        }
+    const newViolations = countViolations(pools, day);
+    const newCost = pairCost(p, q);
+    const fewerViolations = newViolations < currentTotalViolations;
+    const betterCost = newViolations <= currentTotalViolations && newCost < oldCost;
+    if (fewerViolations || betterCost) {
+      swapCount++;
+      if (fewerViolations) {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — violations ${currentTotalViolations}→${newViolations}`,
+        );
+      } else {
+        trace.log(
+          `Swap ${swapCount}: Pool ${getVirtualPoolName(p)} ↔ Pool ${getVirtualPoolName(q)} — ${ti.name} ↔ ${tj.name} — cost ${Math.round(oldCost)}→${Math.round(newCost)} (violations=${newViolations})`,
+        );
       }
+      currentTotalViolations = newViolations;
+      return true;
     }
-    if (!improved) break;
-  }
+    return false;
+  });
 
   trace.log(`Total: ${swapCount} accepted swaps, violations=${currentTotalViolations}`);
 

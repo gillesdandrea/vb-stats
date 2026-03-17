@@ -7,7 +7,6 @@ import { useWindowSize } from 'react-use';
 import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '@/app/CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
-// import CompetitionSheets from '@/app/CompetitionSheets/CompetitionSheets';
 import {
   categories,
   defaultCategory,
@@ -25,10 +24,6 @@ import useCompetition from '@/utils/useCompetition';
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
-
-// const CompetitionBoard = lazy(() => import('@/app/CompetitionBoard/CompetitionBoard'));
-// const CompetitionGraph = lazy(() => import('@/app/CompetitionGraph/CompetitionGraph'));
-// const CompetitionPools = lazy(() => import('@/app/CompetitionPools/CompetitionPools'));
 
 const BREAKPOINT = 512; // 576
 
@@ -329,7 +324,6 @@ const Shell = () => {
     ),
   ];
 
-  // console.log('rendering Shell');
   return (
     <Layout className="vb-shell">
       <img src={vbStatsLogo} className="vb-stats-logo" alt="vb-stats logo" />
@@ -345,13 +339,6 @@ const Shell = () => {
         />
       </Layout.Header>
       <Layout.Content>
-        {/*<Suspense
-          fallback={
-            <Spin size="large">
-              <Layout style={{ height: '100vh' }} />
-            </Spin>
-          }
-        >*/}
         {competition && tab === 'pools' && (
           <CompetitionPools
             // className={tab === 'pools' ? '' : 'no-display'}
@@ -363,17 +350,6 @@ const Shell = () => {
             setTokens={setTokens}
           />
         )}
-        {/* {competition && tab === 'teams' && (
-          <CompetitionTeams
-            // className={tab === 'teams' ? '' : 'no-display'}
-            competition={competition}
-            day={competition.dayCount}
-            singleDay={singleDay}
-            qualified={qualified}
-            tokens={tokens}
-            setTokens={setTokens}
-          />
-        )} */}
         {competition && tab === 'board' && (
           <CompetitionBoard
             // className={tab === 'board' ? '' : 'no-display'}
@@ -393,16 +369,6 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {/*competition && tab === 'sheets' && (
-          <CompetitionSheets
-            // className={tab === 'sheets' ? '' : 'no-display'}
-            competition={competition}
-            day={day}
-            singleDay={singleDay}
-            qualified={qualified}
-          />
-        )*/}
-        {/*</Suspense>*/}
       </Layout.Content>
     </Layout>
   );

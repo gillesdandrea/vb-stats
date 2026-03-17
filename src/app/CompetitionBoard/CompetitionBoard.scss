@@ -17,14 +17,14 @@
     color: #444;
   }
 
-  .ant-table-thead .ant-table-cell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .ant-table-cell {
     background-color: #141414;
+  }
+
+  .ant-table-thead .ant-table-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .vb-trophies {

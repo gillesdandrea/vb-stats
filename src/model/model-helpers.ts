@@ -34,7 +34,6 @@ export const filterTeam = (team: Team, tokens: string[]) =>
   });
 
 export const rateMatch = (ratingWinner: Rating, ratingLoser: Rating, tightScore = false): [Rating, Rating] => {
-  // return rate_1vs1(ratingWinner, ratingLoser, undefined, undefined, ts);
   const ranks = [0, 1];
   const weights = [[1], [tightScore ? TIGHT_FACTOR : 1]];
   const teams = ts.rate([[ratingWinner], [ratingLoser]], ranks, weights, MIN_DELTA);
@@ -111,7 +110,6 @@ export const getTeam = (competition: Competition, id: string, name?: string): Te
 
 export const getGlobalTeamStats = (team: Team, day = team.dayCount): Stats => {
   if (!team.gstats[day]) {
-    // console.log(`Creating Global ${day} Team Stats for ${team.name}`);
     const prevStats = getGlobalTeamStats(team, day - 1); // team.gstats[0] is already defined
     team.gstats[day] = { ...prevStats };
   }
@@ -122,7 +120,6 @@ export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4
   const key = `${day}:${maxDays}`;
   const cached = team.sstats.get(key);
   if (cached) return cached;
-  // console.log(`Creating Sliding from ${Math.max(0, day - maxDays)} to ${day - 1} Team Stats for ${team.name}`);
   let stats = createStats(getGlobalTeamStats(team, day).rating);
   for (let i = Math.max(0, day - maxDays); i < day; i++) {
     const istats = getDayTeamStats(team, i);
@@ -145,7 +142,6 @@ export const getSlidingTeamStats = (team: Team, day = team.dayCount, maxDays = 4
 
 export const getDayTeamStats = (team: Team, day: number): Stats => {
   if (!team.dstats[day]) {
-    // console.log(`Creating Day ${day} Team Stats for ${team.name}`);
     team.dstats[day] = createStats(getGlobalTeamStats(team, day).rating);
   }
   return team.dstats[day];
@@ -210,12 +206,6 @@ export const getPoolProbabilities = (competition: Competition, pool: Pool, day: 
     getWinProbability(pool.teams[2], pool.teams[0], day) * getWinProbability(pool.teams[2], pool.teams[1], day);
   const total = pt0 + pt1 + pt2;
   const probabilities = [pt0 / total, pt1 / total, pt2 / total];
-  // const orders = [1, 2, 3].sort((a, b) => {
-  //   const pa = probabilities[a - 1];
-  //   const pb = probabilities[b - 1];
-  //   return pa < pb ? -1 : 1;
-  // });
-  // hack to make sorting works...
   const orders = [0, 1, 2];
   const swap = (a: number, b: number) => {
     if (probabilities[orders[a]] < probabilities[orders[b]]) {
@@ -290,7 +280,6 @@ export const filterThirdPlace = (teams: Team[], day: number): Team[] => {
 };
 
 export const isTeamInCourse = (competition: Competition, team: Team, day: number): boolean => {
-  // console.log(day, team.stats.dayCount, team.name);
   if (day === 1 || team.dayCount >= day) {
     return true;
   }

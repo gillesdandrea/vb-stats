@@ -2,8 +2,9 @@ import fs from 'node:fs/promises';
 
 import Papa from 'papaparse';
 
+import { type Competition, type Entity, type Pool, seasonToString, type Team } from '@/model/model';
+import { type ClubLocations, getTeamDistance } from '@/model/model-geography';
 import { createCompetition, getSlidingDay, isTeamInCourse } from '@/model/model-helpers';
-import { type Competition, type Entity, type Pool, type Team, seasonToString } from '@/model/model';
 import { processCompetition } from '@/model/model-process';
 import { matchSorter, rankingSorter, ratingSorter } from '@/model/model-sorters';
 
@@ -14,147 +15,20 @@ const CATEGORIES = ['M15F', 'M15M', 'M18F', 'M18M', 'M21F', 'M21M'];
 const MIN_DAY = 5;
 const ENTITY: Entity = 'ACJEUNES';
 
-// --- Department Centroids (approximate lat/lon) ---
-
-const departmentCentroids: Record<string, [lat: number, lon: number]> = {
-  '01': [46.2, 5.3],
-  '02': [49.5, 3.6],
-  '03': [46.4, 3.2],
-  '04': [44.1, 6.2],
-  '05': [44.7, 6.3],
-  '06': [43.8, 7.2],
-  '07': [44.7, 4.4],
-  '08': [49.6, 4.6],
-  '09': [42.9, 1.5],
-  '10': [48.3, 4.1],
-  '11': [43.1, 2.4],
-  '12': [44.3, 2.6],
-  '13': [43.5, 5.1],
-  '14': [49.1, -0.4],
-  '15': [45.0, 2.7],
-  '16': [45.7, 0.2],
-  '17': [45.8, -0.8],
-  '18': [47.0, 2.5],
-  '19': [45.3, 1.9],
-  '21': [47.3, 4.6],
-  '22': [48.5, -3.0],
-  '23': [46.1, 2.1],
-  '24': [45.1, 0.7],
-  '25': [47.2, 6.4],
-  '26': [44.7, 5.2],
-  '27': [49.1, 1.2],
-  '28': [48.3, 1.5],
-  '29': [48.4, -4.2],
-  '2A': [41.9, 9.0],
-  '2B': [42.3, 9.2],
-  '30': [44.0, 4.1],
-  '31': [43.4, 1.2],
-  '32': [43.7, 0.6],
-  '33': [44.8, -0.6],
-  '34': [43.6, 3.5],
-  '35': [48.1, -1.7],
-  '36': [46.8, 1.6],
-  '37': [47.3, 0.7],
-  '38': [45.3, 5.7],
-  '39': [46.7, 5.7],
-  '40': [43.9, -0.8],
-  '41': [47.6, 1.4],
-  '42': [45.7, 4.2],
-  '43': [45.1, 3.7],
-  '44': [47.3, -1.7],
-  '45': [47.9, 2.2],
-  '46': [44.6, 1.7],
-  '47': [44.3, 0.5],
-  '48': [44.5, 3.5],
-  '49': [47.4, -0.5],
-  '50': [48.9, -1.3],
-  '51': [48.9, 3.9],
-  '52': [48.1, 5.3],
-  '53': [48.1, -0.8],
-  '54': [48.7, 6.2],
-  '55': [49.0, 5.4],
-  '56': [47.8, -2.8],
-  '57': [49.0, 6.7],
-  '58': [47.1, 3.5],
-  '59': [50.4, 3.2],
-  '60': [49.4, 2.4],
-  '61': [48.6, 0.1],
-  '62': [50.5, 2.3],
-  '63': [45.7, 3.1],
-  '64': [43.3, -0.8],
-  '65': [43.0, 0.2],
-  '66': [42.6, 2.5],
-  '67': [48.6, 7.5],
-  '68': [47.9, 7.2],
-  '69': [45.8, 4.7],
-  '70': [47.6, 6.2],
-  '71': [46.6, 4.4],
-  '72': [47.9, 0.2],
-  '73': [45.5, 6.4],
-  '74': [46.0, 6.3],
-  '75': [48.9, 2.3],
-  '76': [49.7, 1.0],
-  '77': [48.6, 2.9],
-  '78': [48.8, 1.9],
-  '79': [46.5, -0.3],
-  '80': [49.9, 2.3],
-  '81': [43.8, 2.1],
-  '82': [44.0, 1.3],
-  '83': [43.5, 6.2],
-  '84': [44.1, 5.2],
-  '85': [46.7, -1.3],
-  '86': [46.6, 0.5],
-  '87': [45.9, 1.3],
-  '88': [48.2, 6.4],
-  '89': [47.8, 3.6],
-  '90': [47.6, 6.9],
-  '91': [48.5, 2.2],
-  '92': [48.8, 2.2],
-  '93': [48.9, 2.5],
-  '94': [48.8, 2.5],
-  '95': [49.1, 2.2],
-};
-
-// Haversine distance in km
-const haversineKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-};
-
 // Club location cache (populated from club-locations.json if available)
 const CLUB_LOCATIONS_PATH = './public/data/club-locations.json';
-let clubLocations: Record<string, { lat: number; lon: number }> = {};
+let clubLocations: ClubLocations = {};
 let locationSource = 'department-centroids';
 
 const loadClubLocations = async (): Promise<void> => {
   try {
     const raw = await fs.readFile(CLUB_LOCATIONS_PATH, 'utf8');
-    const data = JSON.parse(raw) as Record<string, { lat: number; lon: number }>;
+    const data = JSON.parse(raw) as ClubLocations;
     clubLocations = data;
     locationSource = `club-cities (${Object.keys(data).length} clubs)`;
   } catch {
     locationSource = 'department-centroids (no club-locations.json, run pnpm cdf-geocode)';
   }
-};
-
-const getTeamCoords = (team: Team): [lat: number, lon: number] | undefined => {
-  // Prefer club-level location
-  const club = clubLocations[team.id];
-  if (club) return [club.lat, club.lon];
-  // Fallback to department centroid
-  return departmentCentroids[team.department.num_dep];
-};
-
-const getTeamDistance = (a: Team, b: Team): number => {
-  const ca = getTeamCoords(a);
-  const cb = getTeamCoords(b);
-  if (!ca || !cb) return -1;
-  return haversineKm(ca[0], ca[1], cb[0], cb[1]);
 };
 
 // --- Role Equity Analysis ---
@@ -248,8 +122,8 @@ const analyzeRoleEquity = (competition: Competition, meritDays: number[]): RoleE
     for (const pool of pools) {
       if (pool.length < 3) continue;
       const host = pool[0];
-      const d1 = getTeamDistance(host, pool[1]);
-      const d2 = getTeamDistance(host, pool[2]);
+      const d1 = getTeamDistance(host, pool[1], clubLocations);
+      const d2 = getTeamDistance(host, pool[2], clubLocations);
 
       // Host role
       const hostEntry = ensureEntry(host.id);
@@ -312,8 +186,8 @@ const analyzeNearFarVisitors = (competition: Competition, day: number): NearFarR
   for (const pool of actualPools) {
     if (pool.length < 3) continue;
     const host = pool[0];
-    const d1 = getTeamDistance(host, pool[1]);
-    const d2 = getTeamDistance(host, pool[2]);
+    const d1 = getTeamDistance(host, pool[1], clubLocations);
+    const d2 = getTeamDistance(host, pool[2], clubLocations);
     if (d1 < 0 || d2 < 0) continue;
     const dNear = Math.min(d1, d2);
     const dFar = Math.max(d1, d2);
@@ -645,14 +519,14 @@ const analyzePoolDistances = (competition: Competition, day: number): GeoDistanc
   for (const pool of actualPools) {
     for (let i = 0; i < pool.length; i++) {
       for (let j = i + 1; j < pool.length; j++) {
-        const d = getTeamDistance(pool[i], pool[j]);
+        const d = getTeamDistance(pool[i], pool[j], clubLocations);
         if (d >= 0) pairDistances.push(d);
       }
     }
     // Distance of visitors to host
     const host = pool[0];
     for (let i = 1; i < pool.length; i++) {
-      const d = getTeamDistance(host, pool[i]);
+      const d = getTeamDistance(host, pool[i], clubLocations);
       if (d >= 0) hostDistances.push(d);
     }
   }
@@ -672,7 +546,7 @@ const computeAllPairsBaseline = (competition: Competition, day: number): number 
   const distances: number[] = [];
   for (let i = 0; i < teams.length; i++) {
     for (let j = i + 1; j < teams.length; j++) {
-      const d = getTeamDistance(teams[i], teams[j]);
+      const d = getTeamDistance(teams[i], teams[j], clubLocations);
       if (d >= 0) distances.push(d);
     }
   }
@@ -689,13 +563,13 @@ const analyzeEarlyDaysGeo = (competition: Competition): GeoDistanceResult => {
     for (const pool of pools) {
       for (let i = 0; i < pool.length; i++) {
         for (let j = i + 1; j < pool.length; j++) {
-          const d = getTeamDistance(pool[i], pool[j]);
+          const d = getTeamDistance(pool[i], pool[j], clubLocations);
           if (d >= 0) pairDistances.push(d);
         }
       }
       const host = pool[0];
       for (let i = 1; i < pool.length; i++) {
-        const d = getTeamDistance(host, pool[i]);
+        const d = getTeamDistance(host, pool[i], clubLocations);
         if (d >= 0) hostDistances.push(d);
       }
     }
@@ -726,7 +600,7 @@ const monteCarloGeoBaseline = (competition: Competition, day: number, runs: numb
       const pool = shuffled.slice(p * 3, p * 3 + 3);
       for (let i = 0; i < pool.length; i++) {
         for (let j = i + 1; j < pool.length; j++) {
-          const d = getTeamDistance(pool[i], pool[j]);
+          const d = getTeamDistance(pool[i], pool[j], clubLocations);
           if (d >= 0) distances.push(d);
         }
       }
