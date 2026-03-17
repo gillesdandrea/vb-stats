@@ -4854,5 +4854,77 @@
     "department": "95",
     "lat": 49.0823913,
     "lon": 2.5034402
+  },
+  "0353652": {
+    "code": "0353652",
+    "name": "C.P.B. RENNES 35",
+    "city": "RENNES CEDEX 7",
+    "department": "35",
+    "lat": 48.1113387,
+    "lon": -1.6800198
+  },
+  "0842424": {
+    "code": "0842424",
+    "name": "AVIGNON VOLLEY BALL",
+    "city": "AVIGNON   -  CEDEX 1",
+    "department": "84",
+    "lat": 43.9492493,
+    "lon": 4.8059012
+  },
+  "0148994": {
+    "code": "0148994",
+    "name": "ELAN SPORTIF DE CARPIQUET DE VOLLEY",
+    "city": "CARPIQUET CEDEX",
+    "department": "14",
+    "lat": 49.1841482,
+    "lon": -0.4417479
+  },
+  "0698293": {
+    "code": "0698293",
+    "name": "U.S. MEYZIEU VOLLEY-BALL",
+    "city": "MEYZIEU CEDEX",
+    "department": "69",
+    "lat": 45.7764637,
+    "lon": 5.0044767
+  },
+  "0030027": {
+    "code": "0030027",
+    "name": "V.B. DISTRICT VICHYSSOIS",
+    "city": "VICHY CEDEX",
+    "department": "03",
+    "lat": 46.124017,
+    "lon": 3.4203658
+  },
+  "0413192": {
+    "code": "0413192",
+    "name": "AS AMICALE JEUNESSE BLESOISE",
+    "city": "BLOIS CEDEX",
+    "department": "41",
+    "lat": 47.5876861,
+    "lon": 1.3337639
+  },
+  "0539224": {
+    "code": "0539224",
+    "name": "AS. CHATEAU GONTIER VB",
+    "city": "CHATEAU GONTIER CEDEX",
+    "department": "53",
+    "lat": 47.8263058,
+    "lon": -0.7066665
+  },
+  "0027343": {
+    "code": "0027343",
+    "name": "VILLERS COTTERETS VOLLEY-BALL",
+    "city": "VILLLERS COTTERETS CEDEX",
+    "department": "02",
+    "lat": 49.2549479,
+    "lon": 3.0909275
+  },
+  "0788607": {
+    "code": "0788607",
+    "name": "VOLLEY-BALL BOIS D'ARCY",
+    "city": "BOIS DARCY",
+    "department": "78",
+    "lat": 48.799856,
+    "lon": 2.023607
   }
 }

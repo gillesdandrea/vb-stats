@@ -75,10 +75,12 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 
 const cleanCity = (city: string): string =>
   city
+    .replace(/[\u0092\u2019\u2018]/g, "'") // normalize Windows-1252 smart quotes to ASCII apostrophe
     .replace(/\s+CEDEX\s*\d*/i, '')
     .replace(/\s+CX\s*\d*/i, '')
     .replace(/^ST-/, 'SAINT-')
     .replace(/^STE-/, 'SAINTE-')
+    .replace(/(.)\1{2,}/g, '$1$1') // fix triple+ letters (e.g., VILLLERS → VILLERS)
     .trim();
 
 const geocodeCity = async (city: string, department: string): Promise<{ lat: number; lon: number } | undefined> => {
