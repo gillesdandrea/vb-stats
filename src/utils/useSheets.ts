@@ -1,13 +1,16 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { Competition, seasonToNumber } from '@/model/model';
-import { SheetMatch, TeamSheetsMap } from '@/model/sheet';
+import { type Competition, seasonToNumber } from '@/model/model';
+import { type SheetMatch, type TeamSheetsMap } from '@/model/sheet';
 import { createSheet } from '@/model/sheet-helpers';
 
 const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Error> => {
   const resource = `FFVB-${seasonToNumber(competition?.season)}-${competition?.entity}-${competition?.category}.JSON`;
   return useQuery<TeamSheetsMap, Error>({
+    // `resource` already identifies the competition; keying on the object itself would serialize the
+    // whole domain model on every render
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: [resource],
     queryFn: async () => {
       if (!competition) {

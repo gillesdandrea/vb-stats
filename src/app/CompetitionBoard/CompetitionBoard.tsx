@@ -2,13 +2,15 @@ import { useMemo, useState } from 'react';
 
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { SortOrder } from 'antd/es/table/interface';
 import cx from 'classnames';
 
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Team } from '@/model/model';
+import { type Competition, type Team } from '@/model/model';
 import {
   getBoard,
   getDayRanking,
+  getSlidingDay,
   getTeamOpposition,
   getTeamRanking,
   getTeamStats,
@@ -16,12 +18,13 @@ import {
   poolId2Name,
 } from '@/model/model-helpers';
 import {
+  matchSorter,
   pointSorter,
   poolSorter,
-  previousPoolSorter,
   rankingSorter,
   ratingSorter,
   setSorter,
+  type SorterParams,
   Sorting,
 } from '@/model/model-sorters';
 
@@ -32,30 +35,63 @@ interface Props {
   day: number;
   singleDay: boolean;
   qualified: boolean;
+  sliding?: number;
   className?: string | string[];
 }
 
-const smallWidth = 60;
+const smallWidth = 70;
 const mediumWidth = 100;
 const largeWidth = 120;
 
-const CompetitionBoard = ({ competition, day, singleDay, qualified, className }: Props) => {
+function getRankingLabel(sliding: number, singleDay: boolean): string {
+  if (sliding > 0) return `Last ${sliding}`;
+  if (singleDay) return 'Daily';
+  return 'Global';
+}
+
+function formatDelta(current: number | undefined, previous: number | undefined): string {
+  if (current === undefined) return '';
+  if (previous === undefined || previous === 0) return ' ⏴';
+  if (current === previous) return '';
+  if (current < previous) return ` ⏶ ${previous - current}`;
+  return ` ⏷ ${current - previous}`;
+}
+
+const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+  const [sortKey, setSortKey] = useState<React.Key | undefined>(undefined);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
+  const isPF = (d: number) => competition.days[d]?.pf;
+  const getDay = (d: number) => (competition.days[d]?.pf ? 'PF' : `J${d}`);
+
+  const isPFday = isPF(day);
+  const statDay = sliding > 0 ? getSlidingDay(competition, day) : day;
+  const statGlobal = sliding > 0 || !singleDay;
+  const statPF = sliding > 0 || !!isPFday;
+  const statSlidingMaxDays = sliding > 0 ? sliding : 4;
+  const statParams: SorterParams = [statDay, statGlobal, statPF, statSlidingMaxDays];
 
   const board = useMemo(
-    () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified),
-    [competition, day, singleDay, qualified],
+    () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
+    [competition, day, singleDay, qualified, sliding],
+  );
+  const getColumnSortOrder = (key: string): SortOrder => (sortKey === key ? sortOrder : null);
+  const slidingRanks = useMemo(
+    () => (sliding > 0 ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
+    [sliding, board],
   );
   const columns: ColumnsType<Team> = [
-    // { title: '', key: 'index', align: 'right', width: 40, render: (value, item, index) => index + 1, fixed: true },
     {
       title: '',
       colSpan: 0,
       key: 'index',
       align: 'right',
       width: 40,
-      render: (team: Team, item, index) => {
+      render: (team: Team) => {
+        if (sliding > 0) {
+          return slidingRanks.get(team.id) ?? '-';
+        }
         if (singleDay) {
           const dranking = getDayRanking(competition, team, day);
           if (dranking === 0) {
@@ -68,14 +104,19 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       fixed: true,
     },
     {
-      title: singleDay ? 'Daily' : 'Global',
+      title: getRankingLabel(sliding, singleDay),
       colSpan: 2,
       key: 'delta',
       align: 'left',
       width: 40,
-      render: (team: Team, item, index) => {
+      render: (team: Team) => {
         if (day === 1) {
           return '';
+        }
+        if (sliding > 0) {
+          const slidingRank = slidingRanks.get(team.id) ?? 0;
+          const qualifiedRank = getTeamRanking(team, day, false, true);
+          return <small>{formatDelta(slidingRank, qualifiedRank)}</small>;
         }
         if (singleDay) {
           const dranking = getDayRanking(competition, team, day);
@@ -85,16 +126,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         }
         const ranking = getTeamRanking(team, day, singleDay, qualified);
         const previous = getTeamRanking(team, day - 1, singleDay, qualified);
-        const delta = previous
-          ? ranking === previous
-            ? ''
-            : ranking < previous
-              ? ` ⏶ ${previous - ranking}`
-              : ` ⏷ ${ranking - previous}`
-          : ' ⏴';
-        return <small>{delta}</small>;
+        return <small>{formatDelta(ranking, previous)}</small>;
       },
-      sorter: rankingSorter(day, !singleDay),
+      sorter: rankingSorter(...statParams),
+      sortOrder: getColumnSortOrder('delta'),
       showSorterTooltip: false,
       fixed: true,
     },
@@ -104,10 +139,11 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const { rating } = getTeamStats(team, day);
+        const { rating } = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return rating.mu.toFixed(3);
       },
-      sorter: ratingSorter(day),
+      sorter: ratingSorter(...statParams),
+      sortOrder: getColumnSortOrder('rating'),
       showSorterTooltip: false,
     },
     {
@@ -116,27 +152,30 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
+        const [mean] = getTeamOpposition(competition, team, statDay, statGlobal);
         // return `${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
         return isNaN(mean) ? '-' : `${(100 * mean).toFixed(1)}%`;
       },
       sorter: (a: Team, b: Team) => {
-        const [amean, astdev] = getTeamOpposition(competition, a, day, !singleDay);
-        const [bmean, bstdev] = getTeamOpposition(competition, b, day, !singleDay);
+        const [amean, astdev] = getTeamOpposition(competition, a, statDay, statGlobal);
+        const [bmean, bstdev] = getTeamOpposition(competition, b, statDay, statGlobal);
         return amean === bmean ? bstdev - astdev : bmean - amean;
       },
+      sortOrder: getColumnSortOrder('difficulty'),
       showSorterTooltip: false,
     },
     {
-      title: 'Points',
+      title: 'M.Pts',
       key: 'ranking',
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         if (stats.matchCount === 0) {
           return '-';
         }
+        if (statPF) return stats.points; // sliding or PF day: raw points only
+        // Below is only reachable for regular board view (no sliding, no PF)
         const dayCount = singleDay ? 1 : Math.min(day, team.lastDay);
         const isCDF = team.pools.length > 0;
         const coef = isCDF ? 2 : 1;
@@ -144,8 +183,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
           coef * dayCount !== stats.matchCount ? '*' : ''
         }`;
       },
-      sorter: rankingSorter(day, !singleDay),
+      sorter: rankingSorter(...statParams),
+      sortOrder: getColumnSortOrder('ranking'),
       showSorterTooltip: false,
+      hidden: isPF(day),
     },
     {
       title: 'Matchs',
@@ -153,9 +194,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         return `${stats.matchWon} / ${stats.matchCount}`;
       },
+      sorter: matchSorter(...statParams),
+      sortOrder: getColumnSortOrder('matchs'),
+      showSorterTooltip: false,
     },
     {
       title: 'Sets',
@@ -163,11 +207,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: mediumWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
         return `${stats.setWon} / ${stats.setLost} = ${sratio}`;
       },
-      sorter: setSorter(day, !singleDay),
+      sorter: setSorter(...statParams),
+      sortOrder: getColumnSortOrder('sets'),
       showSorterTooltip: false,
     },
     {
@@ -176,11 +221,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: largeWidth,
       render: (team: Team) => {
-        const stats = getTeamStats(team, day, !singleDay);
+        const stats = getTeamStats(team, statDay, statGlobal, statPF, statSlidingMaxDays);
         const pratio = stats.pointLost === 0 ? 'MAX' : (stats.pointWon / stats.pointLost).toFixed(3);
         return `${stats.pointWon} / ${stats.pointLost} = ${pratio}`;
       },
-      sorter: pointSorter(day, !singleDay),
+      sorter: pointSorter(...statParams),
+      sortOrder: getColumnSortOrder('points'),
       showSorterTooltip: false,
     },
     {
@@ -189,16 +235,16 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       align: 'center',
       width: smallWidth,
       ellipsis: true,
-      render: (team: Team) => {
-        return team.pools[day]
-          ? `${poolId2Name(team.pools[day].name)}${team.pools[day].teams[0] === team ? '*' : ''}`
-          : '-';
-      },
-      sorter: poolSorter(day, !singleDay),
+      render: (team: Team) =>
+        team.pools[day]
+          ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
+          : '-',
+      sorter: poolSorter(...statParams),
+      sortOrder: getColumnSortOrder('pool'),
       showSorterTooltip: false,
     },
     {
-      title: `J${day - 1}`,
+      title: day <= 1 ? '-' : getDay(day - 1),
       key: 'previous',
       align: 'right',
       width: smallWidth,
@@ -210,8 +256,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
         }
         return day >= 1 ? team.ranking.days[day - 1] : '';
       },
-      // sorter: day > 1 ? rankingSorter(day - 1, false) : undefined,
-      sorter: previousPoolSorter(day, !singleDay),
+      sorter: (a: Team, b: Team) => {
+        const aRank = a.ranking.days[day - 1] ?? Infinity;
+        const bRank = b.ranking.days[day - 1] ?? Infinity;
+        return aRank - bRank;
+      },
+      sortOrder: getColumnSortOrder('previous'),
       showSorterTooltip: false,
     },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
@@ -222,8 +272,9 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
       render: (team: Team) => `${team.department.region_name}`,
       sorter: (a: Team, b: Team) =>
         a.department.region_name === b.department.region_name
-          ? rankingSorter(day, !singleDay)(a, b)
+          ? rankingSorter(...statParams)(a, b)
           : a.department.region_name.localeCompare(b.department.region_name),
+      sortOrder: getColumnSortOrder('region'),
       showSorterTooltip: false,
     },
     {
@@ -237,19 +288,22 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, className }:
     },
   ];
 
-  // console.log('rendering CompetitionBoard');
   return (
-    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}`}>
+    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
       <Table<Team>
         dataSource={board}
         columns={columns}
         sortDirections={['ascend']}
         pagination={false}
-        footer={(data) => <div />}
         scroll={{ y: 1280 }}
         size="small"
         // bordered
-        rowClassName={(team: Team, index) =>
+        onChange={(_pagination, _filters, sorter) => {
+          const s = Array.isArray(sorter) ? sorter[0] : sorter;
+          setSortKey(s.columnKey);
+          setSortOrder(s.order ?? null);
+        }}
+        rowClassName={(team: Team) =>
           cx({
             'table-row-disabled': !isTeamInCourse(competition, team, day),
             'ant-table-row-selected': selectedKeys.includes(team.id),

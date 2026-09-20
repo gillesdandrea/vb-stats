@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { graphviz, GraphvizOptions } from 'd3-graphviz';
+import { graphviz, type GraphvizOptions } from 'd3-graphviz';
 
 export interface IGraphvizProps {
   /**

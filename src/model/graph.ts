@@ -1,9 +1,9 @@
-import { Competition, Match, Score, Team, Victory } from './model';
+import { type Competition, type Match, type Score, type Team, Victory } from './model';
 import {
   getBoard,
   getDayDistance,
   getDayRanking,
-  getFirstCountInPreviousDay,
+  getFirstCountInCurrentDay,
   getTeamOpposition,
   getTeamRanking,
   getTeamStats,
@@ -29,21 +29,21 @@ const getColor = (match: Match) => {
 };
 
 export const getTrophies = (competition: Competition, team: Team): string => {
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
   const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
   const firsts = Array(competition.lastDay)
     .fill(0)
-    .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
+    .map((_, index) => getFirstCountInCurrentDay(team, index + 1));
   const trophies =
     rankings.length > 0
       ? rankings
           .filter((rank) => rank > 0)
-          .map(
-            (rank, index) =>
-              `J${index + 1}${getDayDistance(competition, team, index + 1)}${firsts[index] === 2 ? '*' : ''}${
-                medals[rank]
-              }`,
+          .map((rank, index) =>
+            isPF(index + 1)
+              ? `PF${medals[rank]}`
+              : `J${index + 1}${getDayDistance(team, index + 1)}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`,
           )
           .join(' ')
       : ' ';
@@ -57,6 +57,7 @@ const getTeamNode = (
   singleDay: boolean,
   qualified: boolean,
 ): string => {
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
   const isCDF = team.pools.length > 0;
   const stats = getTeamStats(team, day, !singleDay);
   const sratio = stats.setLost === 0 ? 'MAX' : (stats.setWon / stats.setLost).toFixed(2);
@@ -64,12 +65,12 @@ const getTeamNode = (
   // const eliminated = countLastDayVictories(team) === 0;
   const trophies = getTrophies(competition, team);
   const dayRanking = getDayRanking(competition, team, Math.min(day, competition.lastDay));
-  const eliminated = isCDF && dayRanking !== 1 && dayRanking !== 2;
+  const eliminated = isCDF && dayRanking !== 1 && dayRanking !== 2 && !isPF(day);
   const pre = eliminated ? '<s>' : '';
   const post = eliminated ? '</s>' : '';
   const [mean, stdev] = getTeamOpposition(competition, team, day, !singleDay);
   const opposition = `difficulty: ${(100 * mean).toFixed(1)} ±${(100 * stdev).toFixed(1)}`;
-  const ranking = getTeamRanking(team, day, singleDay, qualified);
+  const ranking = getTeamRanking(team, day, singleDay, qualified) ?? '-';
   return (
     // `T${team.id} [label="${index + 1}\\n${team.name} (${stats.rating.mu.toFixed(3)})\\n\\n` +
     // `matchs: ${stats.matchWon}/${stats.matchCount}, sets: ${stats.setWon}/${stats.setLost}=${sratio}, points: ${stats.pointWon}/${stats.pointLost}=${pratio}"]`
@@ -86,11 +87,12 @@ const getTeamNode = (
 };
 
 const getMatchEdge = (competition: Competition, match: Match) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const teamW = match.winner ? match.winner : Math.round(1000 * match.winProbability) < 500 ? match.teamB : match.teamA;
   const teamL = teamW === match.teamA ? match.teamB : match.teamA;
   const proba = 100 * (teamW === match.teamA ? match.winProbability : 1 - match.winProbability);
   const predicted = Math.round(10 * proba) < 500 ? ' fontcolor="tomato"' : '';
-  const label = `J${match.day}: ${
+  const label = `${getDay(match.day)}: ${
     match.winner ? match.score.map((set: Score) => `${set.scoreA}-${set.scoreB}`).join(',') : match.date
   }\\n${proba.toFixed(1)}%`;
   const tooltip = `${match.teamA.name} - ${match.teamB.name}`;
@@ -121,8 +123,8 @@ export const getGraph = (
   tooltip="${title}"
   node [fontname="Arial" shape="note" style="filled" fillcolor="white"]
   edge [fontname="Arial" fontsize="8pt" minlen=2 dir="both" arrowtail="dot" arrowsize=0.5]
- 
-${teams.map((team: Team, index: number) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
+
+${teams.map((team: Team) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
 
 ${competition.matchs
   .filter(matchFilter)

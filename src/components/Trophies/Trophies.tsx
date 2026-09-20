@@ -1,10 +1,10 @@
 import { CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 
-import { Competition, Match, Score, Team } from '@/model/model';
+import { type Competition, type Match, type Score, type Team } from '@/model/model';
 import {
   getDayDistance,
   getDayRanking,
-  getFirstCountInPreviousDay,
+  getFirstCountInCurrentDay,
   getGlobalTeamStats,
   getWinProbability,
 } from '@/model/model-helpers';
@@ -29,12 +29,14 @@ interface TrophiesProps {
 }
 
 const Trophies = ({ competition, team, selected }: TrophiesProps) => {
+  const isPF = (day: number) => competition && competition && competition.days[day]?.pf;
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const rankings = Array(competition.lastDay)
     .fill(0)
     .map((_, index) => getDayRanking(competition, team, index + 1));
   const firsts = Array(competition.lastDay)
     .fill(0)
-    .map((_, index) => getFirstCountInPreviousDay(competition, team, index + 1));
+    .map((_, index) => getFirstCountInCurrentDay(team, index + 1));
   if (selected && selected !== team) {
     const matchs = getGlobalTeamStats(selected).matchs.filter(
       (match: Match) => match.teamA === team || match.teamB === team,
@@ -48,9 +50,9 @@ const Trophies = ({ competition, team, selected }: TrophiesProps) => {
 
     return matchs.map((match) => (
       <div key={match.id} className="match">
-        {`J${match.day}`}
-        {getDayDistance(competition, selected, match.day)}
-        {firsts[match.day - 1] === 2 ? '*' : ''}
+        {getDay(match.day)}
+        {!isPF(match.day) && getDayDistance(selected, match.day)}
+        {!isPF(match.day) && firsts[match.day - 1] === 2 ? '*' : ''}
         &nbsp;
         {match.winner === undefined ? (
           <QuestionCircleTwoTone />
@@ -70,11 +72,11 @@ const Trophies = ({ competition, team, selected }: TrophiesProps) => {
       ? rankings
           .filter((rank, index) => index < team.lastDay)
           .map((rank, index) => (
-            <div key={`${team.id}J${index + 1}`} className="trophy">{`J${index + 1}${getDayDistance(
-              competition,
-              team,
-              index + 1,
-            )}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}</div>
+            <div key={`${team.id}J${index + 1}`} className="trophy">
+              {isPF(index + 1)
+                ? `PF${medals[rank]}`
+                : `J${index + 1}${getDayDistance(team, index + 1)}${firsts[index] === 2 ? '*' : ''}${medals[rank]}`}
+            </div>
           ))
       : null;
   return <div className="vb-trophies">{trophies}</div>;

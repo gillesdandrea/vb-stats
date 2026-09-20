@@ -1,4 +1,4 @@
-import { Division, Entity, fetchFFVBResults, Pool } from './vb-utils';
+import { type Division, type Entity, fetchFFVBResults, type Pool } from './vb-utils';
 
 if (process.argv.length <= 5) {
   console.log('vb-scrap <season> <entity> <division>');

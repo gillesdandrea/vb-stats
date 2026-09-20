@@ -1,19 +1,21 @@
 import {
-  Competition,
-  CompetitionDay,
+  type Competition,
+  type CompetitionDay,
   HIGH,
-  Match,
+  type Match,
+  type MatchRow,
   MEDIUM,
-  Pool,
-  Score,
+  type Pool,
+  type Score,
   SET_RANKING,
-  Stats,
-  Team,
+  type Stats,
+  type Team,
   Victory,
 } from './model';
 import {
   getDayTeamStats,
   getGlobalTeamStats,
+  getSlidingTeamStats,
   getTeam,
   getTeamMatch,
   getTeamRating,
@@ -23,13 +25,13 @@ import {
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
 
-export const createMatch = (competition: Competition, data: any): Match => {
+export const createMatch = (competition: Competition, data: MatchRow): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
   const teamB = getTeam(competition, data.EQB_no, data.EQB_nom);
   const day = Number(data.Jo);
   const [ssetA, ssetB] = data.Set ? data.Set.split('/') : ['0', '0'];
-  const setA = ssetA === 'F' ? 0 : Number(ssetA);
-  const setB = ssetB === 'F' ? 0 : Number(ssetB);
+  const setA = ssetA === 'F' || ssetA === 'P' ? 0 : Number(ssetA);
+  const setB = ssetB === 'F' || ssetB === 'P' ? 0 : Number(ssetB);
   const [stotalA, stotalB] = data.Total ? data.Total.split('-') : ['0', '0'];
   const totalA = Number(stotalA);
   const totalB = Number(stotalB);
@@ -146,22 +148,25 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
   competition.days[day].matchs.push(match); // idem
   // dstats and gstats are already inited
   addTeamMatch(teamA, teamA.dstats[day], match);
+  // addTeamMatch(teamA, teamA.sstats[day], match);
   addTeamMatch(teamA, teamA.gstats[day], match);
   addTeamMatch(teamB, teamB.dstats[day], match);
+  // addTeamMatch(teamB, teamB.sstats[day], match);
   addTeamMatch(teamB, teamB.gstats[day], match);
 
   updateRating(match, teamA.dstats[day], teamB.dstats[day]);
+  // updateRating(match, teamA.sstats[day], teamB.sstats[day]);
   updateRating(match, teamA.gstats[day], teamB.gstats[day]);
 };
 
-export const processCompetition = (competition: Competition, datas: any[][]) => {
+export const processCompetition = (competition: Competition, datas: MatchRow[][]) => {
   const isCDF = datas.length > 0 && datas[0][0]['Entité'] === 'ACJEUNES';
 
   // reorder matchs based on results of the first matchs
   if (isCDF) {
     datas
-      .filter((data: any) => data)
-      .forEach((data: any[]) => {
+      .filter((data) => data)
+      .forEach((data) => {
         const poolCount = data.length / 3;
         for (let i = 0; i < poolCount; i++) {
           const m1 = data[3 * i];
@@ -171,7 +176,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           const setA = ssetA === 'F' ? 0 : Number(ssetA);
           const setB = ssetB === 'F' ? 0 : Number(ssetB);
           const winner = setA > setB ? m1.EQA_no : m1.EQB_no;
-          if (winner !== m2.EQA_no && winner !== m2.EQB_no) {
+          if (winner !== m2.EQA_no && winner !== m2.EQB_no && m1.Jo !== '99') {
             data[3 * i + 1] = m3;
             data[3 * i + 2] = m2;
           }
@@ -179,24 +184,33 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
       });
   }
 
+  let maxDay = 0;
   datas
     .filter((data) => data)
-    .map((data: any[]) => {
+    .map((data) => {
       // split multiple days in different arrays to support multiple days file
-      const split: any[][] = [];
-      data.forEach((match: any) => {
+      const split: MatchRow[][] = [];
+      data.forEach((match) => {
         const day = Number(match.Jo);
+        if (day !== 99 && maxDay < day) maxDay = day;
         if (!split[day]) {
-          split[day] = data.filter((dayMatch: any) => dayMatch.Jo === match.Jo);
+          split[day] = data.filter((dayMatch) => dayMatch.Jo === match.Jo);
         }
       });
       return split;
       // return [data];
     })
-    .forEach((daydata: any[][]) => {
+    .forEach((daydata) => {
       daydata
-        .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
-        .forEach((data: any[]) => {
+        // .filter((data: MatchRow[]) => data[0].Jo !== '99') // TODO filter out final phases
+        .map((data): { rows: MatchRow[]; pf: boolean } => {
+          if (data[0].Jo !== '99') return { rows: data, pf: false };
+          return {
+            rows: data.filter((_row, index) => index < 12).map((row) => ({ ...row, Jo: String(maxDay + 1) })),
+            pf: true,
+          };
+        })
+        .forEach(({ rows: data, pf }) => {
           // add new day
           const day = Number(data[0].Jo);
           const dayCompetition: CompetitionDay = {
@@ -204,6 +218,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             teams: [],
             matchs: [],
             pools: new Map(),
+            pf,
           };
           competition.dayCount = day;
           competition.days[day] = dayCompetition;
@@ -211,7 +226,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
 
           // process day
           if (!isCDF) {
-            data.forEach((match: any) => {
+            data.forEach((match) => {
               const teamA = getTeam(competition, match.EQA_no, match.EQA_nom);
               const teamB = getTeam(competition, match.EQB_no, match.EQB_nom);
               [teamA, teamB].forEach((team: Team) => {
@@ -219,18 +234,21 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
                 team.dayCount = day;
                 // enforce stats creation
                 getGlobalTeamStats(team, day);
+                // getSlidingTeamStats(team, day);
                 getDayTeamStats(team, day);
               });
             });
           } else {
             const teams: Set<Team> = new Set();
-            Array.from(competition.teams.values())
-              .filter((team) => isTeamInCourse(competition, team, day))
-              .forEach((team) => {
-                // capture all teams even if exempt of a tour
-                teams.add(team);
-                team.dayCount = day;
-              });
+            if (!dayCompetition?.pf) {
+              Array.from(competition.teams.values())
+                .filter((team) => isTeamInCourse(competition, team, day))
+                .forEach((team) => {
+                  // capture all teams even if exempt of a tour
+                  teams.add(team);
+                  team.dayCount = day;
+                });
+            }
 
             const poolCount = data.length / 3;
             for (let i = 0; i < poolCount; i++) {
@@ -261,6 +279,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
                 team.pools[day] = pool as Pool;
                 // enforce stats creation
                 getGlobalTeamStats(team, day);
+                getSlidingTeamStats(team, day);
                 getDayTeamStats(team, day);
               });
             }
@@ -268,7 +287,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           }
 
           // process matchs
-          data.forEach((line: any) => {
+          data.forEach((line) => {
             const match = createMatch(competition, line);
             if (isCDF) {
               match.teamA.pools[day].matchs.push(match);
@@ -294,10 +313,12 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           });
           competition.days[day].pools.forEach((pool: Pool) => {
             const teams = [...pool.teams];
-            teams.sort(rankingSorter(day, false));
-            teams.forEach((team, index) => {
-              team.ranking.pools[day] = index + 1;
-            });
+            if (pool.matchs.every((match) => match.winner)) {
+              teams.sort(rankingSorter(day, false));
+              teams.forEach((team, index) => {
+                team.ranking.pools[day] = index + 1;
+              });
+            }
           });
           if (day > 1) {
             const teams = [...competition.days[day].teams];

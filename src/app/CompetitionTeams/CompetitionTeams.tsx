@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
+import { type ChangeEventHandler, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Col, Empty, Row } from 'antd';
 import Search from 'antd/es/input/Search';
@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 
 import Headroom from '@/components/Headroom/Headroom';
 import TeamInfo from '@/components/TeamInfo/TeamInfo';
-import { Competition, Team } from '@/model/model';
+import { type Competition, type Team } from '@/model/model';
 import { filterTeam, getBoard } from '@/model/model-helpers';
 import { Sorting } from '@/model/model-sorters';
 

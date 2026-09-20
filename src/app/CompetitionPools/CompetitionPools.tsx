@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { gray, presetDarkPalettes } from '@ant-design/colors';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -12,7 +12,7 @@ import Help from '@/components/Help/Help';
 import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
 import TeamInfo from '@/components/TeamInfo/TeamInfo';
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Match, Pool, Team } from '@/model/model';
+import { type Competition, type Match, type Pool, type Team } from '@/model/model';
 import {
   filterTeam,
   getBoard,
@@ -25,7 +25,7 @@ import {
 } from '@/model/model-helpers';
 import { Sorting } from '@/model/model-sorters';
 
-import '../CompetitionTeams/CompetitionTeams.scss'; // TODO hack
+import '@/app/CompetitionTeams/CompetitionTeams.scss'; // TODO hack
 import './CompetitionPools.scss';
 
 interface Props {
@@ -77,13 +77,14 @@ const renderTeam = ({
           : green[6];
   const ranking = getTeamRanking(team, day, false, true);
   const previous = getTeamRanking(team, day - 1, false, true);
-  const delta = previous
-    ? ranking === previous
-      ? ''
-      : ranking < previous
-        ? ` ⏶ ${previous - ranking}`
-        : ` ⏷ ${ranking - previous}`
-    : '';
+  const delta =
+    previous && ranking !== undefined
+      ? ranking === previous
+        ? ''
+        : ranking < previous
+          ? ` ⏶ ${previous - ranking}`
+          : ` ⏷ ${ranking - previous}`
+      : '';
   const dayCount = Math.min(day, team.lastDay);
 
   return (
@@ -98,9 +99,9 @@ const renderTeam = ({
         {medals[dayRanking]}
         &nbsp;
         <span className={eliminated ? 'strikethrough' : ''}>{team.name}</span>
-        <a className="vb-team-link" onClick={() => pushModalTeam(team)}>
+        <button type="button" className="vb-team-link" onClick={() => pushModalTeam(team)}>
           <InfoCircleOutlined />
-        </a>
+        </button>
       </div>
 
       <div className="vb-card-content">
@@ -112,12 +113,13 @@ const renderTeam = ({
             <Trophies competition={competition} team={team} />
             <div className="small-text">
               <div>
-                ranking: {ranking} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
-                {Math.round((stats.points * 2 * dayCount) / stats.matchCount)} / {6 * dayCount}
+                ranking: {ranking ?? '-'} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
+                {stats.matchCount === 0 ? 0 : Math.round((stats.points * 2 * dayCount) / stats.matchCount)} /{' '}
+                {6 * dayCount}
                 {2 * dayCount !== stats.matchCount ? '*' : ''}
               </div>
               <div>
-                matchs: {stats.matchWon}/{stats.matchCount} | sets: {stats.setWon}/{stats.setLost}={sratio} | points:{' '}
+                matchs: {stats.matchWon} / {stats.matchCount} | sets: {stats.setWon}/{stats.setLost}={sratio} | points:{' '}
                 {stats.pointWon}/{stats.pointLost}={pratio}
               </div>
               <div>
@@ -193,8 +195,9 @@ const renderPool = ({
   day: number;
   pushModalTeam: (team: Team) => void;
 }) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const { gold, volcano } = presetDarkPalettes;
-  const [probabilities, orders] = getPoolProbabilities(competition, pool, day);
+  const [probabilities, orders] = getPoolProbabilities(pool, day);
   const firstCount = pool.teams.filter((team) => team.ranking.pools[day - 1] === 1).length;
   const thirdCount = pool.teams.filter((team) => team.ranking.pools[day - 1] === 3).length;
   return (
@@ -208,7 +211,7 @@ const renderPool = ({
             <div className="vb-legend">
               {`CDF ${competition.category} ${competition.season.substring(competition.season.length - 4)}`}
               &nbsp;
-              <Tag>J{day}</Tag>
+              <Tag>{getDay(day)}</Tag>
               <small>{pool.matchs[0]?.date}</small>
             </div>
           </div>
@@ -232,6 +235,7 @@ const renderPool = ({
 };
 
 const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setTokens, className }: Props) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   const scrollRef = useRef<HTMLDivElement>(null);
   const allTeams = useMemo(
     () => getBoard(competition, Sorting.POINTS, competition.dayCount, false, false),
@@ -303,7 +307,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
                     const qb = 1 + match.winProbability / (1 - match.winProbability);
                     return (
                       <div key={match.id} style={{ display: 'flex' }}>
-                        <div style={{ width: '2rem' }}>{`J${cday.day}`}</div>
+                        <div style={{ width: '2rem' }}>{getDay(cday.day)}</div>
                         <div style={{ width: '6rem' }}>{match.date}</div>
                         <div style={{ width: '4rem', color: match.predicted === false ? 'red' : '' }}>{`${(
                           100 * match.winProbability

@@ -1,4 +1,4 @@
-import { Match } from './model';
+import { type Match } from './model';
 
 export interface MetaSlot {
   low: number;

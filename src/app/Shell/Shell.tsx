@@ -1,33 +1,29 @@
 import { useEffect, useState } from 'react';
 
 import { CalendarOutlined, CheckOutlined, MenuOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
-import { Layout, Menu, MenuProps, Result, Spin } from 'antd';
+import { Layout, Menu, type MenuProps, Result, Spin } from 'antd';
 import { useWindowSize } from 'react-use';
 
 import CompetitionBoard from '@/app/CompetitionBoard/CompetitionBoard';
 import CompetitionGraph from '@/app/CompetitionGraph/CompetitionGraph';
 import CompetitionPools from '@/app/CompetitionPools/CompetitionPools';
-// import CompetitionSheets from '@/app/CompetitionSheets/CompetitionSheets';
 import {
   categories,
   defaultCategory,
   defaultEntity,
   defaultSeason,
-  Entity,
+  type Entity,
   getResourceName,
   seasons as iseasons,
   seasonToNumber,
   seasonToString,
 } from '@/model/model';
+import { getSlidingDay } from '@/model/model-helpers';
 import useCompetition from '@/utils/useCompetition';
 
 import './Shell.scss';
 
 import vbStatsLogo from '/vb-stats-logo.svg';
-
-// const CompetitionBoard = lazy(() => import('@/app/CompetitionBoard/CompetitionBoard'));
-// const CompetitionGraph = lazy(() => import('@/app/CompetitionGraph/CompetitionGraph'));
-// const CompetitionPools = lazy(() => import('@/app/CompetitionPools/CompetitionPools'));
 
 const BREAKPOINT = 512; // 576
 
@@ -76,16 +72,23 @@ const getItem = (
 
 const Shell = () => {
   const params = parseQueryParameters(window.location.search);
-  const { width, height } = useWindowSize();
+  const { width } = useWindowSize();
 
   const pday: number = Number.parseInt(params.day);
   const [season, setSeason] = useState<string>(params.season ?? seasonToString(defaultSeason));
-  const [entity, setEntity] = useState<Entity>((params.entity as Entity) ?? defaultEntity);
+  const [entity] = useState<Entity>((params.entity as Entity) ?? defaultEntity);
   const [category, setCategory] = useState<string>(params.category ?? defaultCategory);
   const [dayCount, setDayCount] = useState<number>(-1);
   const [day, setDay] = useState<number>(Number.isNaN(pday) ? 0 : pday);
   const [singleDay, setSingleDay] = useState<boolean>(params.singleDay === 'true'); // OVERALL - J0x (default false)
   const [qualified, setQualified] = useState<boolean>(params.qualified !== 'false'); // ALL TEAMS - QUALIFIED (default true)
+  const [sliding, setSliding] = useState<number>(
+    params.sliding === 'true'
+      ? 4
+      : params.sliding && params.sliding !== 'false'
+        ? Math.max(1, Number.parseInt(params.sliding) || 4)
+        : 0,
+  );
 
   const [tab, setTab] = useState<string>(params.tab ?? 'pools');
   const [tokens, setTokens] = useState<string[]>(params.search?.split('+') ?? []);
@@ -98,12 +101,12 @@ const Shell = () => {
       const search = tokens.length === 0 ? '' : `&search=${tokens.join('+')}`;
       const url = `/vb-stats?tab=${tab}${season ? `&season=${season}` : ''}${entity === defaultEntity ? '' : `&entity=${entity}`}${category ? `&category=${category}` : ''}${
         day ? `&day=${day === dayCount ? 'last' : day}` : ''
-      }&singleDay=${!!singleDay}&qualified=${!!qualified}${search}`;
+      }&singleDay=${!!singleDay}&qualified=${!!qualified}${sliding > 0 ? `&sliding=${sliding}` : ''}${search}`;
       if (window.location.href !== `${window.location.origin}${url}`) {
         window.history.replaceState({}, '', url);
       }
     }
-  }, [fetched, tab, season, entity, category, dayCount, day, singleDay, qualified, tokens]);
+  }, [fetched, tab, season, entity, category, dayCount, day, singleDay, qualified, sliding, tokens]);
 
   if (isLoading) {
     return (
@@ -175,17 +178,25 @@ const Shell = () => {
             setDay(nday);
           } else {
             switch (e.key) {
+              case 'sliding':
+                setQualified(true);
+                setSingleDay(false);
+                setSliding(4);
+                break;
               case 'qualified':
                 setQualified(true);
                 setSingleDay(false);
+                setSliding(0);
                 break;
               case 'overall':
                 setQualified(false);
                 setSingleDay(false);
+                setSliding(0);
                 break;
               case 'single-day':
                 setQualified(true);
                 setSingleDay(true);
+                setSliding(0);
                 break;
             }
           }
@@ -201,7 +212,13 @@ const Shell = () => {
     }
   };
 
+  const getDay = (d: number) => (competition?.days[d]?.pf ? 'PF' : `J${d}`);
   const isCDF = competition && competition.days[1] && competition.days[1].pools.size > 0;
+  const slidingWindowSize = sliding > 0 ? sliding : 4;
+  const slidingDay = competition ? getSlidingDay(competition, day) : day;
+  const slidingEnd = slidingDay - 1;
+  const slidingStart = Math.max(1, slidingEnd - (slidingWindowSize - 1));
+  const slidingLabel = `${getDay(slidingStart)}-${getDay(slidingEnd)}`;
   const dayEnabled = tab !== 'teams';
   const items: MenuItem[] = [
     ...(width < BREAKPOINT
@@ -223,7 +240,7 @@ const Shell = () => {
       : Object.keys(tabNames).map((key) => getItem(tabNames[key], key))),
     // : [...Object.keys(tabNames).map((key) => getItem(tabNames[key], key)), getItem('|')]),
     getItem(
-      `J${dayEnabled ? day : competition?.dayCount}`,
+      getDay((dayEnabled ? day : competition?.dayCount) ?? 0),
       'day',
       <CalendarOutlined />,
       [
@@ -233,7 +250,7 @@ const Shell = () => {
           <CalendarOutlined />,
           days.map((cday) =>
             getItem(
-              `J${cday}`,
+              getDay(cday),
               cday,
               cday === (dayEnabled ? day : competition?.dayCount) ? <CalendarOutlined /> : <Checked />,
               undefined,
@@ -249,7 +266,7 @@ const Shell = () => {
           <SettingOutlined />,
           [
             getItem(
-              `Selected day (J${day})`,
+              `Selected day (${getDay(day)})`,
               'single-day',
               <Checked checked={singleDay} />,
               undefined,
@@ -259,9 +276,19 @@ const Shell = () => {
             !isCDF
               ? null
               : getItem(
+                  `Last ${slidingWindowSize} days (${slidingLabel})`,
+                  'sliding',
+                  <Checked checked={!singleDay && qualified && sliding > 0} />,
+                  undefined,
+                  undefined,
+                  tab !== 'board',
+                ),
+            !isCDF
+              ? null
+              : getItem(
                   'Qualified teams',
                   'qualified',
-                  <Checked checked={!singleDay && qualified} />,
+                  <Checked checked={!singleDay && qualified && sliding === 0} />,
                   undefined,
                   undefined,
                   tab === 'pools',
@@ -297,7 +324,6 @@ const Shell = () => {
     ),
   ];
 
-  // console.log('rendering Shell');
   return (
     <Layout className="vb-shell">
       <img src={vbStatsLogo} className="vb-stats-logo" alt="vb-stats logo" />
@@ -313,13 +339,6 @@ const Shell = () => {
         />
       </Layout.Header>
       <Layout.Content>
-        {/*<Suspense
-          fallback={
-            <Spin size="large">
-              <Layout style={{ height: '100vh' }} />
-            </Spin>
-          }
-        >*/}
         {competition && tab === 'pools' && (
           <CompetitionPools
             // className={tab === 'pools' ? '' : 'no-display'}
@@ -331,17 +350,6 @@ const Shell = () => {
             setTokens={setTokens}
           />
         )}
-        {/* {competition && tab === 'teams' && (
-          <CompetitionTeams
-            // className={tab === 'teams' ? '' : 'no-display'}
-            competition={competition}
-            day={competition.dayCount}
-            singleDay={singleDay}
-            qualified={qualified}
-            tokens={tokens}
-            setTokens={setTokens}
-          />
-        )} */}
         {competition && tab === 'board' && (
           <CompetitionBoard
             // className={tab === 'board' ? '' : 'no-display'}
@@ -349,6 +357,7 @@ const Shell = () => {
             day={day}
             singleDay={singleDay}
             qualified={qualified}
+            sliding={sliding}
           />
         )}
         {competition && tab === 'graph' && (
@@ -360,16 +369,6 @@ const Shell = () => {
             qualified={qualified}
           />
         )}
-        {/*competition && tab === 'sheets' && (
-          <CompetitionSheets
-            // className={tab === 'sheets' ? '' : 'no-display'}
-            competition={competition}
-            day={day}
-            singleDay={singleDay}
-            qualified={qualified}
-          />
-        )*/}
-        {/*</Suspense>*/}
       </Layout.Content>
     </Layout>
   );

@@ -1,30 +1,34 @@
-# vb-stats - Volleyball Stats
+# vb-stats — Volleyball Stats
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite PWA that explores French youth volleyball (FFVB) competition statistics:
+pool standings, TrueSkill ratings, win probabilities, and team relationship graphs — mainly for the
+Coupe de France youth categories.
 
-Currently, two official plugins are available:
+Live app: [gillesdandrea.github.io/vb-stats](https://gillesdandrea.github.io/vb-stats)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting started
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-};
+```shell
+pnpm install
+pnpm dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Competition data lives as CSV files in `public/data/` and is parsed in the browser, so no backend is
+needed.
+
+## Common commands
+
+| Command                       | What it does                                  |
+| ----------------------------- | --------------------------------------------- |
+| `pnpm dev`                    | Vite dev server                               |
+| `pnpm build`                  | TypeScript check + production build           |
+| `pnpm lint` / `pnpm lint:fix` | Prettier, ESLint and Stylelint                |
+| `pnpm deploy`                 | Publish `dist/` to GitHub Pages               |
+| `pnpm cdf-scrap`              | Scrape fresh FFVB results into `public/data/` |
+| `pnpm cdf-update`             | Scrape → build → deploy                       |
+
+## Documentation
+
+- [AGENTS.md](AGENTS.md) — architecture, code organization and conventions
+- [README-SHEETS.md](README-SHEETS.md) — match sheet (player statistics) workflow
+- [docs/](docs/) — how the FFVB assembles pools, and the pool prediction algorithm specification

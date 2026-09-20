@@ -1,0 +1,4930 @@
+{
+  "0444976": {
+    "code": "0444976",
+    "name": "LES NEPTUNES NANTES VOLLEY ASSOCIATION",
+    "city": "NANTES",
+    "department": "44",
+    "lat": 47.2186371,
+    "lon": -1.5541362
+  },
+  "0449605": {
+    "code": "0449605",
+    "name": "ST NAZAIRE VB ATLANTIQUE",
+    "city": "ST NAZAIRE",
+    "department": "44",
+    "lat": 47.2733517,
+    "lon": -2.2138905
+  },
+  "0491492": {
+    "code": "0491492",
+    "name": "SPORTING CLUB DE L OUEST",
+    "city": "ANGERS",
+    "department": "49",
+    "lat": 47.4739884,
+    "lon": -0.5515588
+  },
+  "0497783": {
+    "code": "0497783",
+    "name": "ENTENTE CHOLETAISE VOLLEY-BALL",
+    "city": "CHOLET",
+    "department": "49",
+    "lat": 47.0617293,
+    "lon": -0.8801359
+  },
+  "0729696": {
+    "code": "0729696",
+    "name": "A.S.CHAPELLE SAINT AUBIN",
+    "city": "LA CHAPELLE SAINT AUBIN",
+    "department": "72",
+    "lat": 48.0341335,
+    "lon": 0.1600629
+  },
+  "0856917": {
+    "code": "0856917",
+    "name": "A.S.L. VENDEE VOLLEY-BALL",
+    "city": "LES LANDES GENUSSON",
+    "department": "85",
+    "lat": 46.9663056,
+    "lon": -1.1168574
+  },
+  "0857790": {
+    "code": "0857790",
+    "name": "AS BRUFFIERE DEFONTAINE",
+    "city": "LA BRUFFIERE",
+    "department": "85",
+    "lat": 47.0138889,
+    "lon": -1.1963889
+  },
+  "0857865": {
+    "code": "0857865",
+    "name": "MONTAIGU-VENDEE BOUFFERE VOLLEY-BALL",
+    "city": "MONTAIGU-VENDEE",
+    "department": "85",
+    "lat": 46.974115,
+    "lon": -1.2927456
+  },
+  "0858359": {
+    "code": "0858359",
+    "name": "EVEIL SPORTIF FLORENTIN VOLLEY-BALL",
+    "city": "ESSARTS EN BOCAGE",
+    "department": "85",
+    "lat": 46.7860578,
+    "lon": -1.2528103
+  },
+  "0255795": {
+    "code": "0255795",
+    "name": "BESANCON VOLLEY-BALL",
+    "city": "BESANÇON",
+    "department": "25",
+    "lat": 47.2380222,
+    "lon": 6.0243622
+  },
+  "0714076": {
+    "code": "0714076",
+    "name": "VBC CHALON SUR SAONE",
+    "city": "CHALON-SUR-SAONE",
+    "department": "71",
+    "lat": 46.7831001,
+    "lon": 4.8534326
+  },
+  "0223997": {
+    "code": "0223997",
+    "name": "ASPTT LANNION",
+    "city": "LANNION",
+    "department": "22",
+    "lat": 48.7322183,
+    "lon": -3.4587994
+  },
+  "0228400": {
+    "code": "0228400",
+    "name": "CESSON VOLLEY SAINT-BRIEUC COTES D'ARMOR",
+    "city": "SAINT BRIEUC",
+    "department": "22",
+    "lat": 48.5141134,
+    "lon": -2.7603283
+  },
+  "0293606": {
+    "code": "0293606",
+    "name": "KLOAR-AVEN VB 29",
+    "city": "CLOHARS-CARNOËT",
+    "department": "29",
+    "lat": 47.7955209,
+    "lon": -3.5826145
+  },
+  "0299370": {
+    "code": "0299370",
+    "name": "QUIMPER VOLLEY 29",
+    "city": "QUIMPER",
+    "department": "29",
+    "lat": 47.9960325,
+    "lon": -4.1024782
+  },
+  "0299615": {
+    "code": "0299615",
+    "name": "HEOL SANTEC",
+    "city": "SANTEC",
+    "department": "29",
+    "lat": 48.7031864,
+    "lon": -4.0260322
+  },
+  "0351417": {
+    "code": "0351417",
+    "name": "RENNES ETUDIANTS CLUB",
+    "city": "RENNES",
+    "department": "35",
+    "lat": 48.1113387,
+    "lon": -1.6800198
+  },
+  "0351428": {
+    "code": "0351428",
+    "name": "E.SP. CANTON DE PIPRIAC V.B.",
+    "city": "PIPRIAC",
+    "department": "35",
+    "lat": 47.8088832,
+    "lon": -1.9462224
+  },
+  "0351478": {
+    "code": "0351478",
+    "name": "SAINT-MEDARD TORCE VOLLEY-BALL",
+    "city": "TORCE",
+    "department": "35",
+    "lat": 48.0620743,
+    "lon": -1.2673254
+  },
+  "0358314": {
+    "code": "0358314",
+    "name": "MONTGERMONT VOLLEY-BALL CLUB",
+    "city": "35760 - MONTGERMONT",
+    "department": "35",
+    "lat": 48.1526488,
+    "lon": -1.7120749
+  },
+  "0359298": {
+    "code": "0359298",
+    "name": "ESPERANCE DE SIXT SUR AFF",
+    "city": "SIXT SUR AFF",
+    "department": "35",
+    "lat": 47.7760854,
+    "lon": -2.0803355
+  },
+  "0564002": {
+    "code": "0564002",
+    "name": "LANESTER LES DEUX RIVIERES VOLLEY-BALL",
+    "city": "LANESTER",
+    "department": "56",
+    "lat": 47.7639726,
+    "lon": -3.3444489
+  },
+  "0564003": {
+    "code": "0564003",
+    "name": "VANNES VOLLEY 56",
+    "city": "VANNES",
+    "department": "56",
+    "lat": 47.6586772,
+    "lon": -2.7599079
+  },
+  "0564103": {
+    "code": "0564103",
+    "name": "PLOEMEUR VOLLEY",
+    "city": "PLOEMEUR",
+    "department": "56",
+    "lat": 47.7354591,
+    "lon": -3.4270534
+  },
+  "0283041": {
+    "code": "0283041",
+    "name": "AS NOGENTAISE DE VOLLEY-BALL",
+    "city": "NOGENT-LE-ROTROU",
+    "department": "28",
+    "lat": 48.321809,
+    "lon": 0.8211488
+  },
+  "0284185": {
+    "code": "0284185",
+    "name": "LUISANT ATHLETIC CLUB",
+    "city": "LUISANT",
+    "department": "28",
+    "lat": 48.4231,
+    "lon": 1.46835
+  },
+  "0289678": {
+    "code": "0289678",
+    "name": "AMICALE D'EPERNON SECTION V.B",
+    "city": "EPERNON",
+    "department": "28",
+    "lat": 48.6101745,
+    "lon": 1.677222
+  },
+  "0455556": {
+    "code": "0455556",
+    "name": "NEUVILLE SPORTS",
+    "city": "NEUVILLE AUX BOIS",
+    "department": "45",
+    "lat": 48.0695211,
+    "lon": 2.0534134
+  },
+  "0060008": {
+    "code": "0060008",
+    "name": "MANDELIEU LA NAPOULE V.B.",
+    "city": "MANDELIEU",
+    "department": "06",
+    "lat": 43.5439153,
+    "lon": 6.9359135
+  },
+  "0061297": {
+    "code": "0061297",
+    "name": "RACING CLUB DE CANNES",
+    "city": "CANNES",
+    "department": "06",
+    "lat": 43.5515198,
+    "lon": 7.0134418
+  },
+  "0062701": {
+    "code": "0062701",
+    "name": "ASS SPORTIVE DE MONACO",
+    "city": "MONACO",
+    "department": "06",
+    "lat": 43.7451179,
+    "lon": 7.3670399
+  },
+  "0067686": {
+    "code": "0067686",
+    "name": "VOLERO LE CANNET COTE D'AZUR",
+    "city": "LE CANNET",
+    "department": "06",
+    "lat": 43.5761076,
+    "lon": 7.0191865
+  },
+  "0067689": {
+    "code": "0067689",
+    "name": "US CAGNES VOLLEY-BALL",
+    "city": "CAGNES SUR MER",
+    "department": "06",
+    "lat": 43.6612012,
+    "lon": 7.1513834
+  },
+  "0132346": {
+    "code": "0132346",
+    "name": "MARIGNANE VOLLEY-BALL",
+    "city": "MARIGNANE",
+    "department": "13",
+    "lat": 43.4162193,
+    "lon": 5.2145269
+  },
+  "0132351": {
+    "code": "0132351",
+    "name": "SALON VOLLEY",
+    "city": "SALON DE PROVENCE",
+    "department": "13",
+    "lat": 43.6405237,
+    "lon": 5.0980225
+  },
+  "0134290": {
+    "code": "0134290",
+    "name": "MARTIGUES VOLLEY-BALL",
+    "city": "MARTIGUES",
+    "department": "13",
+    "lat": 43.4057279,
+    "lon": 5.0548176
+  },
+  "0136761": {
+    "code": "0136761",
+    "name": "ISTRES PROVENCE VOLLEY",
+    "city": "ISTRES",
+    "department": "13",
+    "lat": 43.5139051,
+    "lon": 4.9884323
+  },
+  "0138032": {
+    "code": "0138032",
+    "name": "PAYS D'AIX VENELLES V.B.",
+    "city": "VENELLES",
+    "department": "13",
+    "lat": 43.6003084,
+    "lon": 5.4804956
+  },
+  "0138311": {
+    "code": "0138311",
+    "name": "BOUC-BEL-AIR VOLLEY-BALL",
+    "city": "BOUC-BEL-AIR",
+    "department": "13",
+    "lat": 43.4511819,
+    "lon": 5.4127848
+  },
+  "0138350": {
+    "code": "0138350",
+    "name": "COUDOUX VELAUX LA FARE VOLLEY-BALL",
+    "city": "VELAUX",
+    "department": "13",
+    "lat": 43.5217717,
+    "lon": 5.2540649
+  },
+  "0139148": {
+    "code": "0139148",
+    "name": "VOLLEY-BALL ARLESIEN",
+    "city": "ARLES",
+    "department": "13",
+    "lat": 43.6776223,
+    "lon": 4.6309653
+  },
+  "0833350": {
+    "code": "0833350",
+    "name": "VOLLEY PRADETAN GARDEEN",
+    "city": "LE PRADET",
+    "department": "83",
+    "lat": 43.1037608,
+    "lon": 6.0223774
+  },
+  "0836446": {
+    "code": "0836446",
+    "name": "SAINTE-MAXIME COGOLIN VOLLEY",
+    "city": "SAINTE MAXIME",
+    "department": "83",
+    "lat": 43.30871,
+    "lon": 6.637714
+  },
+  "0837251": {
+    "code": "0837251",
+    "name": "VOLLEY BALL OLLIOULAIS",
+    "city": "OLLIOULES",
+    "department": "83",
+    "lat": 43.1397205,
+    "lon": 5.8483538
+  },
+  "0837903": {
+    "code": "0837903",
+    "name": "UNION ATHLETIQUE VALETTOISE",
+    "city": "LA VALETTE DU VAR",
+    "department": "83",
+    "lat": 43.1378245,
+    "lon": 5.9834654
+  },
+  "0839557": {
+    "code": "0839557",
+    "name": "FREJUS VAR VOLLEY",
+    "city": "FREJUS",
+    "department": "83",
+    "lat": 43.4330308,
+    "lon": 6.7360182
+  },
+  "0842404": {
+    "code": "0842404",
+    "name": "JONQUIERES VOLLEY-BALL",
+    "city": "84150 - JONQUIERES",
+    "department": "84",
+    "lat": 44.148926,
+    "lon": 4.92773
+  },
+  "0842425": {
+    "code": "0842425",
+    "name": "U.S. PONTET VOLLEY AVENIR",
+    "city": "LE PONTET",
+    "department": "84",
+    "lat": 43.9621858,
+    "lon": 4.8602588
+  },
+  "0848651": {
+    "code": "0848651",
+    "name": "VOLLEY BEAUCAIRE TARASCON (LE) GRES",
+    "city": "TARASCON",
+    "department": "84",
+    "lat": 43.6961025,
+    "lon": 5.5211925
+  },
+  "0077986": {
+    "code": "0077986",
+    "name": "2GVB-GUILHERAND-GRANGES VOLLEY-BALL",
+    "city": "GUILHERAND-GRANGES",
+    "department": "07",
+    "lat": 44.932545,
+    "lon": 4.8708275
+  },
+  "0267996": {
+    "code": "0267996",
+    "name": "PEYRINS VOLLEY-BALL",
+    "city": "PEYRINS",
+    "department": "26",
+    "lat": 45.0922562,
+    "lon": 5.047774
+  },
+  "0268573": {
+    "code": "0268573",
+    "name": "VOLLEY-BALL ROMANAIS",
+    "city": "ROMANS",
+    "department": "26",
+    "lat": 45.0458886,
+    "lon": 5.0528681
+  },
+  "0380027": {
+    "code": "0380027",
+    "name": "VOLLEY LA TOUR DU PIN",
+    "city": "CESSIEU",
+    "department": "38",
+    "lat": 45.5671,
+    "lon": 5.38238
+  },
+  "0382203": {
+    "code": "0382203",
+    "name": "CA VOLLEY BALL JALIOROMAIN",
+    "city": "ST ROMAIN DE JALIONAS",
+    "department": "38",
+    "lat": 45.7525436,
+    "lon": 5.2199963
+  },
+  "0387013": {
+    "code": "0387013",
+    "name": "UNION AS. SEYSSINOISE V.B.",
+    "city": "SEYSSINS",
+    "department": "38",
+    "lat": 45.1593057,
+    "lon": 5.6878134
+  },
+  "0388899": {
+    "code": "0388899",
+    "name": "UN.SP.VALLEE DE LA GRESSE",
+    "city": "VIF",
+    "department": "38",
+    "lat": 45.0554868,
+    "lon": 5.669033
+  },
+  "0420026": {
+    "code": "0420026",
+    "name": "ROANNE RIORGES VOLLEY-BALL",
+    "city": "ROANNE",
+    "department": "42",
+    "lat": 46.0345572,
+    "lon": 4.0729178
+  },
+  "0426381": {
+    "code": "0426381",
+    "name": "OLYM FOREZIEN ST CYPRIEN",
+    "city": "ST-CYPRIEN",
+    "department": "42",
+    "lat": 45.5377735,
+    "lon": 4.2360503
+  },
+  "0426516": {
+    "code": "0426516",
+    "name": "ENTENTE ST-CHAMOND VOLLEY",
+    "city": "SAINT-CHAMOND",
+    "department": "42",
+    "lat": 45.4748298,
+    "lon": 4.5098046
+  },
+  "0429687": {
+    "code": "0429687",
+    "name": "CLUB ATHLETIQUE DE ST ETIENNE",
+    "city": "SAINT-ETIENNE",
+    "department": "42",
+    "lat": 45.4401467,
+    "lon": 4.3873058
+  },
+  "0634293": {
+    "code": "0634293",
+    "name": "RIOM VOLLEY-BALL",
+    "city": "RIOM",
+    "department": "63",
+    "lat": 45.893012,
+    "lon": 3.1140583
+  },
+  "0634740": {
+    "code": "0634740",
+    "name": "VOLLEY BALL CLUB CHAMALIERES",
+    "city": "CHAMALIERES",
+    "department": "63",
+    "lat": 45.776018,
+    "lon": 3.0681174
+  },
+  "0690044": {
+    "code": "0690044",
+    "name": "VOLLEY VAL DE SAONE",
+    "city": "MONTANAY",
+    "department": "69",
+    "lat": 45.8781153,
+    "lon": 4.8602097
+  },
+  "0693332": {
+    "code": "0693332",
+    "name": "VOLLEY-BALL VILLEFRANCHE BEAUJOLAIS",
+    "city": "VILLEFRANCHE-SUR-SAONE",
+    "department": "69",
+    "lat": 45.9864749,
+    "lon": 4.726611
+  },
+  "0693493": {
+    "code": "0693493",
+    "name": "PATRIOTE ENTRAIN DE SAINT DENIS (LYON PESD)",
+    "city": "LYON",
+    "department": "69",
+    "lat": 45.7578137,
+    "lon": 4.8320114
+  },
+  "0696380": {
+    "code": "0696380",
+    "name": "AS CALUIRE ET CUIRE",
+    "city": "CALUIRE",
+    "department": "69",
+    "lat": 45.7969952,
+    "lon": 4.8423304
+  },
+  "0698439": {
+    "code": "0698439",
+    "name": "FIDESIENNE VOLLEY BALL",
+    "city": "SAINTE-FOY-LÈS-LYON",
+    "department": "69",
+    "lat": 45.7362255,
+    "lon": 4.7934767
+  },
+  "0698769": {
+    "code": "0698769",
+    "name": "PAT. LAIQUE VILLETTE PAUL BERT",
+    "city": "LYON",
+    "department": "69",
+    "lat": 45.7578137,
+    "lon": 4.8320114
+  },
+  "0698828": {
+    "code": "0698828",
+    "name": "VBC FRANCHEVILLE OUEST LYONNAIS",
+    "city": "FRANCHEVILLE",
+    "department": "69",
+    "lat": 45.735748,
+    "lon": 4.7647304
+  },
+  "0699603": {
+    "code": "0699603",
+    "name": "ASUL LYON VOLLEY BALL",
+    "city": "LYON",
+    "department": "69",
+    "lat": 45.7578137,
+    "lon": 4.8320114
+  },
+  "0745091": {
+    "code": "0745091",
+    "name": "ANNECY VOLLEY BALL",
+    "city": "ANNECY",
+    "department": "74",
+    "lat": 45.8992348,
+    "lon": 6.1288847
+  },
+  "0590034": {
+    "code": "0590034",
+    "name": "OMNISPORTS CLUB HELESMOIS",
+    "city": "HELESMES",
+    "department": "59",
+    "lat": 50.3627432,
+    "lon": 3.3598607
+  },
+  "0590036": {
+    "code": "0590036",
+    "name": "VOLLEY CLUB DE VALENCIENNES",
+    "city": "VALENCIENNES",
+    "department": "59",
+    "lat": 50.3579317,
+    "lon": 3.5234846
+  },
+  "0590038": {
+    "code": "0590038",
+    "name": "ASSOCIATION AMANDINOISE DE VOLLEY-BALL",
+    "city": "ST  AMAND LES EAUX",
+    "department": "59",
+    "lat": 50.4491519,
+    "lon": 3.4281142
+  },
+  "0590041": {
+    "code": "0590041",
+    "name": "HALLUIN VOLLEY METROPOLE",
+    "city": "HALLUIN",
+    "department": "59",
+    "lat": 50.7826693,
+    "lon": 3.1249234
+  },
+  "0593916": {
+    "code": "0593916",
+    "name": "VOLLEY CLUB MARCQ BAROEUL",
+    "city": "MARCQ-EN-BAROEUL",
+    "department": "59",
+    "lat": 50.6767018,
+    "lon": 3.1043032
+  },
+  "0595712": {
+    "code": "0595712",
+    "name": "VOLLEY CLUB SAINT POLOIS",
+    "city": "SAINT POL SUR MER",
+    "department": "59",
+    "lat": 51.0273731,
+    "lon": 2.3422205
+  },
+  "0596135": {
+    "code": "0596135",
+    "name": "VOLLEY CLUB DE CAMBRAI",
+    "city": "CAMBRAI",
+    "department": "59",
+    "lat": 50.1757546,
+    "lon": 3.2346145
+  },
+  "0599844": {
+    "code": "0599844",
+    "name": "MOUVEMENT VOLLEY BALL",
+    "city": "LYS LEZ LANNOY",
+    "department": "59",
+    "lat": 50.6713,
+    "lon": 3.21621
+  },
+  "0599848": {
+    "code": "0599848",
+    "name": "DUNKERQUE GRAND LITTORAL V.B.",
+    "city": "DUNKERQUE",
+    "department": "59",
+    "lat": 51.0347708,
+    "lon": 2.3772525
+  },
+  "0607729": {
+    "code": "0607729",
+    "name": "BEAUVAIS OISE UC VOLLEY",
+    "city": "BEAUVAIS",
+    "department": "60",
+    "lat": 49.4300997,
+    "lon": 2.0823355
+  },
+  "0622016": {
+    "code": "0622016",
+    "name": "TOUQUET A.C. VOLLEY-BALL AND BEACH",
+    "city": "LE TOUQUET PARIS PLAGE",
+    "department": "62",
+    "lat": 50.5200083,
+    "lon": 1.5864532
+  },
+  "0623082": {
+    "code": "0623082",
+    "name": "STELLA EDU SP CALAIS",
+    "city": "CALAIS",
+    "department": "62",
+    "lat": 50.9524769,
+    "lon": 1.8538446
+  },
+  "0628929": {
+    "code": "0628929",
+    "name": "VOLLEY CLUB HARNES",
+    "city": "HARNES",
+    "department": "62",
+    "lat": 50.44741,
+    "lon": 2.9068246
+  },
+  "0803781": {
+    "code": "0803781",
+    "name": "LONGUEAU AMIENS METROPOLE VOLLEY-BALL",
+    "city": "LONGEAU",
+    "department": "80",
+    "lat": 47.7616501,
+    "lon": 5.3089795
+  },
+  "0178637": {
+    "code": "0178637",
+    "name": "PERIGNY VOLLEY-BALL",
+    "city": "PERIGNY",
+    "department": "17",
+    "lat": 46.1543471,
+    "lon": -1.0937391
+  },
+  "0198765": {
+    "code": "0198765",
+    "name": "VOLLEY-BALL TULLE NAVES",
+    "city": "TULLE",
+    "department": "19",
+    "lat": 45.2678347,
+    "lon": 1.7706797
+  },
+  "0334980": {
+    "code": "0334980",
+    "name": "UNION SPORTIVE TALENCAISE",
+    "city": "TALENCE",
+    "department": "33",
+    "lat": 44.8088438,
+    "lon": -0.5879629
+  },
+  "0335197": {
+    "code": "0335197",
+    "name": "SPORT ATHLETIQUE MERIGNACAIS",
+    "city": "MERIGNAC",
+    "department": "33",
+    "lat": 44.842168,
+    "lon": -0.6469022
+  },
+  "0337145": {
+    "code": "0337145",
+    "name": "ASSOCIATION SPORTIVE ILLACAISE VOLLEY-BALL",
+    "city": "SAINT-JEAN D'ILLAC",
+    "department": "33",
+    "lat": 44.8101856,
+    "lon": -0.7815257
+  },
+  "0338606": {
+    "code": "0338606",
+    "name": "VOLLEY BALL CLUB LE HAILLAN",
+    "city": "LE HAILLAN",
+    "department": "33",
+    "lat": 44.872105,
+    "lon": -0.6761661
+  },
+  "0645951": {
+    "code": "0645951",
+    "name": "VOLLEY BALL DU LUY DE BEARN",
+    "city": "NAVAILLES ANGOS",
+    "department": "64",
+    "lat": 43.4135044,
+    "lon": -0.3425577
+  },
+  "0646282": {
+    "code": "0646282",
+    "name": "MJC LES FLEURS DE PAU",
+    "city": "PAU",
+    "department": "64",
+    "lat": 43.2957547,
+    "lon": -0.3685668
+  },
+  "0649575": {
+    "code": "0649575",
+    "name": "FOYER RURAL DE GER",
+    "city": "GER",
+    "department": "64",
+    "lat": 43.2525682,
+    "lon": -0.0525885
+  },
+  "0798259": {
+    "code": "0798259",
+    "name": "VOLLEY-BALL PEXINOIS NIORT",
+    "city": "NIORT",
+    "department": "79",
+    "lat": 46.3239233,
+    "lon": -0.4646064
+  },
+  "0868442": {
+    "code": "0868442",
+    "name": "VOUILLE VOLLEY BALL",
+    "city": "VOUILLE",
+    "department": "86",
+    "lat": 46.6330269,
+    "lon": 0.1894079
+  },
+  "0757777": {
+    "code": "0757777",
+    "name": "PUC VOLLEY-BALL",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0757954": {
+    "code": "0757954",
+    "name": "PARIS AMICALE CAMOU",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0770051": {
+    "code": "0770051",
+    "name": "VOLLEY-BALL LA ROCHETTE",
+    "city": "LA ROCHETTE",
+    "department": "77",
+    "lat": 48.5045038,
+    "lon": 2.662899
+  },
+  "0776894": {
+    "code": "0776894",
+    "name": "VB TORCY MARNE LA VALLEE",
+    "city": "TORCY",
+    "department": "77",
+    "lat": 48.8515,
+    "lon": 2.65265
+  },
+  "0779890": {
+    "code": "0779890",
+    "name": "US LOGNES VOLLEY-BALL",
+    "city": "LOGNES",
+    "department": "77",
+    "lat": 48.8384157,
+    "lon": 2.632722
+  },
+  "0784696": {
+    "code": "0784696",
+    "name": "AS VOLLEY-BALL VELIZY",
+    "city": "VELIZY",
+    "department": "78",
+    "lat": 48.7816349,
+    "lon": 2.2248942
+  },
+  "0788680": {
+    "code": "0788680",
+    "name": "AS. SP DE SARTROUVILLE",
+    "city": "SARTROUVILLE",
+    "department": "78",
+    "lat": 48.9409016,
+    "lon": 2.1585037
+  },
+  "0910001": {
+    "code": "0910001",
+    "name": "EXCELLENCE SUD-ESSONNE VOLLEY-BALL",
+    "city": "ETAMPES",
+    "department": "91",
+    "lat": 48.4344621,
+    "lon": 2.1614464
+  },
+  "0912701": {
+    "code": "0912701",
+    "name": "PORTES DE L'ESSONNE VOLLEY-BALL",
+    "city": "PARAY-VIEILLE-POSTE",
+    "department": "91",
+    "lat": 48.7126093,
+    "lon": 2.3637838
+  },
+  "0912770": {
+    "code": "0912770",
+    "name": "ASV - ARTS ET SPORTS A VILLEBON",
+    "city": "VILLEBON SUR YVETTE",
+    "department": "91",
+    "lat": 48.7000046,
+    "lon": 2.2276489
+  },
+  "0917024": {
+    "code": "0917024",
+    "name": "ASSOCIATION VOLLEY-BALL DU VAL D'YERRES",
+    "city": "EPINAY SOUS SENART",
+    "department": "91",
+    "lat": 48.6953018,
+    "lon": 2.5159134
+  },
+  "0921672": {
+    "code": "0921672",
+    "name": "SAINT-CLOUD PARIS SF",
+    "city": "SAINT-CLOUD",
+    "department": "92",
+    "lat": 48.8437412,
+    "lon": 2.219344
+  },
+  "0921673": {
+    "code": "0921673",
+    "name": "ANTONY VOLLEY",
+    "city": "ANTONY",
+    "department": "92",
+    "lat": 48.753613,
+    "lon": 2.2958034
+  },
+  "0922431": {
+    "code": "0922431",
+    "name": "ACBB",
+    "city": "BOULOGNE BILLANCOURT",
+    "department": "92",
+    "lat": 48.8356649,
+    "lon": 2.240206
+  },
+  "0923631": {
+    "code": "0923631",
+    "name": "MEUDON CHAVILLE SEVRES VOLLEY",
+    "city": "CHAVILLE",
+    "department": "92",
+    "lat": 48.8086297,
+    "lon": 2.1882897
+  },
+  "0927924": {
+    "code": "0927924",
+    "name": "C S M CLAMART",
+    "city": "CLAMART",
+    "department": "92",
+    "lat": 48.8003835,
+    "lon": 2.2630238
+  },
+  "0929372": {
+    "code": "0929372",
+    "name": "PLESSIS-ROBINSON VOLLEY-BALL",
+    "city": "LE PLESSIS-ROBINSON",
+    "department": "92",
+    "lat": 48.7811049,
+    "lon": 2.2619632
+  },
+  "0941104": {
+    "code": "0941104",
+    "name": "ENTENTE SPORTIVE DE VILLIERS",
+    "city": "VILLIERS SUR MARNE",
+    "department": "94",
+    "lat": 48.8262055,
+    "lon": 2.5406696
+  },
+  "0941410": {
+    "code": "0941410",
+    "name": "VIE AU GRAND AIR DE ST MAUR",
+    "city": "ST-MAUR",
+    "department": "94",
+    "lat": 48.7968089,
+    "lon": 2.5018587
+  },
+  "0943861": {
+    "code": "0943861",
+    "name": "CNM CHARENTON",
+    "city": "CHARENTON-LE-PONT",
+    "department": "94",
+    "lat": 48.8198479,
+    "lon": 2.4159508
+  },
+  "0945131": {
+    "code": "0945131",
+    "name": "RED STAR CLUB CHAMPIGNY",
+    "city": "CHAMPIGNY-SUR-MARNE",
+    "department": "94",
+    "lat": 48.8137847,
+    "lon": 2.510611
+  },
+  "0946784": {
+    "code": "0946784",
+    "name": "VINCENNES VOLLEY CLUB",
+    "city": "NOISY LE GRAND",
+    "department": "94",
+    "lat": 48.8388507,
+    "lon": 2.5221145
+  },
+  "0955698": {
+    "code": "0955698",
+    "name": "AS VOLLEY-BALL TAVERNY SAINT-LEU",
+    "city": "TAVERNY",
+    "department": "95",
+    "lat": 49.0265888,
+    "lon": 2.2234971
+  },
+  "0957908": {
+    "code": "0957908",
+    "name": "V.B. CLUB ERMONT",
+    "city": "ERMONT",
+    "department": "95",
+    "lat": 48.9917676,
+    "lon": 2.2585679
+  },
+  "0117968": {
+    "code": "0117968",
+    "name": "VOLLEY-BALL GRUISSAN",
+    "city": "GRUISSAN",
+    "department": "11",
+    "lat": 43.107039,
+    "lon": 3.0864971
+  },
+  "0310022": {
+    "code": "0310022",
+    "name": "FONSORBES SEYSSES VOLLEY-BALL",
+    "city": "FONSORBES",
+    "department": "31",
+    "lat": 43.5355879,
+    "lon": 1.2312145
+  },
+  "0319125": {
+    "code": "0319125",
+    "name": "SPORTING CLUB PLAISANCE TOUCH",
+    "city": "PLAISANCE DU TOUCH",
+    "department": "31",
+    "lat": 43.5650991,
+    "lon": 1.2956832
+  },
+  "0319191": {
+    "code": "0319191",
+    "name": "VOLLEY BALMA QUINT FONSEGRIVES",
+    "city": "QUINT-FONSEGRIVES",
+    "department": "31",
+    "lat": 43.5854856,
+    "lon": 1.528301
+  },
+  "0319689": {
+    "code": "0319689",
+    "name": "A.S. DE L'UNION VOLLEY-BALL",
+    "city": "UNION",
+    "department": "31",
+    "lat": 43.6678973,
+    "lon": 1.4785561
+  },
+  "0340015": {
+    "code": "0340015",
+    "name": "BEZIERS VOLLEY",
+    "city": "BEZIERS",
+    "department": "34",
+    "lat": 43.3426562,
+    "lon": 3.2131307
+  },
+  "0340040": {
+    "code": "0340040",
+    "name": "AS VOLLEY GIGEANAIS",
+    "city": "GIGEAN",
+    "department": "34",
+    "lat": 43.5008343,
+    "lon": 3.7108476
+  },
+  "0345002": {
+    "code": "0345002",
+    "name": "ASBAM MONTPELLIER",
+    "city": "MONTPELLIER",
+    "department": "34",
+    "lat": 43.6112422,
+    "lon": 3.8767337
+  },
+  "0347482": {
+    "code": "0347482",
+    "name": "SETE VOLLEY-BALL CLUB",
+    "city": "SETE",
+    "department": "34",
+    "lat": 43.4014434,
+    "lon": 3.6959771
+  },
+  "0348292": {
+    "code": "0348292",
+    "name": "VOLLEY BALL DE GIGNAC",
+    "city": "GIGNAC",
+    "department": "34",
+    "lat": 43.6522859,
+    "lon": 3.5512018
+  },
+  "0348496": {
+    "code": "0348496",
+    "name": "AS.SP. V.B MAUGUIO",
+    "city": "MAUGUIO",
+    "department": "34",
+    "lat": 43.6154825,
+    "lon": 4.0098366
+  },
+  "0348857": {
+    "code": "0348857",
+    "name": "BOUSQUET BEDARIEUX V.B.",
+    "city": "BEDARIEUX",
+    "department": "34",
+    "lat": 43.6155109,
+    "lon": 3.1576143
+  },
+  "0349150": {
+    "code": "0349150",
+    "name": "LATTES ASPTT MONTPELLIER V.A.C",
+    "city": "LATTES",
+    "department": "34",
+    "lat": 43.5653993,
+    "lon": 3.9017114
+  },
+  "0668467": {
+    "code": "0668467",
+    "name": "PERPIGNAN ROUSSILLON V.B",
+    "city": "PERPIGNAN",
+    "department": "66",
+    "lat": 42.6985304,
+    "lon": 2.8953121
+  },
+  "0812329": {
+    "code": "0812329",
+    "name": "ENT. PUYGOUZON/CASTELNAU LEVIS",
+    "city": "PUYGOUZON",
+    "department": "81",
+    "lat": 43.8922718,
+    "lon": 2.1693657
+  },
+  "0817326": {
+    "code": "0817326",
+    "name": "CASTRES MASSAGUEL VOLLEY BALL CLUB",
+    "city": "CASTRES",
+    "department": "81",
+    "lat": 43.6053809,
+    "lon": 2.2411289
+  },
+  "0819413": {
+    "code": "0819413",
+    "name": "VOLLEY CLUB BASTIDIEN",
+    "city": "LABASTIDE ST-GEORGES",
+    "department": "81",
+    "lat": 43.6995,
+    "lon": 1.84337
+  },
+  "0819685": {
+    "code": "0819685",
+    "name": "PUYLAURENS VOLLEY BALL",
+    "city": "PUYLAURENS",
+    "department": "81",
+    "lat": 43.5726147,
+    "lon": 2.0134036
+  },
+  "0510012": {
+    "code": "0510012",
+    "name": "REIMS VOLLEY 51",
+    "city": "REIMS",
+    "department": "51",
+    "lat": 49.2577886,
+    "lon": 4.031926
+  },
+  "0543620": {
+    "code": "0543620",
+    "name": "VANDOEUVRE-NANCY VOLLEY-BALL",
+    "city": "VANDOEUVRE-LES-NANCY",
+    "department": "54",
+    "lat": 48.6599676,
+    "lon": 6.1724618
+  },
+  "0548751": {
+    "code": "0548751",
+    "name": "VOLLEY BEACH-BALL PONT/MOUSSON",
+    "city": "ATTON",
+    "department": "54",
+    "lat": 48.8911882,
+    "lon": 6.0924226
+  },
+  "0575650": {
+    "code": "0575650",
+    "name": "MAIZIERES ATHLETIC CLUB VOLLEY-BALL",
+    "city": "MAIZIÈRES-LÈS-METZ",
+    "department": "57",
+    "lat": 49.210252,
+    "lon": 6.1600345
+  },
+  "0576588": {
+    "code": "0576588",
+    "name": "METZ VOLLEY-BALL",
+    "city": "LONGEVILLE LES METZ",
+    "department": "57",
+    "lat": 49.1152448,
+    "lon": 6.1361244
+  },
+  "0579619": {
+    "code": "0579619",
+    "name": "ASVB YUTZ THIONVILLE",
+    "city": "THIONVILLE",
+    "department": "57",
+    "lat": 49.3579272,
+    "lon": 6.1675872
+  },
+  "0673909": {
+    "code": "0673909",
+    "name": "SPORT CLUB SELESTAT V.B.",
+    "city": "DUPPIGHEIM",
+    "department": "67",
+    "lat": 48.5281292,
+    "lon": 7.5894588
+  },
+  "0674157": {
+    "code": "0674157",
+    "name": "STRASBOURG UNIVERSITE CLUB",
+    "city": "STRASBOURG",
+    "department": "67",
+    "lat": 48.584614,
+    "lon": 7.7507127
+  },
+  "0675289": {
+    "code": "0675289",
+    "name": "A.S. VALLEE DE LA SAUER",
+    "city": "DURRENBACH",
+    "department": "67",
+    "lat": 48.8969356,
+    "lon": 7.7691889
+  },
+  "0679843": {
+    "code": "0679843",
+    "name": "MOLSHEIM OLYMPIQUE CLUB",
+    "city": "URMATT",
+    "department": "67",
+    "lat": 48.5272011,
+    "lon": 7.3247471
+  },
+  "0684661": {
+    "code": "0684661",
+    "name": "COLMARIENNE VOLLEY",
+    "city": "COLMAR",
+    "department": "68",
+    "lat": 48.0777517,
+    "lon": 7.3579641
+  },
+  "0686394": {
+    "code": "0686394",
+    "name": "VBC KINGERSHEIM",
+    "city": "KINGERSHEIM",
+    "department": "68",
+    "lat": 47.7923002,
+    "lon": 7.3386856
+  },
+  "0686625": {
+    "code": "0686625",
+    "name": "AS SP ENTREMONT RIXHEIM",
+    "city": "RIXHEIM",
+    "department": "68",
+    "lat": 47.7441969,
+    "lon": 7.3968786
+  },
+  "0687706": {
+    "code": "0687706",
+    "name": "VOLLEY-BALL CLUB D'ENSISHEIM",
+    "city": "ENSISHEIM",
+    "department": "68",
+    "lat": 47.8665246,
+    "lon": 7.3529099
+  },
+  "0689312": {
+    "code": "0689312",
+    "name": "VOLLEY BIESHEIM",
+    "city": "BIESHEIM",
+    "department": "68",
+    "lat": 48.0408514,
+    "lon": 7.5448609
+  },
+  "0883725": {
+    "code": "0883725",
+    "name": "SAINT DIE DES VOSGES VOLLEY BALL",
+    "city": "SAINTE MARGUERITE",
+    "department": "88",
+    "lat": 48.2684863,
+    "lon": 6.9788664
+  },
+  "0883902": {
+    "code": "0883902",
+    "name": "CAM D'EPINAL",
+    "city": "EPINAL",
+    "department": "88",
+    "lat": 48.1747684,
+    "lon": 6.4503643
+  },
+  "0761497": {
+    "code": "0761497",
+    "name": "AGGLO SUD VOLLEY-BALL 76",
+    "city": "SOTTEVILLE-LES-ROUEN",
+    "department": "76",
+    "lat": 49.4151549,
+    "lon": 1.089746
+  },
+  "0442477": {
+    "code": "0442477",
+    "name": "AILES SP BOUGUENAIS REZE",
+    "city": "REZE",
+    "department": "44",
+    "lat": 47.1905456,
+    "lon": -1.5695287
+  },
+  "0496228": {
+    "code": "0496228",
+    "name": "ATHLETIQUE CLUB LONGUEEN",
+    "city": "LONGUE JUMELLES",
+    "department": "49",
+    "lat": 47.4346214,
+    "lon": -0.1034531
+  },
+  "0534442": {
+    "code": "0534442",
+    "name": "ASPTT LAVAL",
+    "city": "BONCHAMP",
+    "department": "53",
+    "lat": 48.4051017,
+    "lon": -0.9879966
+  },
+  "0858891": {
+    "code": "0858891",
+    "name": "LA ROCHE/YON VOLLEY-BALL",
+    "city": "LA ROCHE SUR YON",
+    "department": "85",
+    "lat": 46.6705431,
+    "lon": -1.4269698
+  },
+  "0714053": {
+    "code": "0714053",
+    "name": "VOLLEY CLUB MACONNAIS",
+    "city": "MACON",
+    "department": "71",
+    "lat": 46.3036683,
+    "lon": 4.8322266
+  },
+  "0906468": {
+    "code": "0906468",
+    "name": "ASM BELFORT VOLLEY-BALL",
+    "city": "BELFORT",
+    "department": "90",
+    "lat": 47.6379599,
+    "lon": 6.8628942
+  },
+  "0224485": {
+    "code": "0224485",
+    "name": "PLANCOET VOLLEY-BALL",
+    "city": "PLANCOET",
+    "department": "22",
+    "lat": 48.5225082,
+    "lon": -2.2345898
+  },
+  "0293684": {
+    "code": "0293684",
+    "name": "ETOILE ST LAURENT",
+    "city": "BREST",
+    "department": "29",
+    "lat": 48.3905283,
+    "lon": -4.4860088
+  },
+  "0355169": {
+    "code": "0355169",
+    "name": "VOLLEY BALL CLUB MALOUIN",
+    "city": "SAINT MALO",
+    "department": "35",
+    "lat": 48.649518,
+    "lon": -2.0260409
+  },
+  "0358885": {
+    "code": "0358885",
+    "name": "ENT.SP.CULT. MOULINS",
+    "city": "MOULINS",
+    "department": "35",
+    "lat": 48.0030682,
+    "lon": -1.3729482
+  },
+  "0565019": {
+    "code": "0565019",
+    "name": "PATRONAGE LAIQUE LORIENT",
+    "city": "PLOEMEUR",
+    "department": "56",
+    "lat": 47.7354591,
+    "lon": -3.4270534
+  },
+  "0286397": {
+    "code": "0286397",
+    "name": "CHATEAUDUN VOLLEY-BALL",
+    "city": "CHATEAUDUN",
+    "department": "28",
+    "lat": 48.0702298,
+    "lon": 1.3284948
+  },
+  "0374861": {
+    "code": "0374861",
+    "name": "TOURS VOLLEY-BALL",
+    "city": "TOURS",
+    "department": "37",
+    "lat": 47.3900474,
+    "lon": 0.6889268
+  },
+  "0377244": {
+    "code": "0377244",
+    "name": "JOUE VOLLEY-BALL",
+    "city": "JOUE-LES-TOURS",
+    "department": "37",
+    "lat": 47.3511161,
+    "lon": 0.6622353
+  },
+  "0060007": {
+    "code": "0060007",
+    "name": "AS CANNES VOLLEY-BALL",
+    "city": "CANNES",
+    "department": "06",
+    "lat": 43.5515198,
+    "lon": 7.0134418
+  },
+  "0060036": {
+    "code": "0060036",
+    "name": "PAYS DE GRASSE VOLLEY-BALL",
+    "city": "TOURRETTES",
+    "department": "06",
+    "lat": 43.7158031,
+    "lon": 7.058912
+  },
+  "0062509": {
+    "code": "0062509",
+    "name": "OLYMPIQUES ANTIBES JUAN PINS",
+    "city": "ANTIBES",
+    "department": "06",
+    "lat": 43.5813878,
+    "lon": 7.1236966
+  },
+  "0066927": {
+    "code": "0066927",
+    "name": "NICE VOLLEY-BALL",
+    "city": "NICE",
+    "department": "06",
+    "lat": 43.7009358,
+    "lon": 7.2683912
+  },
+  "0132348": {
+    "code": "0132348",
+    "name": "MARSEILLE VOLLEY 13",
+    "city": "MARSEILLE",
+    "department": "13",
+    "lat": 43.2961743,
+    "lon": 5.3699525
+  },
+  "0132365": {
+    "code": "0132365",
+    "name": "AIX UNIVERSITE CLUB 13 VOLLEY-BALL",
+    "city": "AIX EN PROVENCE",
+    "department": "13",
+    "lat": 43.5298424,
+    "lon": 5.4474738
+  },
+  "0136082": {
+    "code": "0136082",
+    "name": "VITROLLES SPORTS VOLLEY-BALL",
+    "city": "VITROLLES",
+    "department": "13",
+    "lat": 43.4593696,
+    "lon": 5.2482643
+  },
+  "0833351": {
+    "code": "0833351",
+    "name": "VIDAUBAN VOLLEY-BALL",
+    "city": "VIDAUBAN",
+    "department": "83",
+    "lat": 43.4273183,
+    "lon": 6.4314327
+  },
+  "0382205": {
+    "code": "0382205",
+    "name": "PAYS VOIRONNAIS VOLLEY - PVV",
+    "city": "ST JEAN DE MOIRANS",
+    "department": "38",
+    "lat": 45.3410803,
+    "lon": 5.5818425
+  },
+  "0695668": {
+    "code": "0695668",
+    "name": "VOLLEY BRON @ LYON LUMIERE",
+    "city": "BRON",
+    "department": "69",
+    "lat": 45.7337532,
+    "lon": 4.9092352
+  },
+  "0744930": {
+    "code": "0744930",
+    "name": "ANNEMASSE VOLLEY 74",
+    "city": "ANNEMASSE",
+    "department": "74",
+    "lat": 46.1934005,
+    "lon": 6.2341093
+  },
+  "0023697": {
+    "code": "0023697",
+    "name": "LAON VOLLEY BALL",
+    "city": "LAON",
+    "department": "02",
+    "lat": 49.564665,
+    "lon": 3.620686
+  },
+  "0590025": {
+    "code": "0590025",
+    "name": "AMICALE CENTRE HELLEMMES VOLLEY-BALL",
+    "city": "HELLEMMES",
+    "department": "59",
+    "lat": 50.6274528,
+    "lon": 3.1092154
+  },
+  "0594680": {
+    "code": "0594680",
+    "name": "TOURCOING VOLLEY-BALL L.M.",
+    "city": "TOURCOING",
+    "department": "59",
+    "lat": 50.7235038,
+    "lon": 3.1605714
+  },
+  "0622126": {
+    "code": "0622126",
+    "name": "HARNES VOLLEY-BALL",
+    "city": "HARNES",
+    "department": "62",
+    "lat": 50.44741,
+    "lon": 2.9068246
+  },
+  "0628128": {
+    "code": "0628128",
+    "name": "LOISIRS INTER SPORT ST PIERRE",
+    "city": "CALAIS",
+    "department": "62",
+    "lat": 50.9524769,
+    "lon": 1.8538446
+  },
+  "0803771": {
+    "code": "0803771",
+    "name": "AMIENS METROPOLE VOLLEY",
+    "city": "AMIENS",
+    "department": "80",
+    "lat": 49.8941708,
+    "lon": 2.2956951
+  },
+  "0177925": {
+    "code": "0177925",
+    "name": "LA ROCHELLE VOLLEY BALL",
+    "city": "LA ROCHELLE",
+    "department": "17",
+    "lat": 46.159732,
+    "lon": -1.1515951
+  },
+  "0198049": {
+    "code": "0198049",
+    "name": "C.A. BRIVE/CORREZE VOLLEY",
+    "city": "BRIVE LA GAILLARDE",
+    "department": "19",
+    "lat": 45.1584982,
+    "lon": 1.5332389
+  },
+  "0330014": {
+    "code": "0330014",
+    "name": "J.S.A. BORDEAUX",
+    "city": "BORDEAUX",
+    "department": "33",
+    "lat": 44.841225,
+    "lon": -0.5800364
+  },
+  "0336361": {
+    "code": "0336361",
+    "name": "AV GARDE J D ARC CAUDERAN",
+    "city": "BORDEAUX",
+    "department": "33",
+    "lat": 44.841225,
+    "lon": -0.5800364
+  },
+  "0862447": {
+    "code": "0862447",
+    "name": "ALTERNA STADE POITEVIN VOLLEY BALL",
+    "city": "POITIERS",
+    "department": "86",
+    "lat": 46.5802596,
+    "lon": 0.340196
+  },
+  "0750043": {
+    "code": "0750043",
+    "name": "SPORTING CLUB NORD PARISIEN",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0775819": {
+    "code": "0775819",
+    "name": "FS VAL D'EUROPE ESBLY COUPVRAY VB",
+    "city": "COUPVRAY",
+    "department": "77",
+    "lat": 48.8918983,
+    "lon": 2.7948137
+  },
+  "0776584": {
+    "code": "0776584",
+    "name": "PONTAULT-COMBAULT V.B. CLUB",
+    "city": "PONTAULT-COMBAULT",
+    "department": "77",
+    "lat": 48.8009132,
+    "lon": 2.6068064
+  },
+  "0785464": {
+    "code": "0785464",
+    "name": "UNION SPORTIVE CONFLANS",
+    "city": "CONFLANS STE HONORINE",
+    "department": "78",
+    "lat": 48.9938791,
+    "lon": 2.0949768
+  },
+  "0786162": {
+    "code": "0786162",
+    "name": "VOLLEY-CLUB PLAISIR-VILLEPREUX",
+    "city": "PLAISIR",
+    "department": "78",
+    "lat": 48.817399,
+    "lon": 1.9476363
+  },
+  "0926073": {
+    "code": "0926073",
+    "name": "COURBEVOIE SPORTS",
+    "city": "COURBEVOIE",
+    "department": "92",
+    "lat": 48.8953328,
+    "lon": 2.2561602
+  },
+  "0927953": {
+    "code": "0927953",
+    "name": "ASNIERES VOLLEY 92",
+    "city": "ASNIERES-SUR-SEINE",
+    "department": "92",
+    "lat": 48.9105948,
+    "lon": 2.2890454
+  },
+  "0933876": {
+    "code": "0933876",
+    "name": "USM. GAGNY VOLLEY",
+    "city": "GAGNY",
+    "department": "93",
+    "lat": 48.8853743,
+    "lon": 2.5358323
+  },
+  "0955773": {
+    "code": "0955773",
+    "name": "AMICAL CS CORMEILLAIS",
+    "city": "CORMEILLES-EN-PARISIS",
+    "department": "95",
+    "lat": 48.9759637,
+    "lon": 2.1998877
+  },
+  "0114939": {
+    "code": "0114939",
+    "name": "NARBONNE VOLLEY",
+    "city": "NARBONNE",
+    "department": "11",
+    "lat": 43.1837757,
+    "lon": 3.0041906
+  },
+  "0115113": {
+    "code": "0115113",
+    "name": "UNION SPORTIVE ROUBIANAISE",
+    "city": "ROUBIA",
+    "department": "11",
+    "lat": 43.2473,
+    "lon": 2.80081
+  },
+  "0314739": {
+    "code": "0314739",
+    "name": "T.O.A.C. - T.U.C. VOLLEY-BALL",
+    "city": "TOULOUSE",
+    "department": "31",
+    "lat": 43.6044638,
+    "lon": 1.4442433
+  },
+  "0315117": {
+    "code": "0315117",
+    "name": "MURET VOLLEY-BALL",
+    "city": "MURET",
+    "department": "31",
+    "lat": 43.4599858,
+    "lon": 1.3262332
+  },
+  "0343330": {
+    "code": "0343330",
+    "name": "ARAGO DE SETE VOLLEY-BALL",
+    "city": "SETE",
+    "department": "34",
+    "lat": 43.4014434,
+    "lon": 3.6959771
+  },
+  "0349271": {
+    "code": "0349271",
+    "name": "MONTPELLIER CASTELNAU VOLLEY UNIVERSITE CLUB",
+    "city": "CASTELNAU LE LEZ",
+    "department": "34",
+    "lat": 43.6393171,
+    "lon": 3.9133311
+  },
+  "0523906": {
+    "code": "0523906",
+    "name": "CHAUMONT VOLLEY-BALL 52",
+    "city": "CHAUMONT",
+    "department": "52",
+    "lat": 48.1111324,
+    "lon": 5.1395849
+  },
+  "0542783": {
+    "code": "0542783",
+    "name": "GRAND NANCY VOLLEY-BALL",
+    "city": "NANCY",
+    "department": "54",
+    "lat": 48.6937223,
+    "lon": 6.1834097
+  },
+  "0675406": {
+    "code": "0675406",
+    "name": "VOLLEY-BALL CLUB STRASBOURG VBCS",
+    "city": "STRASBOURG",
+    "department": "67",
+    "lat": 48.584614,
+    "lon": 7.7507127
+  },
+  "0885362": {
+    "code": "0885362",
+    "name": "EPINAL GOLBEY VOLLEY-BALL (EGVB)",
+    "city": "EPINAL",
+    "department": "88",
+    "lat": 48.1747684,
+    "lon": 6.4503643
+  },
+  "0146341": {
+    "code": "0146341",
+    "name": "VOLLEY CLUB HEROUVILLE",
+    "city": "HEROUVILLE SAINT CLAIR",
+    "department": "14",
+    "lat": 49.2031097,
+    "lon": -0.3353513
+  },
+  "0761503": {
+    "code": "0761503",
+    "name": "MAROMME CANTELEU VOLLEY 76",
+    "city": "MAROMME",
+    "department": "76",
+    "lat": 49.476737,
+    "lon": 1.0308208
+  },
+  "0448821": {
+    "code": "0448821",
+    "name": "US BOUGUENAIS VOLLEY-BALL",
+    "city": "BOUGUENAIS",
+    "department": "44",
+    "lat": 47.179301,
+    "lon": -1.6233691
+  },
+  "0490026": {
+    "code": "0490026",
+    "name": "ENTENTE NORD OUEST ANJOU V.B.",
+    "city": "MONTREUIL-JUIGNÉ",
+    "department": "49",
+    "lat": 47.5291981,
+    "lon": -0.6099197
+  },
+  "0495345": {
+    "code": "0495345",
+    "name": "AS SAINT-BARTHELEMY D'ANJOU V.B.",
+    "city": "ST BARTHELEMY D",
+    "department": "49",
+    "lat": 47.4279569,
+    "lon": -0.8424387
+  },
+  "0535933": {
+    "code": "0535933",
+    "name": "ETINCELLE MAYENNE",
+    "city": "53470 - COMMER",
+    "department": "53",
+    "lat": 48.2403718,
+    "lon": -0.6204956
+  },
+  "0538757": {
+    "code": "0538757",
+    "name": "VOLLEY-BALL L'HUISSERIE",
+    "city": "L'HUISSERIE",
+    "department": "53",
+    "lat": 48.0229521,
+    "lon": -0.7681717
+  },
+  "0854977": {
+    "code": "0854977",
+    "name": "SABLES ETUDIANTS CLUB VOLLEY-BALL",
+    "city": "LES SABLES D'OLONNE",
+    "department": "85",
+    "lat": 46.4990505,
+    "lon": -1.7767859
+  },
+  "0255803": {
+    "code": "0255803",
+    "name": "VOLLEY SAINT VITOIS",
+    "city": "SAINT VIT",
+    "department": "25",
+    "lat": 47.1811265,
+    "lon": 5.8100016
+  },
+  "0898444": {
+    "code": "0898444",
+    "name": "SENS VOLLEY 89",
+    "city": "SALIGNY",
+    "department": "89",
+    "lat": 48.2140826,
+    "lon": 3.3526386
+  },
+  "0351447": {
+    "code": "0351447",
+    "name": "LOUVIGNE DE BAIS VOLLEY-BALL",
+    "city": "LOUVIGNE",
+    "department": "35",
+    "lat": 48.4815182,
+    "lon": -1.1231428
+  },
+  "0354331": {
+    "code": "0354331",
+    "name": "FOUGERES VOLLEY-BALL",
+    "city": "FOUGERES",
+    "department": "35",
+    "lat": 48.3503362,
+    "lon": -1.1958526
+  },
+  "0567700": {
+    "code": "0567700",
+    "name": "LA GUIDELOISE",
+    "city": "LORIENT",
+    "department": "56",
+    "lat": 47.7477336,
+    "lon": -3.3660907
+  },
+  "0567745": {
+    "code": "0567745",
+    "name": "PAYS D'AURAY VOLLEY-BALL",
+    "city": "AURAY",
+    "department": "56",
+    "lat": 47.6664485,
+    "lon": -2.9833718
+  },
+  "0284553": {
+    "code": "0284553",
+    "name": "C'CHARTRES VOLLEY",
+    "city": "CHARTRES",
+    "department": "28",
+    "lat": 48.4438601,
+    "lon": 1.4881434
+  },
+  "0374833": {
+    "code": "0374833",
+    "name": "SAINT AVERTIN SPORTS",
+    "city": "SAINT AVERTIN",
+    "department": "37",
+    "lat": 47.3577,
+    "lon": 0.739923
+  },
+  "0377980": {
+    "code": "0377980",
+    "name": "LOCHES VOLLEY-BALL",
+    "city": "LOCHES",
+    "department": "37",
+    "lat": 47.1281692,
+    "lon": 0.9979549
+  },
+  "0454144": {
+    "code": "0454144",
+    "name": "ETUDIANT CLUB ORLEANAIS",
+    "city": "ORLEANS",
+    "department": "45",
+    "lat": 47.9027336,
+    "lon": 1.9086066
+  },
+  "0458265": {
+    "code": "0458265",
+    "name": "GIEN VOLLEY",
+    "city": "GIEN",
+    "department": "45",
+    "lat": 47.6918575,
+    "lon": 2.6313889
+  },
+  "0458478": {
+    "code": "0458478",
+    "name": "SMOC ST-JEAN DE BRAYE",
+    "city": "SAINT JEAN DE BRAYE",
+    "department": "45",
+    "lat": 47.9200018,
+    "lon": 1.9737186
+  },
+  "0064168": {
+    "code": "0064168",
+    "name": "VOLLEY-BALL STADE LAURENTIN",
+    "city": "SAINT-LAURENT-DU-VAR",
+    "department": "06",
+    "lat": 43.6690101,
+    "lon": 7.1906969
+  },
+  "0068454": {
+    "code": "0068454",
+    "name": "MUNICIPAL OLYMPIQUE MOUGINS",
+    "city": "MOUGINS",
+    "department": "06",
+    "lat": 43.6008898,
+    "lon": 6.9963543
+  },
+  "0138932": {
+    "code": "0138932",
+    "name": "STADE MARSEILLAIS U.C",
+    "city": "MARSEILLE",
+    "department": "13",
+    "lat": 43.2961743,
+    "lon": 5.3699525
+  },
+  "0839914": {
+    "code": "0839914",
+    "name": "VOLLEY CLUB HYERES/PIERREFEU LA LONDE",
+    "city": "HYERES",
+    "department": "83",
+    "lat": 43.1202573,
+    "lon": 6.1301614
+  },
+  "0015372": {
+    "code": "0015372",
+    "name": "L'ENVOLLEY 01",
+    "city": "ST ETIENNE DU BOIS",
+    "department": "01",
+    "lat": 46.2876364,
+    "lon": 5.2939953
+  },
+  "0019241": {
+    "code": "0019241",
+    "name": "SAINT-MAURICE COTIERE VOLLEY",
+    "city": "MIRIBEL",
+    "department": "01",
+    "lat": 45.8235227,
+    "lon": 4.9528525
+  },
+  "0019560": {
+    "code": "0019560",
+    "name": "AMBERIEU VOLLEY BALL",
+    "city": "AMBERIEU EN BUGEY",
+    "department": "01",
+    "lat": 45.9584309,
+    "lon": 5.3595099
+  },
+  "0157284": {
+    "code": "0157284",
+    "name": "AURILLAC V.B.",
+    "city": "AURILLAC",
+    "department": "15",
+    "lat": 44.9285441,
+    "lon": 2.4433101
+  },
+  "0384638": {
+    "code": "0384638",
+    "name": "CS BOURGOIN JALLIEU",
+    "city": "BOURGOIN-JALLIEU",
+    "department": "38",
+    "lat": 45.5860438,
+    "lon": 5.2772265
+  },
+  "0385990": {
+    "code": "0385990",
+    "name": "US ST EGREVOISE",
+    "city": "ST-EGREVE",
+    "department": "38",
+    "lat": 45.2325079,
+    "lon": 5.681781
+  },
+  "0635997": {
+    "code": "0635997",
+    "name": "STADE CLERMONTOIS",
+    "city": "CLERMONT-FERRAND",
+    "department": "63",
+    "lat": 45.7774551,
+    "lon": 3.0819427
+  },
+  "0637595": {
+    "code": "0637595",
+    "name": "UNION SPORTIVE ISSOIRIENNE VOLLEY-BALL",
+    "city": "ISSOIRE",
+    "department": "63",
+    "lat": 45.5432962,
+    "lon": 3.2501874
+  },
+  "0699635": {
+    "code": "0699635",
+    "name": "A.S.V.E.L.",
+    "city": "VILLEURBANNE",
+    "department": "69",
+    "lat": 45.7733573,
+    "lon": 4.8868454
+  },
+  "0025847": {
+    "code": "0025847",
+    "name": "VOLLEY BALL CLUB LAFEROIS",
+    "city": "LA FERE",
+    "department": "02",
+    "lat": 49.6632869,
+    "lon": 3.3661672
+  },
+  "0028567": {
+    "code": "0028567",
+    "name": "F.L. ST QUENTIN VOLLEY-BALL",
+    "city": "SAINT-QUENTIN",
+    "department": "02",
+    "lat": 49.8465253,
+    "lon": 3.2876843
+  },
+  "0593336": {
+    "code": "0593336",
+    "name": "ST MICHEL SPORTS MARQUETTE",
+    "city": "MARQUETTE LEZ LILLE",
+    "department": "59",
+    "lat": 50.6760968,
+    "lon": 3.0647175
+  },
+  "0595763": {
+    "code": "0595763",
+    "name": "VOLLEY BALL CLUB WATTIGNIES",
+    "city": "WATTIGNIES",
+    "department": "59",
+    "lat": 50.5878779,
+    "lon": 3.0511655
+  },
+  "0599408": {
+    "code": "0599408",
+    "name": "VOLLEY-BALL CLUB CYSOING",
+    "city": "CYSOING",
+    "department": "59",
+    "lat": 50.5677767,
+    "lon": 3.215489
+  },
+  "0406116": {
+    "code": "0406116",
+    "name": "BISCARROSSE OLYMPIQUE",
+    "city": "BISCARROSSE",
+    "department": "40",
+    "lat": 44.3907065,
+    "lon": -1.1609361
+  },
+  "0406172": {
+    "code": "0406172",
+    "name": "STADE MONTOIS",
+    "city": "MONT-DE-MARSAN",
+    "department": "40",
+    "lat": 43.8911318,
+    "lon": -0.500972
+  },
+  "0647586": {
+    "code": "0647586",
+    "name": "ENTENTE SP BOURNOS DOUMY",
+    "city": "BOURNOS",
+    "department": "64",
+    "lat": 43.4389507,
+    "lon": -0.3871058
+  },
+  "0795537": {
+    "code": "0795537",
+    "name": "VOLLEY-BALL ST MAIXENTAIS",
+    "city": "SAINT MAIXENT L'ECOLE",
+    "department": "79",
+    "lat": 46.409657,
+    "lon": -0.2018603
+  },
+  "0868124": {
+    "code": "0868124",
+    "name": "CS DE SEVRES ANXAUMONT",
+    "city": "SEVRES-ANXAUMONT",
+    "department": "86",
+    "lat": 46.5706783,
+    "lon": 0.4655166
+  },
+  "0758726": {
+    "code": "0758726",
+    "name": "SPORTING CLUB PARIS VOLLEY",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0776776": {
+    "code": "0776776",
+    "name": "COULOMMIERS BRIE VOLLEY",
+    "city": "COULOMMIERS",
+    "department": "77",
+    "lat": 48.8121301,
+    "lon": 3.0843818
+  },
+  "0922483": {
+    "code": "0922483",
+    "name": "CSM PUTEAUX",
+    "city": "PUTEAUX",
+    "department": "92",
+    "lat": 48.8841522,
+    "lon": 2.2368863
+  },
+  "0923959": {
+    "code": "0923959",
+    "name": "AS.SP.VOLTAIRE CHATENAY",
+    "city": "CHATENAY-MALABRY",
+    "department": "92",
+    "lat": 48.7670404,
+    "lon": 2.2775316
+  },
+  "0925448": {
+    "code": "0925448",
+    "name": "USM MALAKOFF",
+    "city": "MALAKOFF",
+    "department": "92",
+    "lat": 48.8211559,
+    "lon": 2.3019814
+  },
+  "0931960": {
+    "code": "0931960",
+    "name": "PANTIN VOLLEY",
+    "city": "PANTIN",
+    "department": "93",
+    "lat": 48.8965023,
+    "lon": 2.4019804
+  },
+  "0938427": {
+    "code": "0938427",
+    "name": "NOISY LE GRAND VOLLEY-BALL",
+    "city": "NOISY-LE-GRAND",
+    "department": "93",
+    "lat": 48.8492238,
+    "lon": 2.5524906
+  },
+  "0939157": {
+    "code": "0939157",
+    "name": "TREMBLAY ATHLETIQUE CLUB",
+    "city": "TREMBLAY-EN-FRANCE",
+    "department": "93",
+    "lat": 48.9802035,
+    "lon": 2.5589558
+  },
+  "0947039": {
+    "code": "0947039",
+    "name": "ASS AMICALE SPORTIVE FRESNES",
+    "city": "FRESNES",
+    "department": "94",
+    "lat": 48.7546687,
+    "lon": 2.3227967
+  },
+  "0948308": {
+    "code": "0948308",
+    "name": "UNION SPORTIVE DE VILLEJUIF",
+    "city": "VILLEJUIF",
+    "department": "94",
+    "lat": 48.7921098,
+    "lon": 2.3633048
+  },
+  "0957093": {
+    "code": "0957093",
+    "name": "ARGENTEUIL VOLLEY BALL 95",
+    "city": "ARGENTEUIL",
+    "department": "95",
+    "lat": 48.9479069,
+    "lon": 2.2481797
+  },
+  "0099513": {
+    "code": "0099513",
+    "name": "TARASCON FOIX V.B.",
+    "city": "TARASCON S/ ARIEGE",
+    "department": "09",
+    "lat": 42.8458016,
+    "lon": 1.6067586
+  },
+  "0119381": {
+    "code": "0119381",
+    "name": "M.J.C. COURSAN",
+    "city": "COURSAN",
+    "department": "11",
+    "lat": 43.2347407,
+    "lon": 3.0585293
+  },
+  "0307732": {
+    "code": "0307732",
+    "name": "NIMES VOLLEY-BALL",
+    "city": "NIMES",
+    "department": "30",
+    "lat": 43.8374249,
+    "lon": 4.3600687
+  },
+  "0318376": {
+    "code": "0318376",
+    "name": "CLUB OLYMPIQUE CARBONNAIS",
+    "city": "CARBONNE",
+    "department": "31",
+    "lat": 43.2958159,
+    "lon": 1.2250686
+  },
+  "0344410": {
+    "code": "0344410",
+    "name": "ASLJCROIX ARGENT MONTPELLIER",
+    "city": "MONTPELLIER",
+    "department": "34",
+    "lat": 43.6112422,
+    "lon": 3.8767337
+  },
+  "0544386": {
+    "code": "0544386",
+    "name": "UNION SPORTIVE DU JARNISY",
+    "city": "JARNY",
+    "department": "54",
+    "lat": 49.1569586,
+    "lon": 5.8821708
+  },
+  "0574053": {
+    "code": "0574053",
+    "name": "VOLLEY-CLUB SARREBOURG",
+    "city": "LORQUIN",
+    "department": "57",
+    "lat": 48.6697525,
+    "lon": 6.9984795
+  },
+  "0671560": {
+    "code": "0671560",
+    "name": "VOLLEY-BALL CLUB HAGUENAU",
+    "city": "HAGUENAU",
+    "department": "67",
+    "lat": 48.8172236,
+    "lon": 7.7885978
+  },
+  "0686392": {
+    "code": "0686392",
+    "name": "VOLLEY MULHOUSE ALSACE",
+    "city": "MULHOUSE",
+    "department": "68",
+    "lat": 47.7467233,
+    "lon": 7.3389937
+  },
+  "0687260": {
+    "code": "0687260",
+    "name": "MDPA RUELISHEIM",
+    "city": "RUELISHEIM",
+    "department": "68",
+    "lat": 47.8259507,
+    "lon": 7.3582193
+  },
+  "0884751": {
+    "code": "0884751",
+    "name": "ASS SPORTIVE DE GERARDMER",
+    "city": "GRANGES AUMONTZEY",
+    "department": "88",
+    "lat": 48.1342375,
+    "lon": 6.8045219
+  },
+  "0503820": {
+    "code": "0503820",
+    "name": "AS HAINNEVILLAISE VOLLEY",
+    "city": "CHERBOURG-EN-COTENTIN",
+    "department": "50",
+    "lat": 49.6425343,
+    "lon": -1.6249565
+  },
+  "0504481": {
+    "code": "0504481",
+    "name": "SAINT-LO VOLLEY",
+    "city": "SAINT LO",
+    "department": "50",
+    "lat": 49.115808,
+    "lon": -1.0909278
+  },
+  "0505985": {
+    "code": "0505985",
+    "name": "SPORTING CLUB COUTANCAIS",
+    "city": "COUTANCES",
+    "department": "50",
+    "lat": 49.047792,
+    "lon": -1.4454857
+  },
+  "0761509": {
+    "code": "0761509",
+    "name": "LE HAVRE ESTUAIRE VOLLEY-BALL",
+    "city": "LE HAVRE",
+    "department": "76",
+    "lat": 49.4938975,
+    "lon": 0.1079732
+  },
+  "0765200": {
+    "code": "0765200",
+    "name": "ASPTT ROUEN MSA VB",
+    "city": "ROUEN CEDEX",
+    "department": "76",
+    "lat": 49.4233415,
+    "lon": 1.0309151
+  },
+  "0768325": {
+    "code": "0768325",
+    "name": "CO REGION ELBEUVIENNE",
+    "city": "ELBEUF SUR SEINE",
+    "department": "76",
+    "lat": 49.3429955,
+    "lon": 1.1243052
+  },
+  "0448335": {
+    "code": "0448335",
+    "name": "SAINT-HERBLAIN VOLLEY-BALL",
+    "city": "ST-HERBLAIN",
+    "department": "44",
+    "lat": 47.2233007,
+    "lon": -1.6346964
+  },
+  "0724695": {
+    "code": "0724695",
+    "name": "JEUNESSE SPORT COULAINES",
+    "city": "72000 - LE MANS",
+    "department": "72",
+    "lat": 48.0097178,
+    "lon": 0.1924837
+  },
+  "0859365": {
+    "code": "0859365",
+    "name": "OYA VOLLEY-BALL",
+    "city": "L ILE D YEU",
+    "department": "85",
+    "lat": 46.7101811,
+    "lon": -2.3491769
+  },
+  "0216180": {
+    "code": "0216180",
+    "name": "VOLLEY CLUB CHENOVE",
+    "city": "CHENOVE",
+    "department": "21",
+    "lat": 47.2932,
+    "lon": 5.00308
+  },
+  "0255807": {
+    "code": "0255807",
+    "name": "ASPTT BESANCON",
+    "city": "BESANCON",
+    "department": "25",
+    "lat": 47.2380222,
+    "lon": 6.0243622
+  },
+  "0716088": {
+    "code": "0716088",
+    "name": "CREUSOT VOLLEY-BALL",
+    "city": "TORCY",
+    "department": "71",
+    "lat": 46.7695411,
+    "lon": 4.4523049
+  },
+  "0351466": {
+    "code": "0351466",
+    "name": "ORGERBLON VOLLEY-BALL",
+    "city": "ORGERES",
+    "department": "35",
+    "lat": 48.0031858,
+    "lon": -1.6679484
+  },
+  "0377620": {
+    "code": "0377620",
+    "name": "UNION SPORTIVE CHAMBRAY LES TOURS",
+    "city": "CHAMBRAY LES TOURS",
+    "department": "37",
+    "lat": 47.3390872,
+    "lon": 0.714368
+  },
+  "0456398": {
+    "code": "0456398",
+    "name": "U.S.ORLEANS VOLLEY-BALL",
+    "city": "ORLEANS",
+    "department": "45",
+    "lat": 47.9027336,
+    "lon": 1.9086066
+  },
+  "0456420": {
+    "code": "0456420",
+    "name": "CERCLE JULES FERRY FLEURY",
+    "city": "FLEURY LES AUBRAIS",
+    "department": "45",
+    "lat": 47.9309156,
+    "lon": 1.9208883
+  },
+  "0842405": {
+    "code": "0842405",
+    "name": "ESPERANCE MORIERES VOLLEY-BALL",
+    "city": "CAUMONT SUR DURANCE",
+    "department": "84",
+    "lat": 43.893915,
+    "lon": 4.9457232
+  },
+  "0264643": {
+    "code": "0264643",
+    "name": "MONTELIMAR VOLLEY",
+    "city": "MONTÉLIMAR",
+    "department": "26",
+    "lat": 44.5579391,
+    "lon": 4.750318
+  },
+  "0382201": {
+    "code": "0382201",
+    "name": "GRENOBLE V.UNIVERSITE CLUB",
+    "city": "GRENOBLE",
+    "department": "38",
+    "lat": 45.1875602,
+    "lon": 5.7357819
+  },
+  "0386331": {
+    "code": "0386331",
+    "name": "ENT SPORT MEYLAN LA TRONCHE",
+    "city": "LA TRONCHE",
+    "department": "38",
+    "lat": 45.2090131,
+    "lon": 5.745715
+  },
+  "0424347": {
+    "code": "0424347",
+    "name": "FIRMINY VOLLEY-BALL",
+    "city": "FIRMINY",
+    "department": "42",
+    "lat": 45.3869665,
+    "lon": 4.2858597
+  },
+  "0690033": {
+    "code": "0690033",
+    "name": "CLUB OMNISPORTS DE SAINT-FONS",
+    "city": "SAINT FONS",
+    "department": "69",
+    "lat": 45.708491,
+    "lon": 4.8532593
+  },
+  "0693938": {
+    "code": "0693938",
+    "name": "CLUB RHODIA VAISE",
+    "city": "VILLEURBANNE",
+    "department": "69",
+    "lat": 45.7733573,
+    "lon": 4.8868454
+  },
+  "0735001": {
+    "code": "0735001",
+    "name": "AMICALE LAIQUE CHAMBERY V.B.",
+    "city": "CHAMBERY",
+    "department": "73",
+    "lat": 45.5662672,
+    "lon": 5.9203636
+  },
+  "0590024": {
+    "code": "0590024",
+    "name": "VOLLEY-BALL CLUB SARRASIN",
+    "city": "FAMARS",
+    "department": "59",
+    "lat": 50.3151251,
+    "lon": 3.5188176
+  },
+  "0593656": {
+    "code": "0593656",
+    "name": "AL CAUDRY VOLLEY-BALL",
+    "city": "CAUDRY",
+    "department": "59",
+    "lat": 50.124391,
+    "lon": 3.410362
+  },
+  "0595407": {
+    "code": "0595407",
+    "name": "UNION SPORTIVE DE ST ANDRE",
+    "city": "SAINT ANDRE",
+    "department": "59",
+    "lat": 50.6544808,
+    "lon": 3.047538
+  },
+  "0597584": {
+    "code": "0597584",
+    "name": "VOLLEY CLUB MOUVALLOIS",
+    "city": "MOUVAUX",
+    "department": "59",
+    "lat": 50.7029,
+    "lon": 3.13689
+  },
+  "0176607": {
+    "code": "0176607",
+    "name": "SAINTES VOLLEY-BALL-SVB",
+    "city": "SAINTES",
+    "department": "17",
+    "lat": 45.7460663,
+    "lon": -0.6300671
+  },
+  "0246303": {
+    "code": "0246303",
+    "name": "AS SP VB BERGERACOIS",
+    "city": "BERGERAC",
+    "department": "24",
+    "lat": 44.8534568,
+    "lon": 0.487531
+  },
+  "0330023": {
+    "code": "0330023",
+    "name": "AS.  V.B.  NORD BASSIN",
+    "city": "ANDERNOS LES BAINS",
+    "department": "33",
+    "lat": 44.7476897,
+    "lon": -1.0925184
+  },
+  "0406096": {
+    "code": "0406096",
+    "name": "UNION SPORTIVE DACQUOISE",
+    "city": "DAX",
+    "department": "40",
+    "lat": 43.7084065,
+    "lon": -1.0518771
+  },
+  "0640001": {
+    "code": "0640001",
+    "name": "LESCAR PYRENEES VOLLEY-BALL",
+    "city": "LESCAR",
+    "department": "64",
+    "lat": 43.3333773,
+    "lon": -0.4357266
+  },
+  "0866049": {
+    "code": "0866049",
+    "name": "UNION SPORTIVE VIVONNE",
+    "city": "POITIERS",
+    "department": "86",
+    "lat": 46.5802596,
+    "lon": 0.340196
+  },
+  "0775447": {
+    "code": "0775447",
+    "name": "MELUN VAL DE SEINE VOLLEY-BALL",
+    "city": "MELUN",
+    "department": "77",
+    "lat": 48.539927,
+    "lon": 2.6608169
+  },
+  "0783185": {
+    "code": "0783185",
+    "name": "VESINET SAINT-GERMAIN CROISSY VOLLEY",
+    "city": "SAINT GERMAIN EN LAYE",
+    "department": "78",
+    "lat": 48.8990413,
+    "lon": 2.0942792
+  },
+  "0917023": {
+    "code": "0917023",
+    "name": "ENTENTE SPORTIVE YERROISE",
+    "city": "CROSNE",
+    "department": "91",
+    "lat": 48.72046,
+    "lon": 2.4645591
+  },
+  "0921678": {
+    "code": "0921678",
+    "name": "SURESNES VOLLEY-BALL CLUB",
+    "city": "SURESNES",
+    "department": "92",
+    "lat": 48.8709053,
+    "lon": 2.2255727
+  },
+  "0944089": {
+    "code": "0944089",
+    "name": "CLUB ESPACE SPORTIF DE SUCY",
+    "city": "SUCY-EN-BRIE",
+    "department": "94",
+    "lat": 48.7711323,
+    "lon": 2.5221284
+  },
+  "0311264": {
+    "code": "0311264",
+    "name": "TOULOUSE ATHLETIC CLUB",
+    "city": "TOURNEFEUILLE",
+    "department": "31",
+    "lat": 43.5832062,
+    "lon": 1.3460025
+  },
+  "0347099": {
+    "code": "0347099",
+    "name": "VBC CLERMONTAIS",
+    "city": "CLERMONT-L'HERAULT",
+    "department": "34",
+    "lat": 43.6263176,
+    "lon": 3.4302412
+  },
+  "0102303": {
+    "code": "0102303",
+    "name": "PATRONAGE LAIQUE 010 V.B.",
+    "city": "TROYES",
+    "department": "10",
+    "lat": 48.2971626,
+    "lon": 4.0746257
+  },
+  "0545068": {
+    "code": "0545068",
+    "name": "CO VILLERS LES NANCY",
+    "city": "VILLERS CLAIRLIEU",
+    "department": "54",
+    "lat": 48.6587699,
+    "lon": 6.111581
+  },
+  "0685479": {
+    "code": "0685479",
+    "name": "UNION SPORTIVE MULHOUSE VOLLEY",
+    "city": "RIEDISHEIM",
+    "department": "68",
+    "lat": 47.7492477,
+    "lon": 7.3682858
+  },
+  "0686678": {
+    "code": "0686678",
+    "name": "AS SP ILLZACH MODENHEIM",
+    "city": "RIEDISHEIM",
+    "department": "68",
+    "lat": 47.7492477,
+    "lon": 7.3682858
+  },
+  "0149419": {
+    "code": "0149419",
+    "name": "CAEN VOLLEY-BALL",
+    "city": "CAEN",
+    "department": "14",
+    "lat": 49.1813403,
+    "lon": -0.3635615
+  },
+  "0218956": {
+    "code": "0218956",
+    "name": "CLUB SPOR. FONTAINE LES DIJON",
+    "city": "DIJON",
+    "department": "21",
+    "lat": 47.3215806,
+    "lon": 5.0414701
+  },
+  "0293600": {
+    "code": "0293600",
+    "name": "SAINT-RENAN IROISE VOLLEY",
+    "city": "SAINT RENAN",
+    "department": "29",
+    "lat": 48.4328451,
+    "lon": -4.622982
+  },
+  "0357501": {
+    "code": "0357501",
+    "name": "OLYMPIQUE CLUB CESSONAIS",
+    "city": "CESSON-SÉVIGNÉ",
+    "department": "35",
+    "lat": 48.1197799,
+    "lon": -1.6038829
+  },
+  "0833584": {
+    "code": "0833584",
+    "name": "SAINT-RAPHAEL VAR VOLLEY-BALL",
+    "city": "ST-RAPHAEL",
+    "department": "83",
+    "lat": 43.4255303,
+    "lon": 6.7694244
+  },
+  "0849721": {
+    "code": "0849721",
+    "name": "DETENTE VERTICALE VEDENAISE",
+    "city": "VEDENE",
+    "department": "84",
+    "lat": 43.9787328,
+    "lon": 4.9035659
+  },
+  "0695743": {
+    "code": "0695743",
+    "name": "VOLLEY-BALL PAYS VIENNOIS",
+    "city": "ST CYR SUR RHONE",
+    "department": "69",
+    "lat": 46.0272825,
+    "lon": 4.5565409
+  },
+  "0594597": {
+    "code": "0594597",
+    "name": "ASP VILLENEUVE D'ASCQ METROPOLE",
+    "city": "VILLENEUVE D",
+    "department": "59",
+    "lat": 50.6193174,
+    "lon": 3.1314002
+  },
+  "0807047": {
+    "code": "0807047",
+    "name": "UNION SPORT RAINNEVILLE",
+    "city": "RAINNEVILLE",
+    "department": "80",
+    "lat": 49.9722345,
+    "lon": 2.3553166
+  },
+  "0476720": {
+    "code": "0476720",
+    "name": "AL VILLENEUVE SUR LOT",
+    "city": "VILLENEUVE SUR LOT",
+    "department": "47",
+    "lat": 44.4056615,
+    "lon": 0.7046455
+  },
+  "0649194": {
+    "code": "0649194",
+    "name": "LES GENETS DE MESPLEDE",
+    "city": "MESPLEDE",
+    "department": "64",
+    "lat": 43.4940678,
+    "lon": -0.6590875
+  },
+  "0862442": {
+    "code": "0862442",
+    "name": "CEP POITIERS/ST BENOIT V.B.",
+    "city": "POITIERS",
+    "department": "86",
+    "lat": 46.5802596,
+    "lon": 0.340196
+  },
+  "0777831": {
+    "code": "0777831",
+    "name": "VC CHAMPS SUR MARNE",
+    "city": "CHAMPS-SUR-MARNE",
+    "department": "77",
+    "lat": 48.8526892,
+    "lon": 2.6027219
+  },
+  "0928481": {
+    "code": "0928481",
+    "name": "LEVALLOIS SPORTING CLUB",
+    "city": "LEVALLOIS",
+    "department": "92",
+    "lat": 48.892956,
+    "lon": 2.2881683
+  },
+  "0937176": {
+    "code": "0937176",
+    "name": "JEANNE D ARC DE ROSNY",
+    "city": "ROSNY-SOUS-BOIS",
+    "department": "93",
+    "lat": 48.8716626,
+    "lon": 2.4875193
+  },
+  "0344036": {
+    "code": "0344036",
+    "name": "AGDE VOLLEY BALL",
+    "city": "AGDE",
+    "department": "34",
+    "lat": 43.3124696,
+    "lon": 3.4707789
+  },
+  "0818902": {
+    "code": "0818902",
+    "name": "U.S. CADALENOISE V.B.",
+    "city": "CADALEN",
+    "department": "81",
+    "lat": 43.85,
+    "lon": 1.98152
+  },
+  "0826760": {
+    "code": "0826760",
+    "name": "BEAUMONT LAVIT LOMAGNE VOLLEY-BALL",
+    "city": "BEAUMONT DE LOMAGNE",
+    "department": "82",
+    "lat": 43.8817933,
+    "lon": 0.9875923
+  },
+  "0579612": {
+    "code": "0579612",
+    "name": "TERVILLE FLORANGE OLYMPIQUE",
+    "city": "TERVILLE",
+    "department": "57",
+    "lat": 49.3449986,
+    "lon": 6.1343914
+  },
+  "0279428": {
+    "code": "0279428",
+    "name": "EVREUX VOLLEY-BALL",
+    "city": "EVREUX",
+    "department": "27",
+    "lat": 49.0268903,
+    "lon": 1.1510164
+  },
+  "0213827": {
+    "code": "0213827",
+    "name": "ASPTT DIJON",
+    "city": "DIJON",
+    "department": "21",
+    "lat": 47.3215806,
+    "lon": 5.0414701
+  },
+  "0717763": {
+    "code": "0717763",
+    "name": "VB SENNECEY LE GRAND CANTON",
+    "city": "SENNECEY LE GRAND",
+    "department": "71",
+    "lat": 46.6402622,
+    "lon": 4.8684023
+  },
+  "0453789": {
+    "code": "0453789",
+    "name": "VOLLEY BEAUNE CLUB",
+    "city": "MONTLIARD",
+    "department": "45",
+    "lat": 48.018834,
+    "lon": 2.3966574
+  },
+  "0429072": {
+    "code": "0429072",
+    "name": "VOLLEY BALL VILLARS",
+    "city": "VILLARS",
+    "department": "42",
+    "lat": 45.4684804,
+    "lon": 4.353307
+  },
+  "0639238": {
+    "code": "0639238",
+    "name": "CEBAZAT VOLLEY-BALL",
+    "city": "CHATEAUGAY",
+    "department": "63",
+    "lat": 45.8502246,
+    "lon": 3.0850695
+  },
+  "0695191": {
+    "code": "0695191",
+    "name": "ENTENTE V.B.C. RILLIEUX",
+    "city": "01600 - MISERIEUX",
+    "department": "69",
+    "lat": 45.9742953,
+    "lon": 4.8112945
+  },
+  "0594399": {
+    "code": "0594399",
+    "name": "VC MICHELET HALLUIN",
+    "city": "HALLUIN",
+    "department": "59",
+    "lat": 50.7826693,
+    "lon": 3.1249234
+  },
+  "0599522": {
+    "code": "0599522",
+    "name": "VC BELLAING/PORTE DU HAINAUT",
+    "city": "BELLAING",
+    "department": "59",
+    "lat": 50.3656919,
+    "lon": 3.4288609
+  },
+  "0606669": {
+    "code": "0606669",
+    "name": "VOLLEY-BALL RANTIGNY-LIANCOURT",
+    "city": "BULLES",
+    "department": "60",
+    "lat": 49.4598673,
+    "lon": 2.3269895
+  },
+  "0758706": {
+    "code": "0758706",
+    "name": "AS. SP. CULT. DUNOIS",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0777942": {
+    "code": "0777942",
+    "name": "SP CLUB BRIARD",
+    "city": "BRIE COMTE ROBERT",
+    "department": "77",
+    "lat": 48.6904522,
+    "lon": 2.6166737
+  },
+  "0923757": {
+    "code": "0923757",
+    "name": "ASS SPORTIVE FONTENAYSIENNE",
+    "city": "FONTENAY-AUX-ROSES",
+    "department": "92",
+    "lat": 48.7911052,
+    "lon": 2.2870373
+  },
+  "0925271": {
+    "code": "0925271",
+    "name": "ISSY LES MOULINEAUX V.B.",
+    "city": "ISSY LES MOULINEAUX",
+    "department": "92",
+    "lat": 48.8250508,
+    "lon": 2.273457
+  },
+  "0926620": {
+    "code": "0926620",
+    "name": "LSO COLOMBES",
+    "city": "COLOMBES",
+    "department": "92",
+    "lat": 48.9227298,
+    "lon": 2.2543631
+  },
+  "0927027": {
+    "code": "0927027",
+    "name": "AS SP BOURG LA REINE",
+    "city": "BOURG-LA-REINE",
+    "department": "92",
+    "lat": 48.7795178,
+    "lon": 2.316085
+  },
+  "0939167": {
+    "code": "0939167",
+    "name": "ETOILE CLUB SP. COURNEUVIEN",
+    "city": "LA COURNEUVE",
+    "department": "93",
+    "lat": 48.9267236,
+    "lon": 2.3896123
+  },
+  "0950027": {
+    "code": "0950027",
+    "name": "I.A.F.V.O.",
+    "city": "L'ISLE ADAM",
+    "department": "95",
+    "lat": 49.1125294,
+    "lon": 2.2186324
+  },
+  "0117601": {
+    "code": "0117601",
+    "name": "CASTELNAUDARY VB",
+    "city": "CASTELNAUDARY",
+    "department": "11",
+    "lat": 43.3192021,
+    "lon": 1.9533495
+  },
+  "0488321": {
+    "code": "0488321",
+    "name": "MENDE VOLLEY LOZERE",
+    "city": "MENDE",
+    "department": "48",
+    "lat": 44.5180226,
+    "lon": 3.4991057
+  },
+  "0656864": {
+    "code": "0656864",
+    "name": "TARBES ODOS PYRENEES VOLLEY-BALL",
+    "city": "ODOS",
+    "department": "65",
+    "lat": 43.1973846,
+    "lon": 0.0581
+  },
+  "0270019": {
+    "code": "0270019",
+    "name": "LOUVIERS VOLLEY-BALL",
+    "city": "LOUVIERS",
+    "department": "27",
+    "lat": 49.2157245,
+    "lon": 1.1646335
+  },
+  "0858707": {
+    "code": "0858707",
+    "name": "VENDRENNES VOLLEY-BALL",
+    "city": "VENDRENNES",
+    "department": "85",
+    "lat": 46.8263148,
+    "lon": -1.1226397
+  },
+  "0352962": {
+    "code": "0352962",
+    "name": "JEANNE D ARC DE RENNES",
+    "city": "RENNES",
+    "department": "35",
+    "lat": 48.1113387,
+    "lon": -1.6800198
+  },
+  "0377979": {
+    "code": "0377979",
+    "name": "REVEIL SPORTIF DE SAINT-CYR",
+    "city": "SAINT CYR SUR LOIRE",
+    "department": "37",
+    "lat": 47.4052448,
+    "lon": 0.6658199
+  },
+  "0380045": {
+    "code": "0380045",
+    "name": "TOUVET VOLLEY-BALL",
+    "city": "LE TOUVET",
+    "department": "38",
+    "lat": 45.3592324,
+    "lon": 5.9515976
+  },
+  "0426457": {
+    "code": "0426457",
+    "name": "C.O. SMASHEURS MONTBRISON V.B.",
+    "city": "MONTBRISON",
+    "department": "42",
+    "lat": 45.6072875,
+    "lon": 4.0627318
+  },
+  "0428393": {
+    "code": "0428393",
+    "name": "VB POUILLY SAINT-NIZIER",
+    "city": "POUILLY SOUS CHARLIEU",
+    "department": "42",
+    "lat": 46.1453805,
+    "lon": 4.1092319
+  },
+  "0622039": {
+    "code": "0622039",
+    "name": "A.S. BERCKOISE DE VOLLEY-BALL",
+    "city": "BERCK",
+    "department": "62",
+    "lat": 50.4052576,
+    "lon": 1.5711617
+  },
+  "0795925": {
+    "code": "0795925",
+    "name": "NIORT VOLLEY BALL",
+    "city": "NIORT",
+    "department": "79",
+    "lat": 46.3239233,
+    "lon": -0.4646064
+  },
+  "0869249": {
+    "code": "0869249",
+    "name": "CISSE VOLLEY-BALL",
+    "city": "CISSÉ",
+    "department": "86",
+    "lat": 46.6462525,
+    "lon": 0.2279887
+  },
+  "0945694": {
+    "code": "0945694",
+    "name": "ENTENTE SPORTIVE VITRY",
+    "city": "VITRY SUR SEINE",
+    "department": "94",
+    "lat": 48.7876,
+    "lon": 2.39164
+  },
+  "0946822": {
+    "code": "0946822",
+    "name": "ASA MAISONS ALFORT",
+    "city": "MAISONS ALFORT",
+    "department": "94",
+    "lat": 48.8012045,
+    "lon": 2.4309703
+  },
+  "0347228": {
+    "code": "0347228",
+    "name": "ENTENTE CASTRIES VOLLEY BALL",
+    "city": "CASTRIES",
+    "department": "34",
+    "lat": 43.6779101,
+    "lon": 3.9868904
+  },
+  "0812335": {
+    "code": "0812335",
+    "name": "VOLLEY-BALL ALBIGEOIS",
+    "city": "ALBI",
+    "department": "81",
+    "lat": 43.9277552,
+    "lon": 2.147899
+  },
+  "0826762": {
+    "code": "0826762",
+    "name": "MONTAUBAN VOLLEY-BALL 82",
+    "city": "MONTAUBAN",
+    "department": "82",
+    "lat": 44.0175835,
+    "lon": 1.3549991
+  },
+  "0574382": {
+    "code": "0574382",
+    "name": "VOLLEY-CLUB CREUTZWALD",
+    "city": "CREUTZWALD",
+    "department": "57",
+    "lat": 49.2052869,
+    "lon": 6.6963095
+  },
+  "0671561": {
+    "code": "0671561",
+    "name": "IMANA VOLLEY",
+    "city": "STRASBOURG",
+    "department": "67",
+    "lat": 48.584614,
+    "lon": 7.7507127
+  },
+  "0146853": {
+    "code": "0146853",
+    "name": "ASPTT DE CAEN",
+    "city": "CAEN",
+    "department": "14",
+    "lat": 49.1813403,
+    "lon": -0.3635615
+  },
+  "0298912": {
+    "code": "0298912",
+    "name": "CONCARNEAU VOLLEY",
+    "city": "CONCARNEAU",
+    "department": "29",
+    "lat": 47.8757017,
+    "lon": -3.9223889
+  },
+  "0351857": {
+    "code": "0351857",
+    "name": "AVENIR MARPIRE CHAMPEAUX",
+    "city": "MARPIRE",
+    "department": "35",
+    "lat": 48.1411828,
+    "lon": -1.3407965
+  },
+  "0358283": {
+    "code": "0358283",
+    "name": "VB GUICHEN",
+    "city": "GUICHEN",
+    "department": "35",
+    "lat": 47.9659271,
+    "lon": -1.7970987
+  },
+  "0374835": {
+    "code": "0374835",
+    "name": "MONTS VOLLEY-BALL",
+    "city": "MONTS",
+    "department": "37",
+    "lat": 47.2749998,
+    "lon": 0.6424978
+  },
+  "0836296": {
+    "code": "0836296",
+    "name": "DRAGUIGNAN UNION CLUB VAR VB",
+    "city": "DRAGUIGNAN",
+    "department": "83",
+    "lat": 43.5374662,
+    "lon": 6.4627333
+  },
+  "0015366": {
+    "code": "0015366",
+    "name": "VOLLEY CLUB MEXIMIEUX",
+    "city": "MEXIMIEUX",
+    "department": "01",
+    "lat": 45.90363,
+    "lon": 5.1925264
+  },
+  "0079102": {
+    "code": "0079102",
+    "name": "F.R.J.E.P. CHARNAS",
+    "city": "CHARNAS",
+    "department": "07",
+    "lat": 45.335952,
+    "lon": 4.744371
+  },
+  "0264654": {
+    "code": "0264654",
+    "name": "VALENCE ACE",
+    "city": "VALENCE",
+    "department": "26",
+    "lat": 44.9332277,
+    "lon": 4.8920811
+  },
+  "0698752": {
+    "code": "0698752",
+    "name": "CLUB SPORTIF DE DECINES",
+    "city": "DECINES",
+    "department": "69",
+    "lat": 45.773606,
+    "lon": 4.9633314
+  },
+  "0023703": {
+    "code": "0023703",
+    "name": "AGGLOMERATION SOISSONS VBC",
+    "city": "MARGIVAL",
+    "department": "02",
+    "lat": 49.4352778,
+    "lon": 3.4025
+  },
+  "0023705": {
+    "code": "0023705",
+    "name": "VOLLEY ITANCOURTOIS",
+    "city": "ITANCOURT",
+    "department": "02",
+    "lat": 49.8075,
+    "lon": 3.3458333
+  },
+  "0622028": {
+    "code": "0622028",
+    "name": "VB PASSION NOYELLES SOUS LENS",
+    "city": "NOYELLES SOUS LENS",
+    "department": "62",
+    "lat": 50.4307524,
+    "lon": 2.8760012
+  },
+  "0648903": {
+    "code": "0648903",
+    "name": "JURANCON CHAPELLE ROUSSE V.B.",
+    "city": "JURANCON",
+    "department": "64",
+    "lat": 43.2871825,
+    "lon": -0.3896425
+  },
+  "0758425": {
+    "code": "0758425",
+    "name": "PARIS VOLLEY CLUB",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0937510": {
+    "code": "0937510",
+    "name": "AVANT GARDE ST DENIS",
+    "city": "ST-DENIS",
+    "department": "93",
+    "lat": 48.9383732,
+    "lon": 2.3627508
+  },
+  "0959441": {
+    "code": "0959441",
+    "name": "ASSOCIATION SPORTIVE D'HERBLAY VOLLEY-BALL",
+    "city": "HERBLAY SUR SEINE",
+    "department": "95",
+    "lat": 48.9898588,
+    "lon": 2.166162
+  },
+  "0348589": {
+    "code": "0348589",
+    "name": "LE CRES VOLLEY-BALL",
+    "city": "LE CRES",
+    "department": "34",
+    "lat": 43.6500649,
+    "lon": 3.9369165
+  },
+  "0668034": {
+    "code": "0668034",
+    "name": "VOLLEY BALL ST ESTEVE",
+    "city": "SAINT-ESTEVE",
+    "department": "66",
+    "lat": 42.7100287,
+    "lon": 2.8456715
+  },
+  "0717441": {
+    "code": "0717441",
+    "name": "LA VAILLANTE AUTUN",
+    "city": "AUTUN",
+    "department": "71",
+    "lat": 46.9510313,
+    "lon": 4.2989478
+  },
+  "0356857": {
+    "code": "0356857",
+    "name": "JEANNE D ARC DE BRUZ",
+    "city": "BRUZ",
+    "department": "35",
+    "lat": 48.0245814,
+    "lon": -1.7471629
+  },
+  "0068669": {
+    "code": "0068669",
+    "name": "ETOILE SPORTIVE DE VILLENEUVE",
+    "city": "VILLENEUVE LOUBET",
+    "department": "06",
+    "lat": 43.6579947,
+    "lon": 7.1217592
+  },
+  "0132366": {
+    "code": "0132366",
+    "name": "MASSALIA VOLLEY",
+    "city": "ALLAUCH",
+    "department": "13",
+    "lat": 43.3351381,
+    "lon": 5.4832687
+  },
+  "0139175": {
+    "code": "0139175",
+    "name": "AUBAGNE CARNOUX VOLLEY-BALL",
+    "city": "AUBAGNE",
+    "department": "13",
+    "lat": 43.2924385,
+    "lon": 5.5703031
+  },
+  "0269591": {
+    "code": "0269591",
+    "name": "AS.SP.LA MOTTE VOLLEY",
+    "city": "LA MOTTE DE GALAURE",
+    "department": "26",
+    "lat": 45.1973075,
+    "lon": 4.9024168
+  },
+  "0695660": {
+    "code": "0695660",
+    "name": "ENTENTE SPORTIVE ST MAURICE",
+    "city": "CHABANIERE",
+    "department": "69",
+    "lat": 45.5853824,
+    "lon": 4.6208176
+  },
+  "0628986": {
+    "code": "0628986",
+    "name": "VOLLEY CLUB LIEVIN",
+    "city": "LIEVIN",
+    "department": "62",
+    "lat": 50.4245,
+    "lon": 2.7738
+  },
+  "0168474": {
+    "code": "0168474",
+    "name": "COSMIC VOLLEY",
+    "city": "LA COURONNE",
+    "department": "16",
+    "lat": 45.608673,
+    "lon": 0.1013099
+  },
+  "0175042": {
+    "code": "0175042",
+    "name": "ROYAN ATLANTIQUE VOLLEY-BALL",
+    "city": "ROYAN",
+    "department": "17",
+    "lat": 45.6245332,
+    "lon": -1.0287636
+  },
+  "0330022": {
+    "code": "0330022",
+    "name": "ENTENTE SPORTIVE DE BRUGES",
+    "city": "BRUGES",
+    "department": "33",
+    "lat": 44.8842379,
+    "lon": -0.6111474
+  },
+  "0645948": {
+    "code": "0645948",
+    "name": "UNION BEARNAISE",
+    "city": "ARGAGNON",
+    "department": "64",
+    "lat": 43.4585148,
+    "lon": -0.6860784
+  },
+  "0645994": {
+    "code": "0645994",
+    "name": "ANGLET OLYMPIQUE",
+    "city": "ANGLET",
+    "department": "64",
+    "lat": 43.4813927,
+    "lon": -1.5149935
+  },
+  "0778853": {
+    "code": "0778853",
+    "name": "COMBS VOLLEY-BALL",
+    "city": "COMBS LA VILLE",
+    "department": "77",
+    "lat": 48.6646994,
+    "lon": 2.564877
+  },
+  "0780015": {
+    "code": "0780015",
+    "name": "CELLOIS / CHESNAY VOLLEY-BALL",
+    "city": "LE CHESNAY",
+    "department": "78",
+    "lat": 48.8264842,
+    "lon": 2.1257808
+  },
+  "0788413": {
+    "code": "0788413",
+    "name": "POISSY VOLLEY",
+    "city": "POISSY",
+    "department": "78",
+    "lat": 48.9274192,
+    "lon": 2.0426301
+  },
+  "0924130": {
+    "code": "0924130",
+    "name": "RUEIL ATHLETIC CLUB",
+    "city": "RUEIL MALMAISON",
+    "department": "92",
+    "lat": 48.87778,
+    "lon": 2.1802832
+  },
+  "0941105": {
+    "code": "0941105",
+    "name": "LIMEIL-BREVANNES VOLLEY-BALL",
+    "city": "LIMEIL BREVANNES",
+    "department": "94",
+    "lat": 48.7489857,
+    "lon": 2.4809129
+  },
+  "0348380": {
+    "code": "0348380",
+    "name": "VOLLEY-CLUB VENDROIS",
+    "city": "VENDRES",
+    "department": "34",
+    "lat": 43.2686109,
+    "lon": 3.2237054
+  },
+  "0524003": {
+    "code": "0524003",
+    "name": "CLUB OLYMPIQUE SAINT-DIZIER VOLLEY-BALL",
+    "city": "SAINT-DIZIER",
+    "department": "52",
+    "lat": 48.6371125,
+    "lon": 4.9473513
+  },
+  "0574034": {
+    "code": "0574034",
+    "name": "V.C. HETTANGE/GRANDE SOETRICH",
+    "city": "HETTANGE GRANDE",
+    "department": "57",
+    "lat": 49.407298,
+    "lon": 6.1516319
+  },
+  "0671552": {
+    "code": "0671552",
+    "name": "VOLLEY-BALL CLUB DE MUNDOLSHEIM",
+    "city": "INGWILLER",
+    "department": "67",
+    "lat": 48.8718112,
+    "lon": 7.4798581
+  },
+  "0687972": {
+    "code": "0687972",
+    "name": "AS ST LEGER GUEBWILLER",
+    "city": "GUEBWILLER",
+    "department": "68",
+    "lat": 47.9094629,
+    "lon": 7.2113271
+  },
+  "0688103": {
+    "code": "0688103",
+    "name": "VOLLEY-BALL PFASTATT",
+    "city": "PFASTATT",
+    "department": "68",
+    "lat": 47.7697441,
+    "lon": 7.3025075
+  },
+  "0279614": {
+    "code": "0279614",
+    "name": "PACY SUR EURE VOLLEY BALL",
+    "city": "PACY SUR EURE",
+    "department": "27",
+    "lat": 49.0141954,
+    "lon": 1.38128
+  },
+  "0503818": {
+    "code": "0503818",
+    "name": "VOLLEY-BALL DES GREVES",
+    "city": "AVRANCHES",
+    "department": "50",
+    "lat": 48.6862085,
+    "lon": -1.3579476
+  },
+  "0616854": {
+    "code": "0616854",
+    "name": "VBC FLERIEN",
+    "city": "FLERS",
+    "department": "61",
+    "lat": 48.7484236,
+    "lon": -0.5697257
+  },
+  "0447105": {
+    "code": "0447105",
+    "name": "ASC ERDRE DONNEAU",
+    "city": "RIAILLE",
+    "department": "44",
+    "lat": 47.5171973,
+    "lon": -1.295781
+  },
+  "0723698": {
+    "code": "0723698",
+    "name": "VELO SPORTS FERTOIS VOLLEY BALL",
+    "city": "LA FERTÉ BERNARD",
+    "department": "72",
+    "lat": 48.1860576,
+    "lon": 0.6554511
+  },
+  "0724826": {
+    "code": "0724826",
+    "name": "CS SABLONS GAZONFIER LE MANS",
+    "city": "COULAINES",
+    "department": "72",
+    "lat": 48.0306873,
+    "lon": 0.2068691
+  },
+  "0188913": {
+    "code": "0188913",
+    "name": "BOURGES VOLLEY-BALL",
+    "city": "BOURGES",
+    "department": "18",
+    "lat": 47.0811658,
+    "lon": 2.399125
+  },
+  "0691865": {
+    "code": "0691865",
+    "name": "ASS SPORTIVE DARDILLOISE",
+    "city": "DARDILLY",
+    "department": "69",
+    "lat": 45.8064992,
+    "lon": 4.7537701
+  },
+  "0745991": {
+    "code": "0745991",
+    "name": "THONON VOLLEY-BALL",
+    "city": "THONON LES BAINS",
+    "department": "74",
+    "lat": 46.3731303,
+    "lon": 6.4779448
+  },
+  "0590018": {
+    "code": "0590018",
+    "name": "VOLLEY BALL LE QUESNOY",
+    "city": "LE QUESNOY",
+    "department": "59",
+    "lat": 50.2473417,
+    "lon": 3.6364504
+  },
+  "0608712": {
+    "code": "0608712",
+    "name": "COMPIEGNE VOLLEY",
+    "city": "COMPIÈGNE",
+    "department": "60",
+    "lat": 49.4179497,
+    "lon": 2.8263171
+  },
+  "0170009": {
+    "code": "0170009",
+    "name": "VOLLEY-BALL ATLANTIQUE CLUB COTE DE BEAUTE",
+    "city": "SAINT GEORGES DE DIDONNE",
+    "department": "17",
+    "lat": 45.6024886,
+    "lon": -0.997949
+  },
+  "0177252": {
+    "code": "0177252",
+    "name": "CHATELAILLON-PLAGE VOLLEY-BALL",
+    "city": "CHATELAILLON-PLAGE",
+    "department": "17",
+    "lat": 46.0738633,
+    "lon": -1.0903991
+  },
+  "0336786": {
+    "code": "0336786",
+    "name": "AS ST MEDARD EN JALLES",
+    "city": "ST MEDARD EN JALLES",
+    "department": "33",
+    "lat": 44.8958887,
+    "lon": -0.7170764
+  },
+  "0337242": {
+    "code": "0337242",
+    "name": "ASS SPORT AMBARESIENNE",
+    "city": "AMBARES",
+    "department": "33",
+    "lat": 44.9259011,
+    "lon": -0.4881846
+  },
+  "0408048": {
+    "code": "0408048",
+    "name": "VOLLEY CLUB D'ORTHE",
+    "city": "BELUS",
+    "department": "40",
+    "lat": 43.5913789,
+    "lon": -1.1086522
+  },
+  "0862446": {
+    "code": "0862446",
+    "name": "US DE MIGNE-AUXANCES VOLLEY-BALL",
+    "city": "POITIERS",
+    "department": "86",
+    "lat": 46.5802596,
+    "lon": 0.340196
+  },
+  "0864160": {
+    "code": "0864160",
+    "name": "CSA CHATELLERAULT",
+    "city": "CHATELLERAULT",
+    "department": "86",
+    "lat": 46.8180047,
+    "lon": 0.545812
+  },
+  "0878050": {
+    "code": "0878050",
+    "name": "LANDOUGE LOISIRS",
+    "city": "LIMOGES",
+    "department": "87",
+    "lat": 45.8354243,
+    "lon": 1.2644847
+  },
+  "0921669": {
+    "code": "0921669",
+    "name": "ENTENTE SPORTIVE DE NANTERRE",
+    "city": "NANTERRE",
+    "department": "92",
+    "lat": 48.8924273,
+    "lon": 2.2071267
+  },
+  "0922831": {
+    "code": "0922831",
+    "name": "SPORTING CLUB CHATILLONNAIS",
+    "city": "CHATILLON",
+    "department": "92",
+    "lat": 48.7997756,
+    "lon": 2.2897124
+  },
+  "0934829": {
+    "code": "0934829",
+    "name": "CLUB SPORTIF MUN EPINAY",
+    "city": "EPINAY SUR SEINE",
+    "department": "93",
+    "lat": 48.9525181,
+    "lon": 2.3145039
+  },
+  "0950023": {
+    "code": "0950023",
+    "name": "AS VOLLEY BALL CERGY",
+    "city": "CERGY",
+    "department": "95",
+    "lat": 49.0527528,
+    "lon": 2.0388736
+  },
+  "0954172": {
+    "code": "0954172",
+    "name": "CSM EAUBONNE",
+    "city": "EAUBONNE",
+    "department": "95",
+    "lat": 48.9911296,
+    "lon": 2.2792058
+  },
+  "0084070": {
+    "code": "0084070",
+    "name": "RETHEL CLUB VOLLEY-BALL",
+    "city": "RETHEL",
+    "department": "08",
+    "lat": 49.5091447,
+    "lon": 4.3666467
+  },
+  "0619616": {
+    "code": "0619616",
+    "name": "ALENCON VOLLEY",
+    "city": "ALENÇON",
+    "department": "61",
+    "lat": 48.4312059,
+    "lon": 0.0911374
+  },
+  "0351506": {
+    "code": "0351506",
+    "name": "LES BLEUETS PORTES DE BRETAGNE VB",
+    "city": "LE PERTRE",
+    "department": "35",
+    "lat": 48.0331705,
+    "lon": -1.0370236
+  },
+  "0420015": {
+    "code": "0420015",
+    "name": "ENTENTE FOREZIENNE VOLLEY-BALL",
+    "city": "ANDREZIEUX-BOUTHEON",
+    "department": "42",
+    "lat": 45.5250887,
+    "lon": 4.2594811
+  },
+  "0599512": {
+    "code": "0599512",
+    "name": "VC AMICALISTE D'AULNOY",
+    "city": "AULNOY LEZ VALENCIENNES",
+    "department": "59",
+    "lat": 50.330848,
+    "lon": 3.5314621
+  },
+  "0947898": {
+    "code": "0947898",
+    "name": "U S DE CRETEIL",
+    "city": "94000 CRETEIL",
+    "department": "94",
+    "lat": 48.7845271,
+    "lon": 2.4539997
+  },
+  "0317037": {
+    "code": "0317037",
+    "name": "GRENADE VOLLEY BALL",
+    "city": "GRENADE",
+    "department": "31",
+    "lat": 43.7723362,
+    "lon": 1.2931922
+  },
+  "0264641": {
+    "code": "0264641",
+    "name": "SPORTS ET LOISIRS DE MARGES",
+    "city": "MONTCHENU",
+    "department": "26",
+    "lat": 45.1955309,
+    "lon": 5.0314318
+  },
+  "0690039": {
+    "code": "0690039",
+    "name": "ASPERLY",
+    "city": "LYON",
+    "department": "69",
+    "lat": 45.7578137,
+    "lon": 4.8320114
+  },
+  "0739029": {
+    "code": "0739029",
+    "name": "EN. LAIQUE ALBERTVILLE UGINE",
+    "city": "ALBERTVILLE",
+    "department": "73",
+    "lat": 45.6754622,
+    "lon": 6.3925417
+  },
+  "0593506": {
+    "code": "0593506",
+    "name": "AS SPORT ET JOIE LILLE",
+    "city": "LILLE",
+    "department": "59",
+    "lat": 50.6365654,
+    "lon": 3.0635282
+  },
+  "0628859": {
+    "code": "0628859",
+    "name": "RACING CLUB D'ARRAS",
+    "city": "ARRAS",
+    "department": "62",
+    "lat": 50.291048,
+    "lon": 2.7772211
+  },
+  "0756063": {
+    "code": "0756063",
+    "name": "SPORT CLUB UNIVERSITAIRE FCE",
+    "city": "PARIS",
+    "department": "75",
+    "lat": 48.8588897,
+    "lon": 2.320041
+  },
+  "0789084": {
+    "code": "0789084",
+    "name": "AS. SP. MONTIGNY LE BRETONNEUX",
+    "city": "MONTIGNY LE BRETONNEUX",
+    "department": "78",
+    "lat": 48.7698937,
+    "lon": 2.0381228
+  },
+  "0916131": {
+    "code": "0916131",
+    "name": "UNION SPORTIVE WISSOUS VB",
+    "city": "WISSOUS",
+    "department": "91",
+    "lat": 48.7316381,
+    "lon": 2.3268669
+  },
+  "0931359": {
+    "code": "0931359",
+    "name": "VILLEMOMBLE SPORTS SECTION V.B.",
+    "city": "VILLEMOMBLE",
+    "department": "93",
+    "lat": 48.881886,
+    "lon": 2.5076181
+  },
+  "0442445": {
+    "code": "0442445",
+    "name": "VOLLEY CLUB CLISSON",
+    "city": "CLISSON",
+    "department": "44",
+    "lat": 47.0877218,
+    "lon": -1.2817422
+  },
+  "0858913": {
+    "code": "0858913",
+    "name": "ST MARTIN/ST AUBIN VOLLEY",
+    "city": "ST MARTIN DES TILLEULS",
+    "department": "85",
+    "lat": 46.9747222,
+    "lon": -1.05
+  },
+  "0359009": {
+    "code": "0359009",
+    "name": "VOLLEY-BALL GUIGNEN",
+    "city": "GUIGNEN",
+    "department": "35",
+    "lat": 47.9205654,
+    "lon": -1.8613166
+  },
+  "0376019": {
+    "code": "0376019",
+    "name": "ALERTE SPORTIVE MONTLOUIS",
+    "city": "MONTLOUIS-SUR-LOIRE",
+    "department": "37",
+    "lat": 47.3881023,
+    "lon": 0.8269289
+  },
+  "0057392": {
+    "code": "0057392",
+    "name": "VOLLEY CLUB DU GUILLESTROIS",
+    "city": "GUILLESTRE",
+    "department": "05",
+    "lat": 44.6597849,
+    "lon": 6.6493945
+  },
+  "0060048": {
+    "code": "0060048",
+    "name": "MOUGINS COTE D'AZUR VOLLEY-BALL",
+    "city": "MOUGINS",
+    "department": "06",
+    "lat": 43.6008898,
+    "lon": 6.9963543
+  },
+  "0385507": {
+    "code": "0385507",
+    "name": "FONTAINE VOLLEY",
+    "city": "FONTAINE",
+    "department": "38",
+    "lat": 45.1950183,
+    "lon": 5.6869624
+  },
+  "0599142": {
+    "code": "0599142",
+    "name": "VOLLEY-BALL CLUB BAILLEULOIS",
+    "city": "BAILLEUL",
+    "department": "59",
+    "lat": 50.7396668,
+    "lon": 2.7349286
+  },
+  "0340030": {
+    "code": "0340030",
+    "name": "GAZELEC BEZIERS MARAUSSAN VOLLEY-BALL",
+    "city": "BEZIERS",
+    "department": "34",
+    "lat": 43.3426562,
+    "lon": 3.2131307
+  },
+  "0340038": {
+    "code": "0340038",
+    "name": "VOLLEY CLUB MARSEILLANAIS",
+    "city": "POMEROLS",
+    "department": "34",
+    "lat": 43.390895,
+    "lon": 3.4992161
+  },
+  "0345657": {
+    "code": "0345657",
+    "name": "VOLLEY OLYMPIQUE MEZOIS",
+    "city": "MEZE",
+    "department": "34",
+    "lat": 43.4245985,
+    "lon": 3.5988383
+  },
+  "0548596": {
+    "code": "0548596",
+    "name": "UNION SPORTIVE BRIOTINE",
+    "city": "BRIEY",
+    "department": "54",
+    "lat": 49.2480975,
+    "lon": 5.9370519
+  },
+  "0574993": {
+    "code": "0574993",
+    "name": "ENTENTE SPORTIVE D HAGONDANGE",
+    "city": "HAGONDANGE",
+    "department": "57",
+    "lat": 49.2540313,
+    "lon": 6.1678213
+  },
+  "0674390": {
+    "code": "0674390",
+    "name": "CER.SPORT.TRICOLORE SAVERNE",
+    "city": "OTTERSWILLER",
+    "department": "67",
+    "lat": 48.7272524,
+    "lon": 7.3755834
+  },
+  "0616179": {
+    "code": "0616179",
+    "name": "CLUB SPORTIF FERTE MACE",
+    "city": "LA FERTE-MACE",
+    "department": "61",
+    "lat": 48.5895488,
+    "lon": -0.3584924
+  },
+  "0384796": {
+    "code": "0384796",
+    "name": "ENT SP ST MARTIN D HERES",
+    "city": "SAINT MARTIN D",
+    "department": "38",
+    "lat": 45.6342203,
+    "lon": 5.2989658
+  },
+  "0338871": {
+    "code": "0338871",
+    "name": "ENT. SPORTIVE BLANQUEFORTAISE",
+    "city": "BLANQUEFORT",
+    "department": "33",
+    "lat": 44.9088982,
+    "lon": -0.6300363
+  },
+  "0476726": {
+    "code": "0476726",
+    "name": "NERAC VOLLEY-BALL",
+    "city": "NERAC",
+    "department": "47",
+    "lat": 44.1353979,
+    "lon": 0.3392503
+  },
+  "0773761": {
+    "code": "0773761",
+    "name": "ALLIANCE NORD 77 VB",
+    "city": "QUINCY VOISINS",
+    "department": "77",
+    "lat": 48.8997,
+    "lon": 2.87886
+  },
+  "0349336": {
+    "code": "0349336",
+    "name": "SAINT-GELY VOLLEY-BALL",
+    "city": "SAINT GELY DU FESC",
+    "department": "34",
+    "lat": 43.6913873,
+    "lon": 3.803981
+  },
+  "0761487": {
+    "code": "0761487",
+    "name": "VB ISNEAUVILLE BOIS-GUILLAUME",
+    "city": "BOIS GUILLAUME",
+    "department": "76",
+    "lat": 49.4704819,
+    "lon": 1.1199476
+  },
+  "0259293": {
+    "code": "0259293",
+    "name": "ENTENTE VOLLEY BEAUCOURT SOCHAUX PAYS MONTBELIARD",
+    "city": "VIEUX-CHARMONT",
+    "department": "25",
+    "lat": 47.5237418,
+    "lon": 6.839312
+  },
+  "0259435": {
+    "code": "0259435",
+    "name": "VOLLEY AUDINCOURT CLUB",
+    "city": "AUDINCOURT",
+    "department": "25",
+    "lat": 47.4819786,
+    "lon": 6.8413684
+  },
+  "0351469": {
+    "code": "0351469",
+    "name": "UNION SPORTIVE LAILLE",
+    "city": "LAILLE",
+    "department": "35",
+    "lat": 47.9784056,
+    "lon": -1.7199066
+  },
+  "0358297": {
+    "code": "0358297",
+    "name": "UNION SPORTIVE LIFFREENNE",
+    "city": "LIFFRE",
+    "department": "35",
+    "lat": 48.2145992,
+    "lon": -1.5059748
+  },
+  "0044309": {
+    "code": "0044309",
+    "name": "ENT PROVEN DIGNE/MANOSQUE V.B.",
+    "city": "PIERREVERT",
+    "department": "04",
+    "lat": 43.8118768,
+    "lon": 5.749258
+  },
+  "0063347": {
+    "code": "0063347",
+    "name": "PAYS DE FAYENCE VOLLEY-BALL",
+    "city": "LE TIGNET",
+    "department": "06",
+    "lat": 43.6399782,
+    "lon": 6.8462891
+  },
+  "0064512": {
+    "code": "0064512",
+    "name": "ASPTT NICE",
+    "city": "NICE",
+    "department": "06",
+    "lat": 43.7009358,
+    "lon": 7.2683912
+  },
+  "0068779": {
+    "code": "0068779",
+    "name": "CLUB OMNISPORTS DE VALBONNE",
+    "city": "SOPHIA ANTIPOLIS",
+    "department": "06",
+    "lat": 43.6195225,
+    "lon": 7.0518158
+  },
+  "0068785": {
+    "code": "0068785",
+    "name": "VENCE VOLLEY-BALL",
+    "city": "VENCE",
+    "department": "06",
+    "lat": 43.7224167,
+    "lon": 7.1116845
+  },
+  "0034954": {
+    "code": "0034954",
+    "name": "STADE MONTLUCONNAIS",
+    "city": "MONTLUCON",
+    "department": "03",
+    "lat": 46.3400296,
+    "lon": 2.6073963
+  },
+  "0035229": {
+    "code": "0035229",
+    "name": "AS SP MOULINOISE",
+    "city": "MOULINS",
+    "department": "03",
+    "lat": 46.5660526,
+    "lon": 3.3331703
+  },
+  "0384651": {
+    "code": "0384651",
+    "name": "AMICALE LAIQUE ECHIROLLES V.B.",
+    "city": "ECHIROLLES",
+    "department": "38",
+    "lat": 45.1481694,
+    "lon": 5.718687
+  },
+  "0745505": {
+    "code": "0745505",
+    "name": "PASSY-SALLANCHES VOLLEY",
+    "city": "SALLANCHES",
+    "department": "74",
+    "lat": 45.9361246,
+    "lon": 6.6302551
+  },
+  "0025634": {
+    "code": "0025634",
+    "name": "CHATEAU THIERRY V.B.",
+    "city": "CHATEAU-THIERRY",
+    "department": "02",
+    "lat": 49.0457362,
+    "lon": 3.4027111
+  },
+  "0622950": {
+    "code": "0622950",
+    "name": "C G SAN MARTIN BOULOGNE",
+    "city": "SAINT MARTIN BOULOGNE",
+    "department": "62",
+    "lat": 50.7258932,
+    "lon": 1.633867
+  },
+  "0165816": {
+    "code": "0165816",
+    "name": "COGNAC VOLLEY",
+    "city": "COGNAC",
+    "department": "16",
+    "lat": 45.6931647,
+    "lon": -0.3250175
+  },
+  "0168144": {
+    "code": "0168144",
+    "name": "ETOILE SPORTIVE DE CHAMPNIERS ANGOULEME",
+    "city": "ANGOULEME",
+    "department": "16",
+    "lat": 45.6484505,
+    "lon": 0.1561947
+  },
+  "0174953": {
+    "code": "0174953",
+    "name": "SPORT ATHLETIQUE ROCHEFORTAIS",
+    "city": "ROCHEFORT",
+    "department": "17",
+    "lat": 45.9366592,
+    "lon": -0.9616399
+  },
+  "0405957": {
+    "code": "0405957",
+    "name": "ADOUR VOLLEY",
+    "city": "GRENADE SUR ADOUR",
+    "department": "40",
+    "lat": 43.780733,
+    "lon": -0.4341591
+  },
+  "0640009": {
+    "code": "0640009",
+    "name": "BAYONNE VOLLEY-BALL",
+    "city": "BAYONNE",
+    "department": "64",
+    "lat": 43.4945144,
+    "lon": -1.4736657
+  },
+  "0918042": {
+    "code": "0918042",
+    "name": "EN SP MONTGERONNAISE",
+    "city": "MONTGERON",
+    "department": "91",
+    "lat": 48.7038873,
+    "lon": 2.4605107
+  },
+  "0943988": {
+    "code": "0943988",
+    "name": "VOLLEY-CLUB NOGENTAIS",
+    "city": "NOGENT SUR MARNE",
+    "department": "94",
+    "lat": 48.8387639,
+    "lon": 2.4916592
+  },
+  "0949368": {
+    "code": "0949368",
+    "name": "CHOISY LE ROI VOLLEY-BALL",
+    "city": "CHOISY LE ROI",
+    "department": "94",
+    "lat": 48.7630238,
+    "lon": 2.4093664
+  },
+  "0545520": {
+    "code": "0545520",
+    "name": "OMNISPORTS FROUARD POMPEY",
+    "city": "FROUARD",
+    "department": "54",
+    "lat": 48.7601755,
+    "lon": 6.1293789
+  },
+  "0689296": {
+    "code": "0689296",
+    "name": "RIEDISHEIM VOLLEY-BALL",
+    "city": "MULHOUSE",
+    "department": "68",
+    "lat": 47.7467233,
+    "lon": 7.3389937
+  },
+  "0149355": {
+    "code": "0149355",
+    "name": "V.B.C. ATHLETIQUE LEXOVIEN",
+    "city": "LISIEUX",
+    "department": "14",
+    "lat": 49.1460831,
+    "lon": 0.2255168
+  },
+  "0495295": {
+    "code": "0495295",
+    "name": "SAINT-MACAIRE VOLLEY-BALL",
+    "city": "SEVREMOINE",
+    "department": "49",
+    "lat": 47.0877516,
+    "lon": -1.0821288
+  },
+  "0351454": {
+    "code": "0351454",
+    "name": "HAUTE VILAINE VOLLEY-BALL",
+    "city": "SAINT M'HERVÉ",
+    "department": "35",
+    "lat": 48.1784037,
+    "lon": -1.1169757
+  },
+  "0351496": {
+    "code": "0351496",
+    "name": "DINARD COTE D'EMERAUDE VOLLEY",
+    "city": "DINARD",
+    "department": "35",
+    "lat": 48.6320379,
+    "lon": -2.0580178
+  },
+  "0357988": {
+    "code": "0357988",
+    "name": "VOLLEY BALL GREGORIEN",
+    "city": "SAINT GREGOIRE",
+    "department": "35",
+    "lat": 48.1524129,
+    "lon": -1.685398
+  },
+  "0060050": {
+    "code": "0060050",
+    "name": "PHENIX MARITIMUM VOLLEY",
+    "city": "PEYMEINADE",
+    "department": "06",
+    "lat": 43.641991,
+    "lon": 6.8756858
+  },
+  "0846986": {
+    "code": "0846986",
+    "name": "VOLLEY BALL CARPENTRAS",
+    "city": "CARPENTRAS",
+    "department": "84",
+    "lat": 44.0554043,
+    "lon": 5.0487681
+  },
+  "0245511": {
+    "code": "0245511",
+    "name": "ASPTT PERIGUEUX",
+    "city": "PERIGUEUX",
+    "department": "24",
+    "lat": 45.1840214,
+    "lon": 0.7160392
+  },
+  "0338605": {
+    "code": "0338605",
+    "name": "CLUB MUNICIPAL FLOIRAC",
+    "city": "FLOIRAC",
+    "department": "33",
+    "lat": 44.8327,
+    "lon": -0.520823
+  },
+  "0098424": {
+    "code": "0098424",
+    "name": "V.B.C. APPAMEEN",
+    "city": "PAMIERS",
+    "department": "09",
+    "lat": 43.1147515,
+    "lon": 1.6082177
+  },
+  "0270020": {
+    "code": "0270020",
+    "name": "ARCHE VOLLEY-BALL",
+    "city": "PONT DE L ARCHE",
+    "department": "27",
+    "lat": 49.3049098,
+    "lon": 1.1562938
+  },
+  "0276685": {
+    "code": "0276685",
+    "name": "ENTENTE GISORSIENNE",
+    "city": "GISORS",
+    "department": "27",
+    "lat": 49.2789504,
+    "lon": 1.777826
+  },
+  "0219695": {
+    "code": "0219695",
+    "name": "DIJON TALANT VOLLEY-BALL",
+    "city": "DIJON",
+    "department": "21",
+    "lat": 47.3215806,
+    "lon": 5.0414701
+  },
+  "0706191": {
+    "code": "0706191",
+    "name": "AVANT-GARDE MUNICIP VESOUL",
+    "city": "VESOUL",
+    "department": "70",
+    "lat": 47.6197395,
+    "lon": 6.1544694
+  },
+  "0648734": {
+    "code": "0648734",
+    "name": "LONS VOLLEY-CLUB DU MOULIN",
+    "city": "LONS",
+    "department": "64",
+    "lat": 43.3154079,
+    "lon": -0.4097637
+  },
+  "0773754": {
+    "code": "0773754",
+    "name": "U.S. JEUNESSE MITRY V.B.",
+    "city": "MITRY MORY",
+    "department": "77",
+    "lat": 48.9839674,
+    "lon": 2.6183971
+  },
+  "0948279": {
+    "code": "0948279",
+    "name": "AS ELAN CHEVILLY-LARUE",
+    "city": "CHEVILLY-LARUE",
+    "department": "94",
+    "lat": 48.7714153,
+    "lon": 2.3469255
+  },
+  "0950033": {
+    "code": "0950033",
+    "name": "AS. VOLLEY OSNY PONTOISE",
+    "city": "PONTOISE",
+    "department": "95",
+    "lat": 49.0508845,
+    "lon": 2.1008067
+  },
+  "0319362": {
+    "code": "0319362",
+    "name": "UNION SPORTIVE RAMONVILLE V.B.",
+    "city": "RAMONVILLE ST AGNE",
+    "department": "31",
+    "lat": 43.5460533,
+    "lon": 1.4749101
+  },
+  "0279735": {
+    "code": "0279735",
+    "name": "VOLLEY-BALL GAILLON AUBEVOYE",
+    "city": "GAILLON",
+    "department": "27",
+    "lat": 49.1605604,
+    "lon": 1.3336126
+  },
+  "0948412": {
+    "code": "0948412",
+    "name": "US FONTENAYSIENNE",
+    "city": "FONTENAY-SOUS-BOIS",
+    "department": "94",
+    "lat": 48.8490721,
+    "lon": 2.4749347
+  },
+  "0886034": {
+    "code": "0886034",
+    "name": "VOLLEY CLUB DE REMIREMONT",
+    "city": "REMIREMONT",
+    "department": "88",
+    "lat": 48.0158951,
+    "lon": 6.5912615
+  },
+  "0351491": {
+    "code": "0351491",
+    "name": "UNION SPORTIVE CHATEAUGIRON VOLLEY-BALL",
+    "city": "CHATEAUGIRON",
+    "department": "35",
+    "lat": 48.0486707,
+    "lon": -1.502815
+  },
+  "0077976": {
+    "code": "0077976",
+    "name": "US ALBENASSIENNE V.B.",
+    "city": "ST ETIENNE DE FONTBELLON",
+    "department": "07",
+    "lat": 44.5969806,
+    "lon": 4.3780321
+  },
+  "0380007": {
+    "code": "0380007",
+    "name": "VOLLEY-BALL CLUB APPRIEU",
+    "city": "APPRIEU",
+    "department": "38",
+    "lat": 45.3992601,
+    "lon": 5.502492
+  },
+  "0634252": {
+    "code": "0634252",
+    "name": "AL DE CEBAZAT FJEP",
+    "city": "CEBAZAT",
+    "department": "63",
+    "lat": 45.8305758,
+    "lon": 3.1000933
+  },
+  "0405959": {
+    "code": "0405959",
+    "name": "JEANNE ET SERGE ACADEMIE VOLLEY-BALL",
+    "city": "ANGRESSE",
+    "department": "40",
+    "lat": 43.65801,
+    "lon": -1.37342
+  },
+  "0959233": {
+    "code": "0959233",
+    "name": "MONTIGNY VOLLEY 95",
+    "city": "MONTIGNY LES CORMEILLES",
+    "department": "95",
+    "lat": 48.9959113,
+    "lon": 2.1989225
+  },
+  "0440054": {
+    "code": "0440054",
+    "name": "ASB.REZE VOLLEY 44",
+    "city": "REZE",
+    "department": "44",
+    "lat": 47.1905456,
+    "lon": -1.5695287
+  },
+  "0351443": {
+    "code": "0351443",
+    "name": "BROCELIANDE VOLLEY",
+    "city": "TREFFENDEL",
+    "department": "35",
+    "lat": 48.041297,
+    "lon": -2.0090611
+  },
+  "0622439": {
+    "code": "0622439",
+    "name": "ETOILE  D OIGNIES",
+    "city": "OIGNIES",
+    "department": "62",
+    "lat": 50.4643,
+    "lon": 2.99387
+  },
+  "0912772": {
+    "code": "0912772",
+    "name": "VOLLEY OLYMPIQUE JUVISY/ATHIS MONS",
+    "city": "JUVISY SUR ORGE",
+    "department": "91",
+    "lat": 48.6904063,
+    "lon": 2.373809
+  },
+  "0812326": {
+    "code": "0812326",
+    "name": "VOLLEY LABRUGUIEROIS/NYCKEL",
+    "city": "LABRUGUIERE",
+    "department": "81",
+    "lat": 43.5402951,
+    "lon": 2.2634222
+  },
+  "0520010": {
+    "code": "0520010",
+    "name": "AS COLLEGE CRESSOT DE JOINVILLE",
+    "city": "",
+    "department": "52",
+    "lat": 48.1329414,
+    "lon": 5.2529108
+  },
+  "0440049": {
+    "code": "0440049",
+    "name": "SEVRE ET LOIRE VOLLEY BALL",
+    "city": "LOROUX BOTTEREAU",
+    "department": "44",
+    "lat": 47.2385415,
+    "lon": -1.3472697
+  },
+  "0442441": {
+    "code": "0442441",
+    "name": "ORVAULT VOLLEY-BALL",
+    "city": "44300 - NANTES",
+    "department": "44",
+    "lat": 47.2463746,
+    "lon": -1.5387729
+  },
+  "0359633": {
+    "code": "0359633",
+    "name": "JEANNE D'ARC DE PLECHATEL",
+    "city": "PLECHATEL",
+    "department": "35",
+    "lat": 47.8947671,
+    "lon": -1.7496755
+  },
+  "0368667": {
+    "code": "0368667",
+    "name": "ASPTT CHATEAUROUX SECTION VB",
+    "city": "CHATEAUROUX",
+    "department": "36",
+    "lat": 46.8203785,
+    "lon": 1.6770956
+  },
+  "0833310": {
+    "code": "0833310",
+    "name": "VOLLEY CLUB MEDITERRANEE",
+    "city": "LA SEYNE SUR MER",
+    "department": "83",
+    "lat": 43.1007714,
+    "lon": 5.8788948
+  },
+  "0015373": {
+    "code": "0015373",
+    "name": "ASSOCIATION SPORTIVE ARBENT VOLLEY-BALL",
+    "city": "ARBENT",
+    "department": "01",
+    "lat": 46.2946684,
+    "lon": 5.680467
+  },
+  "0264658": {
+    "code": "0264658",
+    "name": "C.L.A.P. CREST",
+    "city": "CREST",
+    "department": "26",
+    "lat": 44.7282675,
+    "lon": 5.0236641
+  },
+  "0590033": {
+    "code": "0590033",
+    "name": "VOLLEY CLUB LIEU SAINT-AMAND",
+    "city": "LIEU SAINT-ARMAND",
+    "department": "59",
+    "lat": 45.6276919,
+    "lon": 6.4480466
+  },
+  "0594143": {
+    "code": "0594143",
+    "name": "LA MADELEINE VOLLEY-BALL ET VIE ACTIVE",
+    "city": "59110 - LA MADELEINE",
+    "department": "59",
+    "lat": 50.6540571,
+    "lon": 3.0677463
+  },
+  "0912765": {
+    "code": "0912765",
+    "name": "SAINT-PIERRE VOLLEY-BALL",
+    "city": "ST PIERRE DU PERRAY",
+    "department": "91",
+    "lat": 48.6137867,
+    "lon": 2.505381
+  },
+  "0618473": {
+    "code": "0618473",
+    "name": "PATRONAGE LAIQUE D'ARGENTAN",
+    "city": "ARGENTAN",
+    "department": "61",
+    "lat": 48.74289,
+    "lon": -0.0223386
+  },
+  "0440041": {
+    "code": "0440041",
+    "name": "PORNIC VOLLEY BALL",
+    "city": "PORNIC",
+    "department": "44",
+    "lat": 47.1152695,
+    "lon": -2.1040102
+  },
+  "0413486": {
+    "code": "0413486",
+    "name": "UNION SP VENDOMOISE",
+    "city": "VENDÖME",
+    "department": "41",
+    "lat": 47.7934453,
+    "lon": 1.0662256
+  },
+  "0337991": {
+    "code": "0337991",
+    "name": "VOLLEY SUD BASSIN D'ARCACHON",
+    "city": "LA TESTE DE BUCH",
+    "department": "33",
+    "lat": 44.6316943,
+    "lon": -1.1491319
+  },
+  "0476722": {
+    "code": "0476722",
+    "name": "ASPTT MARMANDE VOLLEY-BALL",
+    "city": "MARMANDE",
+    "department": "47",
+    "lat": 44.5007939,
+    "lon": 0.164274
+  },
+  "0921676": {
+    "code": "0921676",
+    "name": "AMICALE VILLENEUVE LA GARENNE V.B.",
+    "city": "VILLENEUVE-LA-GARENNE",
+    "department": "92",
+    "lat": 48.9350488,
+    "lon": 2.3324727
+  },
+  "0320002": {
+    "code": "0320002",
+    "name": "FRJEP EAUZE-LAURAET VOLLEY-BALL",
+    "city": "LAURAET",
+    "department": "32",
+    "lat": 43.9341984,
+    "lon": 0.2477554
+  },
+  "0270011": {
+    "code": "0270011",
+    "name": "VOLLEY VERNON/ST MARCEL",
+    "city": "SAINT MARCEL",
+    "department": "27",
+    "lat": 49.0963054,
+    "lon": 1.4439786
+  },
+  "0596435": {
+    "code": "0596435",
+    "name": "VOLLEY-BALL DE RONCQ",
+    "city": "RONCQ",
+    "department": "59",
+    "lat": 50.7531232,
+    "lon": 3.1209016
+  },
+  "0776475": {
+    "code": "0776475",
+    "name": "VIE SPORTIVE OZOPHORICIENNE",
+    "city": "OZOIR LA FERRIERE",
+    "department": "77",
+    "lat": 48.7620904,
+    "lon": 2.6719421
+  },
+  "0780017": {
+    "code": "0780017",
+    "name": "UNION SPORTIVE CARRIERES SUR SEINE",
+    "city": "CARRIERES SUR SEINE",
+    "department": "78",
+    "lat": 48.9134112,
+    "lon": 2.1779083
+  },
+  "0917513": {
+    "code": "0917513",
+    "name": "CLUB SPORTIF MENNECY",
+    "city": "MENNECY",
+    "department": "91",
+    "lat": 48.5666645,
+    "lon": 2.4347044
+  },
+  "0941129": {
+    "code": "0941129",
+    "name": "GENTILLY VOLLEY CLUB",
+    "city": "GENTILLY",
+    "department": "94",
+    "lat": 48.8153656,
+    "lon": 2.3483549
+  },
+  "0857966": {
+    "code": "0857966",
+    "name": "EPESSES HERBIERS VOLLEY-BALL",
+    "city": "LES HERBIERS",
+    "department": "85",
+    "lat": 46.871379,
+    "lon": -1.0150646
+  },
+  "0351499": {
+    "code": "0351499",
+    "name": "VOLLEY CLUB CASTELBOURGEOIS",
+    "city": "CHATEAUBOURG",
+    "department": "35",
+    "lat": 48.1108554,
+    "lon": -1.3982411
+  },
+  "0132380": {
+    "code": "0132380",
+    "name": "VENELLES PROVENCE VOLLEY",
+    "city": "VENELLES",
+    "department": "13",
+    "lat": 43.6003084,
+    "lon": 5.4804956
+  },
+  "0849374": {
+    "code": "0849374",
+    "name": "ENTENTE RHONE OUVEZE V.B.",
+    "city": "BEDARRIDES",
+    "department": "84",
+    "lat": 44.0407425,
+    "lon": 4.8982969
+  },
+  "0738286": {
+    "code": "0738286",
+    "name": "AIX LES BAINS V.B.",
+    "city": "DRUMETTAZ-CLARAFOND",
+    "department": "73",
+    "lat": 45.6582224,
+    "lon": 5.9285677
+  },
+  "0606677": {
+    "code": "0606677",
+    "name": "VOLLEY LOISIRS CREVECOEUR",
+    "city": "CREVECOEUR LE GRAND",
+    "department": "60",
+    "lat": 49.611,
+    "lon": 2.08184
+  },
+  "0912778": {
+    "code": "0912778",
+    "name": "PLESSIS VOLLEY",
+    "city": "LE PLESSIS PATE",
+    "department": "91",
+    "lat": 48.6116007,
+    "lon": 2.3256213
+  },
+  "0683731": {
+    "code": "0683731",
+    "name": "VOLLEY-BALL CLUB DU RHIN",
+    "city": "BARTENHEIM",
+    "department": "68",
+    "lat": 47.6354901,
+    "lon": 7.4766365
+  },
+  "0446523": {
+    "code": "0446523",
+    "name": "SS ST DENIS MAUVES SUR LOIRE",
+    "city": "MAUVES-SUR-LOIRE",
+    "department": "44",
+    "lat": 47.2954249,
+    "lon": -1.393575
+  },
+  "0358451": {
+    "code": "0358451",
+    "name": "UNION SPORTIVE VERN",
+    "city": "VERN SUR SEICHE",
+    "department": "35",
+    "lat": 48.0452053,
+    "lon": -1.6045972
+  },
+  "0170002": {
+    "code": "0170002",
+    "name": "DOMPIERRE SUR MER VOLLEY-BALL",
+    "city": "SAINTE SOULLE",
+    "department": "17",
+    "lat": 46.188253,
+    "lon": -1.0157986
+  },
+  "0443000": {
+    "code": "0443000",
+    "name": "LA BAULE VOLLEY-BALL",
+    "city": "ST ANDRÉ DES EAUX",
+    "department": "44",
+    "lat": 47.3160596,
+    "lon": -2.3099292
+  },
+  "0856001": {
+    "code": "0856001",
+    "name": "AIZENAY VOLLEY-BALL",
+    "city": "AIZENAY",
+    "department": "85",
+    "lat": 46.7391797,
+    "lon": -1.6084351
+  },
+  "0858798": {
+    "code": "0858798",
+    "name": "CHALLANS VOLLEY-BALL",
+    "city": "CHALLANS",
+    "department": "85",
+    "lat": 46.8478091,
+    "lon": -1.877431
+  },
+  "0299601": {
+    "code": "0299601",
+    "name": "DOUARNENEZ VOLLEY BALL CLUB",
+    "city": "DOUARNENEZ",
+    "department": "29",
+    "lat": 48.0944459,
+    "lon": -4.3311243
+  },
+  "0564104": {
+    "code": "0564104",
+    "name": "SAINT-AVE VOLLEY-BALL",
+    "city": "SAINT AVÉ",
+    "department": "56",
+    "lat": 47.6903849,
+    "lon": -2.7358875
+  },
+  "0568435": {
+    "code": "0568435",
+    "name": "CLUB OMNISPORTS DE PLUVIGNER",
+    "city": "PLUVIGNER",
+    "department": "56",
+    "lat": 47.7770909,
+    "lon": -3.0095755
+  },
+  "0057389": {
+    "code": "0057389",
+    "name": "GAP VOLLEY-BALL",
+    "city": "LA ROCHE DES ARNAUDS",
+    "department": "05",
+    "lat": 44.5635619,
+    "lon": 5.9591484
+  },
+  "0060041": {
+    "code": "0060041",
+    "name": "PEGOMAS VAL DE SIAGNE VOLLEY-BALL",
+    "city": "PEGOMAS",
+    "department": "06",
+    "lat": 43.5928477,
+    "lon": 6.9306639
+  },
+  "0132364": {
+    "code": "0132364",
+    "name": "AMIS DE L'INSTRUCTION LAIQUE",
+    "city": "GRANS",
+    "department": "13",
+    "lat": 43.606758,
+    "lon": 5.063379
+  },
+  "0848678": {
+    "code": "0848678",
+    "name": "CLUB VOLLEY-BALL APTESIEN",
+    "city": "APT",
+    "department": "84",
+    "lat": 43.8757936,
+    "lon": 5.3970648
+  },
+  "0697746": {
+    "code": "0697746",
+    "name": "PATRO. LAIQUE CRAPONNE",
+    "city": "CRAPONNE",
+    "department": "69",
+    "lat": 45.743476,
+    "lon": 4.7231057
+  },
+  "0804244": {
+    "code": "0804244",
+    "name": "CERCLE SPORTIF ROYEN",
+    "city": "RETHONVILLERS",
+    "department": "80",
+    "lat": 49.7330342,
+    "lon": 2.8668461
+  },
+  "0406707": {
+    "code": "0406707",
+    "name": "UNION SPORTIVE HAGETMAU",
+    "city": "HAGETMAU",
+    "department": "40",
+    "lat": 43.65506,
+    "lon": -0.59393
+  },
+  "0795538": {
+    "code": "0795538",
+    "name": "VOLLEY-BALL CLUB ECHIRE",
+    "city": "ECHIRÉ",
+    "department": "79",
+    "lat": 46.3919107,
+    "lon": -0.4154901
+  },
+  "0910000": {
+    "code": "0910000",
+    "name": "AMICALE DES SPORTS ET LOISIRS DE JANVILLE LARDY",
+    "city": "LARDY",
+    "department": "91",
+    "lat": 48.5204818,
+    "lon": 2.2654419
+  },
+  "0912702": {
+    "code": "0912702",
+    "name": "CLUB OMNISPORTS DE COURCOURONNES -SECTION VB",
+    "city": "COURCOURONNES",
+    "department": "91",
+    "lat": 48.622557,
+    "lon": 2.4118939
+  },
+  "0914781": {
+    "code": "0914781",
+    "name": "ENTENTE SPORTIVE MASSY",
+    "city": "MASSY",
+    "department": "91",
+    "lat": 48.730158,
+    "lon": 2.2766735
+  },
+  "0950004": {
+    "code": "0950004",
+    "name": "CLUB SPORTIF VOLLEY PUISEUX-EN-FRANCE",
+    "city": "PUISEUX-EN-FRANCE",
+    "department": "95",
+    "lat": 49.0597512,
+    "lon": 2.5009544
+  },
+  "0950038": {
+    "code": "0950038",
+    "name": "MONTMORENCY VOLLEY BALL",
+    "city": "MONTMORENCY",
+    "department": "95",
+    "lat": 48.9891693,
+    "lon": 2.3197111
+  },
+  "0084069": {
+    "code": "0084069",
+    "name": "VOLLEY CLUB SEDANAIS",
+    "city": "GLAIRE",
+    "department": "08",
+    "lat": 49.7116667,
+    "lon": 4.9155556
+  },
+  "0761506": {
+    "code": "0761506",
+    "name": "BALEZ O VOLLEY",
+    "city": "ELBEUF",
+    "department": "76",
+    "lat": 49.2871086,
+    "lon": 1.0108998
+  },
+  "0015367": {
+    "code": "0015367",
+    "name": "BOURG VOLLEY",
+    "city": "BOURG EN BRESSE",
+    "department": "01",
+    "lat": 46.2051192,
+    "lon": 5.2250324
+  },
+  "0598741": {
+    "code": "0598741",
+    "name": "V.C.JEAN MACE HAZEBROUCK",
+    "city": "HAZEBROUCK",
+    "department": "59",
+    "lat": 50.7226113,
+    "lon": 2.5360331
+  },
+  "0770057": {
+    "code": "0770057",
+    "name": "AS BALNEOLITAINE",
+    "city": "BAGNEAUX SUR LOING",
+    "department": "77",
+    "lat": 48.2314677,
+    "lon": 2.7042711
+  },
+  "0785333": {
+    "code": "0785333",
+    "name": "MARLY-LE-ROI VOLLEY-BALL",
+    "city": "MARLY-LE-ROI",
+    "department": "78",
+    "lat": 48.8681762,
+    "lon": 2.0965935
+  },
+  "0668643": {
+    "code": "0668643",
+    "name": "CABESTANY OLYMPIQUE CULTUREL VOLLEYBALL",
+    "city": "CABESTANY",
+    "department": "66",
+    "lat": 42.6799514,
+    "lon": 2.9403263
+  },
+  "0542765": {
+    "code": "0542765",
+    "name": "LUNEVILLE VOLLEY-BALL",
+    "city": "LUNEVILLE",
+    "department": "54",
+    "lat": 48.5916164,
+    "lon": 6.4919563
+  },
+  "0699733": {
+    "code": "0699733",
+    "name": "CISGO VBALL CLUB INTERCO. ST GENIS-LAVAL/OULLINS",
+    "city": "OULLINS",
+    "department": "69",
+    "lat": 45.7153254,
+    "lon": 4.8039331
+  },
+  "0590013": {
+    "code": "0590013",
+    "name": "LOMME VOLLEY-BALL",
+    "city": "LA CHAPELLE D'ARMENTIERES",
+    "department": "59",
+    "lat": 50.6727867,
+    "lon": 2.8965721
+  },
+  "0683676": {
+    "code": "0683676",
+    "name": "VOLLEY-BALL CLUB HIRSINGUE",
+    "city": "MULHOUSE",
+    "department": "68",
+    "lat": 47.7467233,
+    "lon": 7.3389937
+  },
+  "0919440": {
+    "code": "0919440",
+    "name": "MORSANG VOLLEY",
+    "city": "MORSANG SUR ORGE",
+    "department": "91",
+    "lat": 48.6641415,
+    "lon": 2.3527728
+  },
+  "0950030": {
+    "code": "0950030",
+    "name": "CLUB MARLYSIEN DE VOLLEY-BALL",
+    "city": "MARLY LA VILLE",
+    "department": "95",
+    "lat": 49.0823913,
+    "lon": 2.5034402
+  },
+  "0353652": {
+    "code": "0353652",
+    "name": "C.P.B. RENNES 35",
+    "city": "RENNES CEDEX 7",
+    "department": "35",
+    "lat": 48.1113387,
+    "lon": -1.6800198
+  },
+  "0842424": {
+    "code": "0842424",
+    "name": "AVIGNON VOLLEY BALL",
+    "city": "AVIGNON   -  CEDEX 1",
+    "department": "84",
+    "lat": 43.9492493,
+    "lon": 4.8059012
+  },
+  "0148994": {
+    "code": "0148994",
+    "name": "ELAN SPORTIF DE CARPIQUET DE VOLLEY",
+    "city": "CARPIQUET CEDEX",
+    "department": "14",
+    "lat": 49.1841482,
+    "lon": -0.4417479
+  },
+  "0698293": {
+    "code": "0698293",
+    "name": "U.S. MEYZIEU VOLLEY-BALL",
+    "city": "MEYZIEU CEDEX",
+    "department": "69",
+    "lat": 45.7764637,
+    "lon": 5.0044767
+  },
+  "0030027": {
+    "code": "0030027",
+    "name": "V.B. DISTRICT VICHYSSOIS",
+    "city": "VICHY CEDEX",
+    "department": "03",
+    "lat": 46.124017,
+    "lon": 3.4203658
+  },
+  "0413192": {
+    "code": "0413192",
+    "name": "AS AMICALE JEUNESSE BLESOISE",
+    "city": "BLOIS CEDEX",
+    "department": "41",
+    "lat": 47.5876861,
+    "lon": 1.3337639
+  },
+  "0539224": {
+    "code": "0539224",
+    "name": "AS. CHATEAU GONTIER VB",
+    "city": "CHATEAU GONTIER CEDEX",
+    "department": "53",
+    "lat": 47.8263058,
+    "lon": -0.7066665
+  },
+  "0027343": {
+    "code": "0027343",
+    "name": "VILLERS COTTERETS VOLLEY-BALL",
+    "city": "VILLLERS COTTERETS CEDEX",
+    "department": "02",
+    "lat": 49.2549479,
+    "lon": 3.0909275
+  },
+  "0788607": {
+    "code": "0788607",
+    "name": "VOLLEY-BALL BOIS D'ARCY",
+    "city": "BOIS DARCY",
+    "department": "78",
+    "lat": 48.799856,
+    "lon": 2.023607
+  }
+}

@@ -1,18 +1,18 @@
 import type { Rating } from 'ts-trueskill';
 
-import { Department } from './geography';
+import { type Department } from './geography';
 
 // each set updates ts-ranking vs each match
 export const SET_RANKING = true;
 
 // export const seasons = [2025];
 // export const categories = ['M15M'];
-export const seasons = [2025, 2024, 2023, 2022];
-export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F', 'PMA'];
+export const seasons = [2026, 2025, 2024, 2023, 2022];
+export const categories = ['M13M', 'M15M', 'M18M', 'M21M', 'M13F', 'M15F', 'M18F', 'M21F']; // 'PMA'
 export const getResourceName = (season: number, entity: Entity, category: string) =>
   `FFVB-${season}-${entity === 'ACJEUNES' ? 'CDF' : entity}-${category}.CSV`;
 
-export const defaultSeason = 2025;
+export const defaultSeason = 2026;
 export const defaultEntity: Entity = 'ACJEUNES';
 export const defaultCategory = 'M18M';
 export const seasonToString = (season: number) => `${season - 1}/${season}`;
@@ -39,11 +39,15 @@ export interface Pool {
   ranking?: number;
 }
 
+/** A raw CSV line as parsed by PapaParse: every column is a string keyed by its header. */
+export type MatchRow = Record<string, string>;
+
 export interface CompetitionDay {
   readonly day: number;
   readonly teams: Team[];
   readonly matchs: Match[];
   readonly pools: Map<string, Pool>;
+  readonly pf: boolean;
 }
 
 export interface Ranking {
@@ -58,8 +62,9 @@ export interface Team {
   readonly name: string;
   readonly department: Department;
   readonly ranking: Ranking;
-  readonly gstats: Stats[];
-  readonly dstats: Stats[];
+  readonly gstats: Stats[]; // global (all days) stats
+  readonly sstats: Map<string, Stats>; // sliding stats (keyed by "day:maxDays")
+  readonly dstats: Stats[]; // daily stats
   readonly pools: Pool[];
   dayCount: number;
   lastDay: number; // last played day

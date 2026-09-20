@@ -1,10 +1,10 @@
 import { CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
-import { Avatar, Card, Collapse, CollapseProps } from 'antd';
+import { Avatar, Card, Collapse, type CollapseProps } from 'antd';
 import cx from 'classnames';
 
 import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
 import Trophies from '@/components/Trophies/Trophies';
-import { Competition, Match, Team } from '@/model/model';
+import { type Competition, type Match, type Team } from '@/model/model';
 import {
   getDayRanking,
   getTeamMatch,
@@ -28,7 +28,7 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
   const ranking = getTeamRanking(team, day, false, true);
   const previous = getTeamRanking(team, day - 1, false, true);
   const delta =
-    previous && !isNaN(ranking)
+    previous && ranking !== undefined
       ? ranking === previous
         ? ''
         : ranking < previous
@@ -39,7 +39,7 @@ const renderTeam = ({ competition, team, day, displayRanking }: TeamInfoProps) =
 
   return (
     <div className={cx('vb-card-header-content', { eliminated })}>
-      {ranking && (
+      {ranking !== undefined && (
         <Avatar size="large" className={cx('ranking', { 'ranking-low': !displayRanking })}>
           {ranking}
         </Avatar>
@@ -100,7 +100,7 @@ const renderMatchs = (
     const ranking = getTeamRanking(teamB, day, false, true);
     const previous = getTeamRanking(teamB, day - 1, false, true);
     const delta =
-      previous && !isNaN(ranking)
+      previous && ranking !== undefined
         ? ranking === previous
           ? ''
           : ranking < previous
@@ -147,9 +147,9 @@ const renderMatchs = (
                 {teamB.name} ({teamB.department.num_dep})
               </span>
               {pushModalTeam && (
-                <a className="vb-team-link" onClick={() => pushModalTeam(teamB)}>
+                <button type="button" className="vb-team-link" onClick={() => pushModalTeam(teamB)}>
                   <InfoCircleOutlined />
-                </a>
+                </button>
               )}
             </div>
             <Trophies competition={competition} team={teamB} />
@@ -190,6 +190,7 @@ interface TeamInfoProps {
 }
 
 const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam }: TeamInfoProps) => {
+  const getDay = (day: number) => (competition && competition && competition.days[day]?.pf ? 'PF' : `J${day}`);
   return (
     <Card className="vb-team-info">
       <div className="vb-card">
@@ -207,7 +208,7 @@ const TeamInfo = ({ competition, team, day, displayRanking = true, pushModalTeam
             return (
               <div className="vb-card-split" key={`J${index}${pool.name}`}>
                 <div className="vb-card-left">
-                  <div className="vb-tag">{`J${index}`}</div>
+                  <div className="vb-tag">{getDay(index)}</div>
                   <div className="medal">{medals[getDayRanking(competition, team, index)]}</div>
                 </div>
                 <div className="vb-card-right">

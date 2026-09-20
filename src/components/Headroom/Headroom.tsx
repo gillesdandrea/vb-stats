@@ -1,4 +1,4 @@
-import { PropsWithChildren, RefObject } from 'react';
+import { type PropsWithChildren, type RefObject } from 'react';
 
 import cx from 'classnames';
 

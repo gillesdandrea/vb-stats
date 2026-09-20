@@ -21,6 +21,12 @@
     background-color: #141414;
   }
 
+  .ant-table-thead .ant-table-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .vb-trophies {
     .trophy {
       text-align: right;
