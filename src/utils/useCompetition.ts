@@ -7,6 +7,8 @@ import { type Competition, type Entity, getResourceName, type MatchRow } from '@
 import { createCompetition } from '@/model/model-helpers';
 import { processCompetition } from '@/model/model-process';
 
+const DATA_STALE_TIME_MS = 60 * 60 * 1000; // 1 hour
+
 const useCompetition = (season: number, entity: Entity, category: string): UseQueryResult<Competition, Error> => {
   const resource = getResourceName(season, entity, category);
   return useQuery<Competition, Error>({
@@ -39,7 +41,10 @@ const useCompetition = (season: number, entity: Entity, category: string): UseQu
       console.log('Processed in', Date.now() - now, 'ms.');
       return competition;
     },
-    staleTime: Infinity,
+    // A data-only deploy leaves the bundle untouched, so the service worker
+    // never updates and the reload prompt never fires: results have to go stale
+    // on their own for an open tab to ever see new ones.
+    staleTime: DATA_STALE_TIME_MS,
   });
 };
 
