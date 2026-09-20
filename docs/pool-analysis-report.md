@@ -2,11 +2,13 @@
 
 ## Abstract
 
-This report presents a comprehensive, data-driven investigation into how the French Volleyball Federation (FFVB) assembles pools of three teams for the national rounds (day 5 onward) of the Coupe de France (CDF) youth volleyball competition. Analyzing 5 seasons (2022--2026), 6 categories, 88 national days, 833 pools, and 2,499 team pairs -- with 607 geocoded clubs -- we tested 17 distinct analyses spanning ranking-based ordering, constraint enforcement, statistical distribution, geographic proximity, role equity, and consecutive hosting patterns.
+This report presents a comprehensive, data-driven investigation into how the French Volleyball Federation (FFVB) assembles pools of three teams for the national rounds (day 5 onward) of the Coupe de France (CDF) youth volleyball competition. Analyzing 5 seasons (2022--2026), 6 categories, 96 national days, 887 pools, and 2,661 team pairs -- with 616 geocoded clubs -- we tested 17 distinct analyses spanning ranking-based ordering, constraint enforcement, statistical distribution, geographic proximity, role equity, and consecutive hosting patterns.
 
-The central finding is that geography is the dominant factor: actual pools are on average 27% closer in distance than randomly assembled pools (distance ratio 0.734), with an asymmetric "1 close + 1 far" visitor pattern (avg 202 km vs 398 km), while no ranking-based method predicts pool composition above random chance. Two hard constraints -- no-repeat matchups and no-three-firsts -- are perfectly enforced. The system is competitively fair: host selection is ranking-neutral, ranking spread within pools is statistically indistinguishable from random, and role equity (host/nearby/far) is approximately balanced.
+The central finding is that geography is the dominant factor: actual pools are on average 27% closer in distance than randomly assembled pools (distance ratio 0.734), with an asymmetric "1 close + 1 far" visitor pattern (avg 201 km vs 398 km), while no ranking-based method predicts pool composition above random chance. Two hard constraints -- no-repeat matchups and no-three-firsts -- are enforced almost without exception (one repeat pairing in 2,661 national-round pairs, four across all days; zero three-firsts pools). The system is competitively fair: host selection is ranking-neutral, ranking spread within pools is statistically indistinguishable from random, and role equity (host/nearby/far) is approximately balanced.
 
 These findings guided the design of a pool prediction algorithm that reproduces observed patterns. See the [Pool Prediction Algorithm Specification](pool-prediction-algorithm.md) for details.
+
+_Figures in this report come from `pnpm cdf-analysis` and `pnpm cdf-validation` run against the CSV data in `public/data/` as of September 2026. Re-running them after a data refresh will shift the numbers._
 
 ---
 
@@ -44,10 +46,10 @@ The analysis focuses on national days only (day >= 5), excluding:
 | ---------------------- | -------------------------------------- |
 | Seasons                | 5 (2022, 2023, 2024, 2025, 2026)       |
 | Categories             | 6 (M15F, M15M, M18F, M18M, M21F, M21M) |
-| National days analyzed | 88                                     |
-| Pools analyzed         | 833                                    |
-| Team pairs analyzed    | 2,499 (3 pairs per pool of 3)          |
-| Geocoded clubs         | 607                                    |
+| National days analyzed | 96                                     |
+| Pools analyzed         | 887                                    |
+| Team pairs analyzed    | 2,661 (3 pairs per pool of 3)          |
+| Geocoded clubs         | 616                                    |
 | Data format            | CSV files (one per season/category)    |
 
 Each CSV file follows the naming convention `FFVB-{season}-CDF-{category}.CSV` and contains match-level records with team identifiers, scores, set results, pool codes, and day numbers.
@@ -104,21 +106,23 @@ Seven distinct ranking-based hypotheses were tested:
 
 Geography is the dominant factor in pool assembly. We established this through multiple convergent analyses:
 
-**Pair distance analysis**: Using geocoded club locations (607 clubs, Nominatim), we computed haversine distances between every pair of teams within each pool. The average pairwise distance within actual pools is approximately 270 km, compared to approximately 370 km for random pools -- a **distance ratio of 0.734**, meaning actual pools are **27% closer** than random.
+**Pair distance analysis**: Using geocoded club locations (616 clubs, Nominatim), we computed haversine distances between every pair of teams within each pool. The average pairwise distance within actual pools is 327 km, compared to 445 km for random pools -- a **distance ratio of 0.734**, meaning actual pools are **27% closer** than random.
 
-**Same-region pair rate**: Approximately **32% of actual pool pairs** share the same French administrative region, compared to approximately **11% under random assignment** -- a roughly **3x enrichment**. Same-department rates are elevated but less dramatically, consistent with distance-minimization operating at the geographic level rather than at administrative boundaries.
+**Same-region pair rate**: **16.2% of actual pool pairs** (430/2,661) share the same French administrative region, compared to **7.2% under random assignment** -- a roughly **2.2x enrichment**. Same-department rates are elevated but less dramatically (3.2%), consistent with distance-minimization operating at the geographic level rather than at administrative boundaries.
 
-**Monte Carlo baseline**: 10,000 random simulations per day confirm that the only dimension on which actual pools deviate from random is geography. All ranking-based metrics fall squarely within the random distribution.
+**Monte Carlo baseline**: 200 constrained random simulations per day confirm that the only dimension on which actual pools deviate from random is geography. All ranking-based metrics fall squarely within the random distribution.
 
 ### 5.2 Hard Constraints
 
-Two hard constraints are **perfectly enforced** across all 5 seasons:
+Two hard constraints hold almost without exception across all 5 seasons (`pnpm cdf-validation`, all days: 5,402 pools / 16,206 pairs):
 
-| Constraint                 | Description                                           | Enforcement                                     |
-| -------------------------- | ----------------------------------------------------- | ----------------------------------------------- |
-| No-repeat matchups         | Two teams never share a pool twice in a season        | **100% enforced** (0 violations in 2,499 pairs) |
-| No-three-firsts            | Never 3 previous-day 1st-place finishers in same pool | **100% enforced**                               |
-| No previous-pool carryover | Teams from same previous pool never reunited          | **100% enforced** (consequence of no-repeat)    |
+| Constraint                 | Description                                           | Enforcement                                                         |
+| -------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------- |
+| No-repeat matchups         | Two teams never share a pool twice in a season        | **1 violation in 2,661 national pairs**; 4 in 16,206 pairs all days |
+| No-three-firsts            | Never 3 previous-day 1st-place finishers in same pool | **100% enforced** (0 in 5,402 pools)                                |
+| No previous-pool carryover | Teams from same previous pool never reunited          | Same single national-day incident (day 5 pool repeated on day 6)    |
+
+The three other repeat pairings all occur on regional days 1--3. A related rule is weaker still: 6 pools out of 5,402 contain no previous-day winner at all, so "at least 1 first per pool" is a strong tendency rather than an absolute.
 
 These constraints ensure variety of opponents and prevent the formation of "groups of death."
 
@@ -126,14 +130,14 @@ These constraints ensure variety of opponents and prevent the formation of "grou
 
 In each pool of 3, the FFVB ensures one visitor is nearby while accepting one traveling far -- an asymmetric "1 close + 1 far" pattern rather than minimizing total travel equally.
 
-For each of the 833 pools, we computed the haversine distance from the host to each visitor. The shorter distance was classified as d_near and the longer as d_far:
+For each of the 887 pools, we computed the haversine distance from the host to each visitor. The shorter distance was classified as d_near and the longer as d_far:
 
 | Metric  | Closer visitor | Farther visitor |
 | ------- | -------------- | --------------- |
-| Average | 202 km         | 398 km          |
+| Average | 201 km         | 398 km          |
 | Median  | 182 km         | 376 km          |
 
-The far/near ratio averages 3.79 (mean) with a median of 1.84. The distribution is heavily skewed: **87.4% of near visitors** travel under 300 km, while **27.6% of far visitors** travel 500 km or more.
+The far/near ratio averages 3.79 (mean) with a median of 1.85. The distribution is heavily skewed: **77.6% of near visitors** travel under 300 km, while **27.5% of far visitors** travel 500 km or more.
 
 **Interpretation**: The FFVB prioritizes having at least one nearby visitor -- ensuring a short trip for one team -- while accepting asymmetric long-distance travel for the other. This is a pragmatic trade-off: attempting to get both visitors equally close would likely mean neither is truly close.
 
@@ -141,12 +145,12 @@ The far/near ratio averages 3.79 (mean) with a median of 1.84. The distribution 
 
 Geographic clustering varies systematically by day:
 
-| Day   | Approximate Average Pair Distance | Explanation                                                   |
-| ----- | --------------------------------- | ------------------------------------------------------------- |
-| Day 5 | ~186 km                           | Many teams remain; strong geographic clustering is feasible   |
-| Day 6 | ~250 km                           | Fewer teams, slightly wider pools                             |
-| Day 7 | ~350 km                           | Pool of remaining teams is thinning                           |
-| Day 8 | ~500+ km                          | Very few teams left; geographic clustering becomes impossible |
+| Day   | Average Pair Distance | Pools | Explanation                                                   |
+| ----- | --------------------- | ----- | ------------------------------------------------------------- |
+| Day 5 | 270 km                | 389   | Many teams remain; strong geographic clustering is feasible   |
+| Day 6 | 316 km                | 253   | Fewer teams, slightly wider pools                             |
+| Day 7 | 408 km                | 156   | Pool of remaining teams is thinning                           |
+| Day 8 | 461 km                | 89    | Very few teams left; geographic clustering becomes impossible |
 
 As the competition progresses and teams are eliminated, the pool of remaining teams shrinks. With fewer teams to choose from, the no-repeat constraint becomes increasingly binding, and the FFVB has less freedom to form geographically compact pools. By the late rounds, pools necessarily span large distances.
 
@@ -156,7 +160,7 @@ For each team with 2+ national days, we tracked how many times it was assigned t
 
 **Chi-square test**: For each team with 3+ national days, we computed the chi-square statistic testing whether the observed host/nearby/far distribution differs from uniform (df=2, critical value 5.99 at p=0.05). The average chi-square value across all teams falls well below the critical threshold, indicating that the observed role distribution is **not significantly different from uniform** for most teams.
 
-**Monte Carlo comparison**: 1,000 random role assignments confirm that the actual deviation from ideal (sum of |actual - N/3| across roles) is comparable to what random assignment would produce.
+**Monte Carlo comparison**: 1,000 random role assignments show the actual distribution is in fact _more_ balanced than chance: the average deviation from ideal (sum of |actual - N/3| across roles) is 1.60 versus 1.98 for random, and 54.4% of teams with 3+ national days hold all three roles versus 34.7% under random assignment.
 
 **Extreme imbalances**: A small fraction of teams with 3+ national days have never hosted or always played as the far visitor. However, these rates are consistent with random variation given the small number of national days per team (typically 2--4).
 
@@ -168,7 +172,7 @@ We analyzed whether the same team avoids hosting on consecutive days -- a fairne
 
 **Method**: For all days (not just national days), we identified cases where a team hosted on day N and also hosted on day N+1.
 
-**Finding**: Consecutive hosting violations are rare but do occur. When they happen, it is typically in late rounds where very few teams remain and geographic constraints leave little flexibility. This motivated adding a soft no-consecutive-hosting rule to the prediction algorithm, with an escape hatch for cases where all candidates hosted the previous day.
+**Finding**: Consecutive hosting is rare but does occur -- 60 occurrences across the 30 competitions, concentrated on days 1--3. When they happen, it is typically in late rounds where very few teams remain and geographic constraints leave little flexibility. This motivated adding a soft no-consecutive-hosting rule to the prediction algorithm, with an escape hatch for cases where all candidates hosted the previous day.
 
 ### 5.7 L/D/R/N Distance Classification
 
@@ -213,20 +217,20 @@ Role equity analysis (Section 5.5) shows that hosting, nearby, and far visitor d
 
 Each finding from the data analysis directly motivated a feature in the pool prediction algorithm:
 
-| Observation in Data                          | Algorithm Feature                                                                               | Validation                                                          |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Pools are 27% closer than random             | Geographic distance minimization as primary objective                                           | Predicted pools achieve similar distance ratios                     |
-| "1 close + 1 far" pattern (202 km vs 398 km) | Asymmetric travel cost with weights [2.0, 1.0, 0.5] favoring one short distance                 | Predicted pools reproduce the near/far asymmetry                    |
-| No-repeat matchups: 100% enforced            | Hard constraint: `haveSharedPool()` check                                                       | Zero violations in all predictions                                  |
-| No-three-firsts: 100% enforced               | Hard constraint: `hasThreeFirsts()` check                                                       | Zero violations in all predictions                                  |
-| Approximate role equity across days          | Equity penalty: penalizes overloading a team's host/nearby/far proportion beyond 1/3            | Reduces role concentration vs. pure geographic optimization         |
-| Consecutive hosting is rare                  | Soft constraint: deprioritize yesterday's hosts in host selection                               | Consecutive hosting occurs only when forced by pool constraints     |
-| Geographic decay in late rounds              | No special handling needed — the algorithm naturally produces wider pools as fewer teams remain | Distance ratios increase with day number, matching observed pattern |
-| Host selection is ranking-neutral            | Host selected by centroid proximity with equity tie-breaking, not by ranking                    | Predicted hosts match geographic centrality pattern                 |
+| Observation in Data                           | Algorithm Feature                                                                               | Validation                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Pools are 27% closer than random              | Geographic distance minimization as primary objective                                           | Predicted pools achieve similar distance ratios                     |
+| "1 close + 1 far" pattern (201 km vs 398 km)  | Asymmetric travel cost with weights [2.0, 1.0, 0.5] favoring one short distance                 | Predicted pools reproduce the near/far asymmetry                    |
+| No-repeat matchups: 1 in 2,661 national pairs | Hard constraint: `haveSharedPool()` check                                                       | Zero violations in all predictions                                  |
+| No-three-firsts: 100% enforced                | Hard constraint: `hasThreeFirsts()` check                                                       | Zero violations in all predictions                                  |
+| Approximate role equity across days           | Equity penalty: penalizes overloading a team's host/nearby/far proportion beyond 1/3            | Reduces role concentration vs. pure geographic optimization         |
+| Consecutive hosting is rare                   | Soft constraint: deprioritize yesterday's hosts in host selection                               | Consecutive hosting occurs only when forced by pool constraints     |
+| Geographic decay in late rounds               | No special handling needed — the algorithm naturally produces wider pools as fewer teams remain | Distance ratios increase with day number, matching observed pattern |
+| Host selection is ranking-neutral             | Host selected by centroid proximity with equity tie-breaking, not by ranking                    | Predicted hosts match geographic centrality pattern                 |
 
 ### 7.2 Prediction Tool Overview
 
-The prediction algorithm is implemented in `src/model/model-pools.ts` and supports four approaches:
+The prediction algorithm is implemented in `src/model/model-pools.ts`, run offline through `pnpm cdf-comparison` rather than from the web app, and supports four approaches:
 
 1. **Greedy Geographic**: Spread hosts by latitude, assign visitors to closest pool
 2. **Swap Optimization**: Start from serpentine seed, iteratively improve by swapping
@@ -312,15 +316,15 @@ Geographic data is managed through `geography.ts`, which maps all 101 French dep
 
 The FFVB's pool assembly process for the Coupe de France youth competition follows a **geography-first, constraint-enforced** approach:
 
-1. **Geography is primary, with asymmetric travel**: Pools are 27% closer in distance than random assignment, with same-region pairings at approximately 3 times the random rate. Crucially, this geographic optimization follows an asymmetric "1 close + 1 far" pattern: in each pool, one visitor is nearby (avg 202 km) while the other travels significantly farther (avg 398 km). The FFVB doesn't minimize total distance equally -- it ensures at least one short trip while accepting one long one. This is a sensible priority for a youth competition where families and clubs bear travel costs.
+1. **Geography is primary, with asymmetric travel**: Pools are 27% closer in distance than random assignment, with same-region pairings at roughly 2.2 times the random rate. Crucially, this geographic optimization follows an asymmetric "1 close + 1 far" pattern: in each pool, one visitor is nearby (avg 201 km) while the other travels significantly farther (avg 398 km). The FFVB doesn't minimize total distance equally -- it ensures at least one short trip while accepting one long one. This is a sensible priority for a youth competition where families and clubs bear travel costs.
 
-2. **Hard constraints are absolute**: The no-repeat rule (teams never share a pool twice) and the no-three-firsts rule (never three previous-day winners in a single pool) are enforced without exception across all 5 seasons analyzed. These constraints ensure variety of opponents and prevent the formation of "groups of death."
+2. **Hard constraints are near-absolute**: The no-three-firsts rule (never three previous-day winners in a single pool) holds without exception across all 5 seasons, and the no-repeat rule (teams never share a pool twice) is breached once in 2,661 national-round pairs (four times in 16,206 pairs across all days, the rest on regional days). These constraints ensure variety of opponents and prevent the formation of "groups of death."
 
 3. **Ranking plays no role in pool formation**: Every ranking-based hypothesis tested -- serpentine, sequential, Swiss system, tier/pot, two-group, Spearman correlation, TrueSkill rating -- fails to predict pool composition above random chance. Rankings determine which teams remain in the competition (elimination), but not how surviving teams are grouped.
 
 4. **The system is fair**: Ranking spread within pools matches the random baseline, meaning pools are neither stacked with strong teams nor artificially balanced. Host selection is ranking-neutral. Role equity (host/nearby/far) is approximately balanced across teams.
 
-5. **Geographic clustering degrades in late rounds**: As the competition progresses and fewer teams remain, the no-repeat constraint becomes increasingly binding and the pool of eligible nearby opponents shrinks. By day 8, average pair distances exceed 500 km because there are simply not enough remaining teams to form geographically compact pools.
+5. **Geographic clustering degrades in late rounds**: As the competition progresses and fewer teams remain, the no-repeat constraint becomes increasingly binding and the pool of eligible nearby opponents shrinks. By day 8, average pair distances reach 460 km because there are simply not enough remaining teams to form geographically compact pools.
 
 6. **The analysis enables prediction**: Each observed pattern -- geographic optimization, constraint enforcement, role equity, consecutive hosting avoidance -- was translated into a corresponding algorithm feature. The resulting prediction tool reproduces historical pool compositions with encouraging accuracy, validating the analysis findings.
 
@@ -338,7 +342,7 @@ In summary, the FFVB pool assembly algorithm can be characterized as: **minimize
 - **Haversine formula**: Great-circle distance calculation between two points on a sphere, used for all geographic distance measurements
 - **PapaParse**: CSV parsing library used in the data pipeline
 - **Source data**: CSV files in `public/data/FFVB-{season}-CDF-{category}.CSV`
-- **Club locations**: `public/data/club-locations.json` (607 geocoded clubs)
+- **Club locations**: `public/data/club-locations.json` (616 geocoded clubs)
 - **Domain model**: `src/model/model.ts`, `src/model/model-process.ts`, `src/model/model-helpers.ts`
 - **Geography mapping**: `src/model/geography.ts` (101 French departments, 13 metropolitan regions)
 - **Data scraper**: `src/scripts/cdf-scrap.ts`

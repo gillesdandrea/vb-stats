@@ -1,15 +1,13 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents (Claude Code, Codex, …) when working with code in this repository.
 
 ## Key Principles
 
 ### Knowledge
 
-When unfamiliar with a library or needing up-to-date information, use MCP tools before guessing:
-
-- Use **context7 MCP** to access library documentation and code snippets
-- Use **codewiki MCP** to ask natural language questions about code examples, best practices, or architecture
+When unfamiliar with a library or needing up-to-date information, use **context7 MCP** to access library
+documentation and code snippets before guessing.
 
 ### Simplicity First
 
@@ -53,7 +51,12 @@ Package manager: **pnpm** (pinned v9.15.0)
 - `pnpm preview` — preview production build
 - `pnpm deploy` — deploy to GitHub Pages
 - `pnpm cdf-scrap` / `pnpm vb-scrap` — scrape FFVB data
+- `pnpm pdf-parse` — parse match sheet PDFs
+- `pnpm cdf-geocode` — geocode club locations
+- `pnpm cdf-analysis` / `pnpm cdf-comparison` / `pnpm cdf-validation` — pool composition analysis (see `docs/`)
 - `pnpm cdf-update` — full pipeline: scrape → build → deploy
+
+Agent tooling (`.claude/`, `.agents/`) is gitignored and installed from `skills-lock.json`; never commit it.
 
 ## Architecture
 
@@ -61,7 +64,9 @@ Package manager: **pnpm** (pinned v9.15.0)
 - Domain: French youth volleyball (FFVB) competition statistics with TrueSkill ratings
 - Data pipeline: CSV files in `public/data/` → PapaParse → `processCompetition()` → domain model
 - UI: Ant Design dark theme, React Query for data fetching, URL params as state
-- 4 main views: Pools, Board, Graph, Sheets (tab-based via Shell component)
+- 3 active views, tab-based via the Shell component: Pools, Board, Graph. `CompetitionTeams` and
+  `CompetitionSheets` still exist under `src/app/` but are not wired into `Shell.tsx` (no import, no
+  `tabNames` entry)
 - Key libraries: ts-trueskill (ratings), recharts (charts), d3-graphviz (network graphs)
 
 ## Code Organization
@@ -72,13 +77,17 @@ Package manager: **pnpm** (pinned v9.15.0)
   - `model-helpers.ts`: Utility functions (rating, filtering, stats extraction)
   - `model-sorters.ts`: Multiple ranking strategies (points, rating, wins, sets, points)
   - `geography.ts`: French department/region data and color mapping
+  - `model-geography.ts`: club coordinates, team distances (haversine)
+  - `model-pools.ts`: pool composition algorithms (`PoolApproach` strategies)
   - `graph.ts`: Graphviz DOT generation
   - `sheet.ts` / `sheet-helpers.ts`: Match sheet player-level statistics
   - `meta.ts`: Prediction accuracy tracking
 - `src/app/` — Feature views (Shell + competition views)
 - `src/components/` — Reusable UI components (Graphviz, TeamInfo, Trophies, etc.)
-- `src/utils/` — React hooks (useCompetition)
-- `src/scripts/` — Build-time data scrapers (cdf-scrap, vb-scrap, pdf-parse)
+- `src/utils/` — React hooks (`useCompetition`, `useSheets`, `useClubLocations`, `useScrollDirection`)
+- `src/scripts/` — Build-time scrapers and analysis tools (cdf-scrap, vb-scrap, pdf-parse, cdf-geocode,
+  `cdf-pool-*`), sharing `trueskill.ts` / `vb-utils.ts`
+- `docs/` — Written analyses of pool composition and the prediction algorithm
 
 ## Key Patterns
 

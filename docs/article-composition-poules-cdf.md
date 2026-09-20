@@ -1,4 +1,4 @@
-# Comment la FFVB compose les poules de Coupe de France jeunes : 833 poules analysées, le verdict est sans appel
+# Comment la FFVB compose les poules de Coupe de France jeunes : 887 poules analysées, le verdict est sans appel
 
 _Par un parent data scientist qui en avait marre de spéculer dans le mini-bus._
 
@@ -38,13 +38,13 @@ J'ai récupéré l'intégralité des résultats de la Coupe de France jeunes sur
 
 Ça représente :
 
-- **88 journées** nationales
-- **833 poules**
-- **2 499 paires d'équipes** à analyser
+- **96 journées** nationales
+- **887 poules**
+- **2 661 paires d'équipes** à analyser
 
-Ensuite, j'ai géocodé **607 clubs** sur tout le territoire français. Chaque club a reçu ses coordonnées GPS, ce qui m'a permis de calculer la distance réelle entre chaque paire d'équipes dans chaque poule.
+Ensuite, j'ai géocodé **616 clubs** sur tout le territoire français. Chaque club a reçu ses coordonnées GPS, ce qui m'a permis de calculer la distance réelle entre chaque paire d'équipes dans chaque poule.
 
-Et puis j'ai fait tourner des **simulations Monte Carlo**. Le principe est simple : pour chaque journée, je génère des milliers de compositions de poules aléatoires qui respectent les mêmes contraintes. Ça me donne une référence : _à quoi ressembleraient les poules si elles étaient tirées au hasard ?_ Et je compare avec la réalité.
+Et puis j'ai fait tourner des **simulations Monte Carlo**. Le principe est simple : pour chaque journée, je génère des centaines de compositions de poules aléatoires qui respectent les mêmes contraintes. Ça me donne une référence : _à quoi ressembleraient les poules si elles étaient tirées au hasard ?_ Et je compare avec la réalité.
 
 C'est comme mesurer la température d'un patient : il faut d'abord savoir ce qu'est "normal" pour dire si c'est chaud ou froid.
 
@@ -62,26 +62,26 @@ Relisez cette phrase. Elle devrait mettre fin à 80% des débats de parking.
 
 **Les grosses équipes ne sont pas protégées.** Il n'y a pas de main invisible qui sépare les favoris ou regroupe les faibles. Le système ne regarde pas votre classement pour décider de votre poule. Il regarde votre _code postal_.
 
-## Les contraintes : un sans-faute
+## Les contraintes : presque un sans-faute
 
 J'ai aussi vérifié les contraintes "dures" -- celles que la fédé est censée respecter systématiquement :
 
 - **Pas de re-match** : deux équipes qui se sont déjà affrontées dans la compétition ne doivent pas se retrouver dans la même poule.
 - **Pas de trois premiers** : une poule ne peut pas contenir trois équipes classées premières de leur poule précédente.
 
-Sur 833 poules et 2 499 paires d'équipes : **zéro violation**. Pas une seule. Cinq saisons, six catégories, zéro écart.
+Le résultat, sur l'ensemble des journées des cinq saisons (5 402 poules, 16 206 paires) : **zéro poule à trois premiers**, et seulement **4 re-matchs** -- soit 0,02% des paires, dont un seul en journées nationales. Ce n'est pas tout à fait le sans-faute, mais on en est très près.
 
 Et la sélection du club qui accueille la journée ? J'ai vérifié aussi. Elle est **neutre par rapport au classement**. Le club hôte n'est ni systématiquement le mieux classé, ni le moins bien classé. Pas de favoritisme.
 
-Le système est strict, rigoureux, et appliqué sans exception. On peut lui reprocher beaucoup de choses, mais certainement pas d'être laxiste.
+Le système est strict, rigoureux, et appliqué à quatre exceptions près en cinq saisons. On peut lui reprocher beaucoup de choses, mais certainement pas d'être laxiste.
 
 ## Le déclin géographique : quand il n'y a plus assez d'équipes proches
 
 Voici un phénomène que j'ai trouvé fascinant -- et que tout parent ayant survécu aux phases finales comprendra instinctivement.
 
-À la **journée 5**, quand il reste encore beaucoup d'équipes en lice, la distance moyenne entre équipes d'une même poule est d'environ **186 kilomètres**. C'est raisonnable. Un aller-retour dans la journée, c'est faisable. Le mini-bus rentre avant le dîner.
+À la **journée 5**, quand il reste encore beaucoup d'équipes en lice, la distance moyenne entre équipes d'une même poule est d'environ **270 kilomètres**. C'est raisonnable. Un aller-retour dans la journée, c'est faisable. Le mini-bus rentre avant le dîner.
 
-À la **journée 8**, quand il ne reste qu'une poignée d'équipes, cette distance explose à **plus de 500 kilomètres**. Et là, c'est le départ à 4h du matin, le sandwich triangle sur l'autoroute, et les gamins qui dorment dans le bus au retour.
+À la **journée 8**, quand il ne reste qu'une poignée d'équipes, cette distance grimpe à **environ 460 kilomètres**. Et là, c'est le départ à 4h du matin, le sandwich triangle sur l'autoroute, et les gamins qui dorment dans le bus au retour.
 
 C'est mathématique, pas politique. Quand il reste 8 équipes réparties sur tout le territoire, il n'y a physiquement plus moyen de faire des poules de proximité. Vous pouvez avoir le meilleur algorithme du monde : si les quatre dernières équipes sont à Lille, Marseille, Brest et Strasbourg, personne ne joue à côté de chez soi.
 
@@ -91,9 +91,9 @@ Ce déclin géographique est progressif, prévisible, et inévitable. Ce n'est p
 
 Il y a un schéma que personne ne voit à l'œil nu, mais que les données révèlent clairement : dans chaque poule de trois, un visiteur est proche et l'autre est loin. Systématiquement.
 
-En moyenne, le visiteur le plus proche parcourt **202 kilomètres** (médiane 182 km), et le plus éloigné **398 kilomètres** (médiane 376 km). Le ratio est presque de 2 pour 1 -- le visiteur loin parcourt environ le double du visiteur proche.
+En moyenne, le visiteur le plus proche parcourt **201 kilomètres** (médiane 182 km), et le plus éloigné **398 kilomètres** (médiane 376 km). Le ratio est presque de 2 pour 1 -- le visiteur loin parcourt environ le double du visiteur proche.
 
-Les chiffres sont frappants : **87% des visiteurs "proches"** font moins de 300 km. En revanche, **près de 28% des visiteurs "loin"** dépassent les 500 km.
+Les chiffres sont frappants : **78% des visiteurs "proches"** font moins de 300 km. En revanche, **près de 28% des visiteurs "loin"** dépassent les 500 km.
 
 Dans votre poule, il y a presque toujours une équipe qui fait 2h de route -- et une qui fait 4h.
 
@@ -119,9 +119,9 @@ Après avoir compris comment le système fonctionne, j'ai fait un pas de plus : 
 
 Si la géographie est le facteur dominant, alors on peut simuler les poules probables avant qu'elles ne tombent. L'outil prend en compte les résultats de la journée précédente, les contraintes de non-répétition, et optimise la proximité géographique selon le schéma "un proche, un loin" -- exactement comme semble le faire la fédération.
 
-Ce n'est pas de la voyance. C'est de la rétro-ingénierie basée sur cinq ans de données et 833 poules analysées. Et les résultats sont encourageants : l'outil retrouve fréquemment des compositions très proches de la réalité.
+Ce n'est pas de la voyance. C'est de la rétro-ingénierie basée sur cinq ans de données et 887 poules analysées. Et les résultats sont encourageants : l'outil retrouve fréquemment des compositions très proches de la réalité.
 
-Vous pouvez explorer toutes les données, les visualisations, et l'outil de prédiction sur **[vb-stats](https://gillesdandrea.github.io/vb-stats)**.
+Vous pouvez explorer toutes les données et les visualisations sur **[vb-stats](https://gillesdandrea.github.io/vb-stats)** ; l'outil de prédiction, lui, vit dans le dépôt open source, sous forme de script d'analyse.
 
 ## Le mot de la fin
 
@@ -135,7 +135,7 @@ Est-ce qu'il pourrait être plus transparent ? Absolument. Publier l'algorithme,
 
 Non.
 
-833 poules. 2 499 paires. 5 saisons. La réponse est non.
+887 poules. 2 661 paires. 5 saisons. La réponse est non.
 
 ---
 

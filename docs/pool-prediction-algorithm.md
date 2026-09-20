@@ -2,9 +2,9 @@
 
 ## 1. Overview
 
-The pool prediction algorithm attempts to reproduce how the FFVB assembles pools of 3 teams for the national rounds (day >= 5) of the Coupe de France youth volleyball competition. Based on analysis of 833 historical pools, the algorithm follows a **geography-first, constraint-enforced** approach.
+The pool prediction algorithm attempts to reproduce how the FFVB assembles pools of 3 teams for the national rounds (day >= 5) of the Coupe de France youth volleyball competition. Based on analysis of 887 historical national-round pools, the algorithm follows a **geography-first, constraint-enforced** approach.
 
-The algorithm is invoked via `predictPools(competition, day, config)` in `src/model/model-pools.ts`. It supports four approaches, each producing a set of pools with metrics. All approaches share the same constraint framework and host selection logic.
+The algorithm is invoked via `predictPools(competition, day, config)` in `src/model/model-pools.ts`. It is an offline analysis tool, run from `pnpm cdf-comparison`; it is not wired into the web app. It supports four approaches, each producing a set of pools with metrics. All approaches share the same constraint framework and host selection logic.
 
 ### When It Runs
 
