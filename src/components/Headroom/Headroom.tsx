@@ -9,7 +9,7 @@ import './Headroom.scss';
 // @see https://www.codemzy.com/blog/react-sticky-header-disappear-scroll
 
 export interface Props {
-  scrollRef: RefObject<HTMLElement>;
+  scrollRef: RefObject<HTMLElement | null>;
   className?: string;
 }
 

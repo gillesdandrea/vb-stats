@@ -5,19 +5,14 @@ import { type Competition, seasonToNumber } from '@/model/model';
 import { type SheetMatch, type TeamSheetsMap } from '@/model/sheet';
 import { createSheet } from '@/model/sheet-helpers';
 
+type SheetMatchMap = Record<string, SheetMatch>;
+
 const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Error> => {
   const resource = `FFVB-${seasonToNumber(competition?.season)}-${competition?.entity}-${competition?.category}.JSON`;
-  return useQuery<TeamSheetsMap, Error>({
-    // `resource` already identifies the competition; keying on the object itself would serialize the
-    // whole domain model on every render
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+  return useQuery<SheetMatchMap, Error, TeamSheetsMap>({
     queryKey: [resource],
     queryFn: async () => {
-      if (!competition) {
-        return {};
-      }
-      console.log(import.meta.env.BASE_URL + '/sheets/' + resource);
-      const request = await axios.get(import.meta.env.BASE_URL + '/sheets/' + resource, {
+      const request = await axios.get<SheetMatchMap | string>(`${import.meta.env.BASE_URL}/sheets/${resource}`, {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
           'Access-Control-Allow-Origin': '*',
@@ -27,8 +22,11 @@ const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Erro
         // ensure error in dev mode
         throw new Error();
       }
-      const matchs: Record<string, SheetMatch> = request.data;
-
+      return request.data;
+    },
+    // `resource` already identifies the competition, so the competition-dependent mapping belongs in
+    // `select` rather than the cache key, which would otherwise serialize the whole domain model
+    select: (matchs: SheetMatchMap): TeamSheetsMap => {
       const teamsSheets: TeamSheetsMap = {};
       competition.teams.forEach((team) => (teamsSheets[team.id] = []));
       competition.matchs.forEach((match) => {
@@ -40,6 +38,7 @@ const useSheets = (competition: Competition): UseQueryResult<TeamSheetsMap, Erro
       });
       return teamsSheets;
     },
+    enabled: !!competition,
     retry: 0,
     staleTime: Infinity,
   });

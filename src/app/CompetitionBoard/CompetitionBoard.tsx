@@ -295,7 +295,8 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
         columns={columns}
         sortDirections={['ascend']}
         pagination={false}
-        scroll={{ y: 1280 }}
+        // cap the scrollable body at the viewport: 4rem header + 1rem margin + 2.25rem thead + 1rem gutter
+        scroll={{ y: 'calc(100dvh - 8.25rem)' }}
         size="small"
         // bordered
         onChange={(_pagination, _filters, sorter) => {

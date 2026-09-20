@@ -176,7 +176,7 @@ const renderMatchs = (
   });
   return (
     <div className="vb-match">
-      <Collapse ghost collapsible="icon" expandIconPosition="end" items={items} />
+      <Collapse ghost collapsible="icon" expandIconPlacement="end" items={items} />
     </div>
   );
 };

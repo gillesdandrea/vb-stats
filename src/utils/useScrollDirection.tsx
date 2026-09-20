@@ -1,18 +1,35 @@
 import { type RefObject, useEffect, useState } from 'react';
 
-import { usePrevious, useScroll } from 'react-use';
+type ScrollDirection = 'down' | 'up';
 
-const useScrollDirection = (scrollRef: RefObject<HTMLElement>, scrollSensibility = 2) => {
-  const [scrollDirection, setScrollDirection] = useState<'down' | 'up'>();
-  const { y } = useScroll(scrollRef);
-  const prevY = usePrevious<number>(y) ?? y;
+const useScrollDirection = (
+  scrollRef: RefObject<HTMLElement | null>,
+  scrollSensibility = 2,
+): ScrollDirection | undefined => {
+  const [scrollDirection, setScrollDirection] = useState<ScrollDirection>();
 
   useEffect(() => {
-    const direction = y > prevY ? 'down' : 'up';
-    if (direction !== scrollDirection && (y - prevY > scrollSensibility || y - prevY < -scrollSensibility)) {
-      setScrollDirection(direction);
+    const element = scrollRef.current;
+    if (!element) {
+      return;
     }
-  }, [scrollSensibility, y, prevY, scrollDirection, setScrollDirection]);
+
+    let previousY = element.scrollTop;
+    const onScroll = () => {
+      const y = element.scrollTop;
+      const delta = y - previousY;
+      previousY = y;
+      // ignore jitter: only a move larger than the sensibility counts as a direction change
+      if (delta > scrollSensibility) {
+        setScrollDirection('down');
+      } else if (delta < -scrollSensibility) {
+        setScrollDirection('up');
+      }
+    };
+
+    element.addEventListener('scroll', onScroll, { passive: true });
+    return () => element.removeEventListener('scroll', onScroll);
+  }, [scrollRef, scrollSensibility]);
 
   return scrollDirection;
 };

@@ -57,10 +57,8 @@ const CompetitionGraph = ({ competition, day, singleDay, qualified, className }:
           options={{
             useWorker: false,
             zoom: true,
-            // @ts-expect-error force width in vw
             width: '100vw',
-            // @ts-expect-error force height in vh
-            height: 'calc(100vh - 4rem)',
+            height: 'calc(100dvh - 4rem)',
             fit: true,
           }}
         />
