@@ -20,10 +20,9 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 
-    /* Absolute Imports */
-    "baseUrl": "./",
+    /* Absolute Imports (paths resolve relative to this file; baseUrl is removed in TS 7) */
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],

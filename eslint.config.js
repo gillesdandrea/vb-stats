@@ -5,7 +5,6 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import react from 'eslint-plugin-react';
-// import reactCompiler from 'eslint-plugin-react-compiler';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -73,10 +72,6 @@ const eslintConfig = [
       '@tanstack/query/exhaustive-deps': 'warn',
     },
   }),
-  // {
-  //   name: '::react-compiler',
-  //   ...reactCompiler.configs.recommended,
-  // },
   {
     name: '::no-relative-import-paths',
     files,
