@@ -1,3 +1,9 @@
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
+
+# the generator is only used by the manual `generate-pwa-assets` script; vite-plugin-pwa's
+# `pwaAssets` integration (which is what pins it to ^1) is not used here
+peerDependencyRules:
+  allowedVersions:
+    'vite-plugin-pwa>@vite-pwa/assets-generator': '2'
