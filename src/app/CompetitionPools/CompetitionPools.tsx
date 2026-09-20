@@ -113,7 +113,8 @@ const renderTeam = ({
             <Trophies competition={competition} team={team} />
             <div className="small-text">
               <div>
-                ranking: {ranking ?? '-'} / {competition.days[day].teams.length} <small>{delta}</small> | points:{' '}
+                ranking: {stats.matchCount === 0 ? '-' : (ranking ?? '-')} / {competition.days[day].teams.length}{' '}
+                <small>{delta}</small> | points:{' '}
                 {stats.matchCount === 0 ? 0 : Math.round((stats.points * 2 * dayCount) / stats.matchCount)} /{' '}
                 {6 * dayCount}
                 {2 * dayCount !== stats.matchCount ? '*' : ''}
