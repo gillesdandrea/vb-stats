@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Modal, Segmented, Table } from 'antd';
+import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { SortOrder } from 'antd/es/table/interface';
 import cx from 'classnames';
@@ -9,7 +8,6 @@ import cx from 'classnames';
 import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Team } from '@/model/model';
 import {
-  compareVirtualPoolNames,
   getBoard,
   getDayRanking,
   getSlidingDay,
@@ -19,8 +17,6 @@ import {
   isTeamInCourse,
   poolId2Name,
 } from '@/model/model-helpers';
-import { getTeamDistance } from '@/model/model-geography';
-import { type PoolApproach, predictPools } from '@/model/model-pools';
 import {
   matchSorter,
   pointSorter,
@@ -31,7 +27,6 @@ import {
   type SorterParams,
   Sorting,
 } from '@/model/model-sorters';
-import useClubLocations from '@/utils/useClubLocations';
 
 import './CompetitionBoard.scss';
 
@@ -62,17 +57,8 @@ function formatDelta(current: number | undefined, previous: number | undefined):
   return ` ⏷ ${current - previous}`;
 }
 
-const approachLabels: Record<PoolApproach, string> = {
-  'greedy-geographic': 'Geo',
-  'swap-optimization': 'Swap',
-  'geographic-clustering': 'Cluster',
-  'role-priority': 'Role',
-};
-
 const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0, className }: Props) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-  const [approach, setApproach] = useState<PoolApproach>('greedy-geographic');
-  const [helpOpen, setHelpOpen] = useState(false);
   const [sortKey, setSortKey] = useState<React.Key | undefined>(undefined);
   const [sortOrder, setSortOrder] = useState<SortOrder>(null);
   const selectedTeam = selectedKeys.length > 0 ? competition.teams.get(selectedKeys[0] as string) : undefined;
@@ -86,20 +72,10 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   const statSlidingMaxDays = sliding > 0 ? sliding : 4;
   const statParams: SorterParams = [statDay, statGlobal, statPF, statSlidingMaxDays];
 
-  const { data: clubLocations } = useClubLocations();
-
   const board = useMemo(
     () => getBoard(competition, Sorting.POINTS, day, singleDay, qualified, sliding),
     [competition, day, singleDay, qualified, sliding],
   );
-  const prediction = useMemo(() => {
-    if (sliding <= 0 || !clubLocations) return undefined;
-    // Don't predict if the current day has no pool data at all
-    const dayData = competition.days[day];
-    if (!dayData || dayData.pools.size === 0) return undefined;
-    return predictPools(competition, day, { approach, clubLocations, enableRoleEquity: true, debug: true });
-  }, [sliding, competition, day, approach, clubLocations]);
-  const virtualPools = prediction?.poolMap ?? new Map<string, string>();
   const getColumnSortOrder = (key: string): SortOrder => (sortKey === key ? sortOrder : null);
   const slidingRanks = useMemo(
     () => (sliding > 0 ? new Map(board.map((team, index) => [team.id, index + 1])) : new Map<string, number>()),
@@ -254,94 +230,40 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
       showSorterTooltip: false,
     },
     {
-      title: prediction ? 'V.Pool' : 'Pool',
+      title: 'Pool',
       key: 'pool',
       align: 'center',
       width: smallWidth,
       ellipsis: true,
-      render: (team: Team) => {
-        if (prediction) {
-          const poolName = virtualPools.get(team.id);
-          if (!poolName) return '-';
-          const isHost = prediction.pools.some((pool) => pool.length > 0 && pool[0] === team);
-          return `${poolName}${isHost ? '*' : ''}`;
-        }
-        return team.pools[day]
+      render: (team: Team) =>
+        team.pools[day]
           ? `${poolId2Name(team.pools[day].name)}${!isPF(day) && team.pools[day].teams[0] === team ? '*' : ''}`
-          : '-';
-      },
-      sorter: prediction
-        ? (a: Team, b: Team) => {
-            const poolA = virtualPools.get(a.id) ?? 'zzz';
-            const poolB = virtualPools.get(b.id) ?? 'zzz';
-            if (poolA !== poolB) return compareVirtualPoolNames(poolA, poolB);
-            return board.indexOf(a) - board.indexOf(b);
-          }
-        : poolSorter(...statParams),
+          : '-',
+      sorter: poolSorter(...statParams),
       sortOrder: getColumnSortOrder('pool'),
       showSorterTooltip: false,
     },
-    clubLocations
-      ? {
-          title: 'Km',
-          key: 'distance',
-          align: 'right',
-          width: smallWidth,
-          ellipsis: true,
-          render: (team: Team) => {
-            if (prediction) {
-              const pool = prediction.pools.find((p) => p.some((t) => t.id === team.id));
-              if (!pool || pool.length === 0) return '-';
-              const host = pool[0];
-              if (host.id === team.id) return '-';
-              const dist = getTeamDistance(team, host, clubLocations);
-              return dist >= 0 ? Math.round(dist) : '-';
-            }
-            const pool = team.pools[day];
-            if (!pool || pool.teams.length === 0) return '-';
-            const host = pool.teams[0];
-            if (host.id === team.id) return '-';
-            const dist = getTeamDistance(team, host, clubLocations);
-            return dist >= 0 ? Math.round(dist) : '-';
-          },
-          sorter: (a: Team, b: Team) => {
-            const getHostDist = (t: Team): number => {
-              if (prediction) {
-                const pool = prediction.pools.find((p) => p.some((m) => m.id === t.id));
-                if (pool && pool[0].id !== t.id) return getTeamDistance(t, pool[0], clubLocations) ?? -1;
-                return -1;
-              }
-              const pool = t.pools[day];
-              if (pool && pool.teams.length > 0 && pool.teams[0].id !== t.id)
-                return getTeamDistance(t, pool.teams[0], clubLocations) ?? -1;
-              return -1;
-            };
-            return getHostDist(a) - getHostDist(b);
-          },
-          sortOrder: getColumnSortOrder('distance'),
-          showSorterTooltip: false,
+    {
+      title: day <= 1 ? '-' : getDay(day - 1),
+      key: 'previous',
+      align: 'right',
+      width: smallWidth,
+      ellipsis: true,
+      render: (team: Team) => {
+        const dranking = getDayRanking(competition, team, day - 1);
+        if (dranking === 0) {
+          return '';
         }
-      : {
-          title: day <= 1 ? '-' : getDay(day - 1),
-          key: 'previous',
-          align: 'right',
-          width: smallWidth,
-          ellipsis: true,
-          render: (team: Team) => {
-            const dranking = getDayRanking(competition, team, day - 1);
-            if (dranking === 0) {
-              return '';
-            }
-            return day >= 1 ? team.ranking.days[day - 1] : '';
-          },
-          sorter: (a: Team, b: Team) => {
-            const aRank = a.ranking.days[day - 1] ?? Infinity;
-            const bRank = b.ranking.days[day - 1] ?? Infinity;
-            return aRank - bRank;
-          },
-          sortOrder: getColumnSortOrder('previous'),
-          showSorterTooltip: false,
-        },
+        return day >= 1 ? team.ranking.days[day - 1] : '';
+      },
+      sorter: (a: Team, b: Team) => {
+        const aRank = a.ranking.days[day - 1] ?? Infinity;
+        const bRank = b.ranking.days[day - 1] ?? Infinity;
+        return aRank - bRank;
+      },
+      sortOrder: getColumnSortOrder('previous'),
+      showSorterTooltip: false,
+    },
     { title: 'Name', key: 'name', width: '24rem', render: (team: Team) => `${team.name} (${team.department.num_dep})` },
     {
       title: 'Region',
@@ -367,39 +289,12 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
   ];
 
   return (
-    <div
-      className={cx('vb-board', { 'has-toolbar': sliding > 0 }, className)}
-      key={`${day}-${singleDay}-${qualified}-${sliding}`}
-    >
+    <div className={cx('vb-board', className)} key={`${day}-${singleDay}-${qualified}-${sliding}`}>
       <Table<Team>
         dataSource={board}
         columns={columns}
         sortDirections={['ascend']}
         pagination={false}
-        footer={() =>
-          sliding > 0 ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Segmented
-                value={approach}
-                onChange={(value) => setApproach(value as PoolApproach)}
-                options={Object.entries(approachLabels).map(([value, label]) => ({ value, label }))}
-                size="small"
-              />
-              <Button type="text" size="small" icon={<QuestionCircleOutlined />} onClick={() => setHelpOpen(true)} />
-              {prediction && (
-                <small style={{ opacity: 0.7 }}>
-                  Avg: {Math.round(prediction.metrics.avgPairDistance)} km | Host:{' '}
-                  {Math.round(prediction.metrics.avgHostDistance)} km | ±{' '}
-                  {Math.round(prediction.metrics.distanceStdDev)} km
-                  {prediction.metrics.constraintViolations > 0 &&
-                    ` | ${prediction.metrics.constraintViolations} violation(s)`}
-                </small>
-              )}
-            </div>
-          ) : (
-            <div />
-          )
-        }
         scroll={{ y: 1280 }}
         size="small"
         // bordered
@@ -425,47 +320,6 @@ const CompetitionBoard = ({ competition, day, singleDay, qualified, sliding = 0,
           },
         })}
       />
-      <Modal
-        title="Composition des poules virtuelles"
-        open={helpOpen}
-        onCancel={() => setHelpOpen(false)}
-        footer={null}
-        width={640}
-      >
-        <p>
-          Les poules virtuelles simulent la composition des poules pour la prochaine journée en se basant sur le
-          classement glissant actuel.
-        </p>
-        <h4>Règles dures (obligatoires)</h4>
-        <ul>
-          <li>Deux équipes du même club ne peuvent pas être dans la même poule</li>
-          <li>Deux équipes qui se sont déjà rencontrées récemment sont évitées si possible</li>
-        </ul>
-        <h4>Règles souples (optimisation)</h4>
-        <ul>
-          <li>Minimiser les distances de déplacement entre les équipes d'une même poule</li>
-          <li>Équilibrer le niveau des poules (ratings proches)</li>
-          <li>Alterner les rôles recevant/visiteur</li>
-        </ul>
-        <h4>Algorithmes disponibles</h4>
-        <ul>
-          <li>
-            <strong>Geo</strong> — Approche gloutonne géographique : construit les poules en priorisant la proximité
-            géographique
-          </li>
-          <li>
-            <strong>Optimized</strong> — Optimisation par échanges : part d'une solution initiale et améliore par
-            échanges successifs entre poules
-          </li>
-          <li>
-            <strong>Cluster</strong> — Clustering géographique : regroupe d'abord les équipes par zone géographique puis
-            forme les poules
-          </li>
-        </ul>
-        <p>
-          <small>* indique l'équipe receveuse de la poule</small>
-        </p>
-      </Modal>
     </div>
   );
 };

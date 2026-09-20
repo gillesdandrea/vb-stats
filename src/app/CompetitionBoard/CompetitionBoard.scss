@@ -13,14 +13,6 @@
     height: calc(100vh - 9rem);
   }
 
-  &.has-toolbar .ant-table-body {
-    height: calc(100vh - 10.5rem);
-  }
-
-  &.has-toolbar .ant-table-footer {
-    padding: 4px 8px;
-  }
-
   .table-row-disabled {
     color: #444;
   }
