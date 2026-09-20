@@ -39,6 +39,9 @@ export interface Pool {
   ranking?: number;
 }
 
+/** A raw CSV line as parsed by PapaParse: every column is a string keyed by its header. */
+export type MatchRow = Record<string, string>;
+
 export interface CompetitionDay {
   readonly day: number;
   readonly teams: Team[];

@@ -50,7 +50,7 @@ const summary = (csstats: CSStats): string => {
 
 const Spacer = () => <div style={{ height: 12 }} />;
 
-const Player = ({
+const _Player = ({
   sheets,
   setters,
   playerName,
@@ -93,9 +93,15 @@ const Player = ({
   );
 };
 
-const CompetitionSheets = ({ competition, day, singleDay, qualified, className }: Props) => {
+const CompetitionSheets = ({
+  competition,
+  day: _day,
+  singleDay: _singleDay,
+  qualified: _qualified,
+  className,
+}: Props) => {
   const [team, setTeam] = useState<Team>();
-  const [match, setMatch] = useState<Match>();
+  const [_match, setMatch] = useState<Match>();
 
   const filterOption = (input: string, option?: { label: string; value: string }) =>
     (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -167,18 +173,18 @@ const CompetitionSheets = ({ competition, day, singleDay, qualified, className }
   //   }
   // });
 
-  const Tom = '2309489';
-  const Anto = '2212762';
-  const Sam = '2191218';
-  const Alex = '2460596';
+  const _Tom = '2309489';
+  const _Anto = '2212762';
+  const _Sam = '2191218';
+  const _Alex = '2460596';
   const Nathan = '2091829';
-  const Aless = '2227629';
-  const Mady = '2267238';
-  const Adrien = '2499328';
-  const Loic = '2596850';
+  const _Aless = '2227629';
+  const _Mady = '2267238';
+  const _Adrien = '2499328';
+  const _Loic = '2596850';
 
-  const AlexF = '2194387';
-  const Maxim = '2119743';
+  const _AlexF = '2194387';
+  const _Maxim = '2119743';
 
   const AxelGD = '2052969'; // 01 setter AS Cannes
   const MatteoC = '2153177';

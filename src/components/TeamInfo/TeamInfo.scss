@@ -1,6 +1,14 @@
 .vb-team-info.ant-card {
   .vb-team-link {
+    cursor: pointer;
+
     margin-left: 0.375rem;
+    padding: 0;
+    border: 0;
+
+    color: inherit;
+
+    background: none;
   }
 
   .vb-tag {

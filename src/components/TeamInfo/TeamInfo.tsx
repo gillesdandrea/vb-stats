@@ -147,9 +147,9 @@ const renderMatchs = (
                 {teamB.name} ({teamB.department.num_dep})
               </span>
               {pushModalTeam && (
-                <a className="vb-team-link" onClick={() => pushModalTeam(teamB)}>
+                <button type="button" className="vb-team-link" onClick={() => pushModalTeam(teamB)}>
                   <InfoCircleOutlined />
-                </a>
+                </button>
               )}
             </div>
             <Trophies competition={competition} team={teamB} />

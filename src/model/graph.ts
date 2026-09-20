@@ -124,7 +124,7 @@ export const getGraph = (
   node [fontname="Arial" shape="note" style="filled" fillcolor="white"]
   edge [fontname="Arial" fontsize="8pt" minlen=2 dir="both" arrowtail="dot" arrowsize=0.5]
 
-${teams.map((team: Team, index: number) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
+${teams.map((team: Team) => `  ${getTeamNode(competition, team, day, singleDay, qualified)}`).join('\n')}
 
 ${competition.matchs
   .filter(matchFilter)

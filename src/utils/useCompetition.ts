@@ -3,19 +3,19 @@ import axios from 'axios';
 import Papa from 'papaparse';
 
 import { createMetaStats, metaAddMatch, metaToString } from '@/model/meta';
-import { type Competition, type Entity, getResourceName } from '@/model/model';
+import { type Competition, type Entity, getResourceName, type MatchRow } from '@/model/model';
 import { createCompetition } from '@/model/model-helpers';
 import { processCompetition } from '@/model/model-process';
 
 const useCompetition = (season: number, entity: Entity, category: string): UseQueryResult<Competition, Error> => {
   const resource = getResourceName(season, entity, category);
   return useQuery<Competition, Error>({
-    queryKey: [resource],
+    queryKey: [resource, season, entity, category],
     queryFn: async () => {
       const now = Date.now();
 
       const request = await axios.get(import.meta.env.BASE_URL + '/data/' + resource);
-      const { data } = Papa.parse<string[]>(request.data, {
+      const { data } = Papa.parse<MatchRow>(request.data, {
         header: true,
         delimiter: ';',
         skipEmptyLines: true,

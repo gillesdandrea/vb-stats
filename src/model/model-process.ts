@@ -3,6 +3,7 @@ import {
   type CompetitionDay,
   HIGH,
   type Match,
+  type MatchRow,
   MEDIUM,
   type Pool,
   type Score,
@@ -24,7 +25,7 @@ import {
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
 
-export const createMatch = (competition: Competition, data: any): Match => {
+export const createMatch = (competition: Competition, data: MatchRow): Match => {
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
   const teamB = getTeam(competition, data.EQB_no, data.EQB_nom);
   const day = Number(data.Jo);
@@ -158,14 +159,14 @@ export const addCompetitionMatch = (competition: Competition, match: Match) => {
   updateRating(match, teamA.gstats[day], teamB.gstats[day]);
 };
 
-export const processCompetition = (competition: Competition, datas: any[][]) => {
+export const processCompetition = (competition: Competition, datas: MatchRow[][]) => {
   const isCDF = datas.length > 0 && datas[0][0]['Entité'] === 'ACJEUNES';
 
   // reorder matchs based on results of the first matchs
   if (isCDF) {
     datas
-      .filter((data: any) => data)
-      .forEach((data: any[]) => {
+      .filter((data) => data)
+      .forEach((data) => {
         const poolCount = data.length / 3;
         for (let i = 0; i < poolCount; i++) {
           const m1 = data[3 * i];
@@ -186,27 +187,30 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
   let maxDay = 0;
   datas
     .filter((data) => data)
-    .map((data: any[]) => {
+    .map((data) => {
       // split multiple days in different arrays to support multiple days file
-      const split: any[][] = [];
-      data.forEach((match: any) => {
+      const split: MatchRow[][] = [];
+      data.forEach((match) => {
         const day = Number(match.Jo);
         if (day !== 99 && maxDay < day) maxDay = day;
         if (!split[day]) {
-          split[day] = data.filter((dayMatch: any) => dayMatch.Jo === match.Jo);
+          split[day] = data.filter((dayMatch) => dayMatch.Jo === match.Jo);
         }
       });
       return split;
       // return [data];
     })
-    .forEach((daydata: any[][]) => {
+    .forEach((daydata) => {
       daydata
-        // .filter((data: any[]) => data[0].Jo !== '99') // TODO filter out final phases
-        .map((data: any[]) => {
-          if (data[0].Jo !== '99') return data;
-          return data.filter((data, index) => index < 12).map((data) => ({ ...data, Jo: maxDay + 1, pf: true }));
+        // .filter((data: MatchRow[]) => data[0].Jo !== '99') // TODO filter out final phases
+        .map((data): { rows: MatchRow[]; pf: boolean } => {
+          if (data[0].Jo !== '99') return { rows: data, pf: false };
+          return {
+            rows: data.filter((_row, index) => index < 12).map((row) => ({ ...row, Jo: String(maxDay + 1) })),
+            pf: true,
+          };
         })
-        .forEach((data: any[]) => {
+        .forEach(({ rows: data, pf }) => {
           // add new day
           const day = Number(data[0].Jo);
           const dayCompetition: CompetitionDay = {
@@ -214,7 +218,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
             teams: [],
             matchs: [],
             pools: new Map(),
-            pf: data[0]?.pf,
+            pf,
           };
           competition.dayCount = day;
           competition.days[day] = dayCompetition;
@@ -222,7 +226,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
 
           // process day
           if (!isCDF) {
-            data.forEach((match: any) => {
+            data.forEach((match) => {
               const teamA = getTeam(competition, match.EQA_no, match.EQA_nom);
               const teamB = getTeam(competition, match.EQB_no, match.EQB_nom);
               [teamA, teamB].forEach((team: Team) => {
@@ -283,7 +287,7 @@ export const processCompetition = (competition: Competition, datas: any[][]) => 
           }
 
           // process matchs
-          data.forEach((line: any) => {
+          data.forEach((line) => {
             const match = createMatch(competition, line);
             if (isCDF) {
               match.teamA.pools[day].matchs.push(match);

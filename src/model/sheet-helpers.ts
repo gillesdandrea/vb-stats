@@ -268,13 +268,13 @@ export const notMatch =
 
 export const acceptMatchWon =
   (won = true) =>
-  (sheet: Sheet, csmatch: CSheetMatch, csset: CSheetSet): boolean => {
+  (sheet: Sheet, csmatch: CSheetMatch, _csset: CSheetSet): boolean => {
     return won ? csmatch.count > 0 : csmatch.count < 0;
   };
 
 export const acceptMatchs =
   (matchids: string[]) =>
-  (sheet: Sheet, csmatch: CSheetMatch, csset: CSheetSet): boolean => {
+  (sheet: Sheet, _csmatch: CSheetMatch, _csset: CSheetSet): boolean => {
     return matchids.some((matchid) => matchid.toLowerCase() === sheet.id.toLowerCase());
   };
 
@@ -503,7 +503,7 @@ export const sumCSheetStat = (sheet: Sheet, stat: CSheetStat): CSheetStat => {
     stat.sets++;
     stat.setWon += set.count > 0 ? +1 : 0;
     stat.setLost += set.count < 0 ? +1 : 0;
-    set.points.forEach((point, index) => {
+    set.points.forEach((point) => {
       stat.points++;
       if (point.serve) {
         stat.serves++;

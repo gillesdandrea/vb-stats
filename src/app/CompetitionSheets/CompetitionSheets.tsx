@@ -90,7 +90,7 @@ const Spacer = () => <div style={{ height: 12 }} />;
 const CompetitionSheets = ({ competition, className }: Props) => {
   const { isLoading, isError, data: teamSheets } = useSheets(competition);
 
-  const { blue, red } = presetDarkPalettes;
+  const { blue: _blue, red: _red } = presetDarkPalettes;
 
   const [team, setTeam] = useState<Team>();
   const [teamSetters, setTeamSetters] = useState<CategoryClubSetters>(knownSetters);

@@ -38,7 +38,7 @@ const updateStats = ({
   day: number;
   stats: Stats;
 }): Stats => {
-  const [probabilities, orders] = getPoolProbabilities(pool, day);
+  const [_probabilities, orders] = getPoolProbabilities(pool, day);
   pool.teams.forEach((team, index) => {
     const rank = orders[index];
     const dayRanking = getDayRanking(competition, team, day);
@@ -57,7 +57,7 @@ const updateStats = ({
   return stats;
 };
 
-const Help = ({ competition, day, singleDay, qualified, className }: Props) => {
+const Help = ({ competition, day, singleDay: _singleDay, qualified: _qualified, className: _className }: Props) => {
   const chartSize = 70;
   const { blue, green, gold, red } = presetDarkPalettes;
   const cday = competition.days[day];

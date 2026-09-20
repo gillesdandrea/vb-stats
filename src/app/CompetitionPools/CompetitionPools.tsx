@@ -99,9 +99,9 @@ const renderTeam = ({
         {medals[dayRanking]}
         &nbsp;
         <span className={eliminated ? 'strikethrough' : ''}>{team.name}</span>
-        <a className="vb-team-link" onClick={() => pushModalTeam(team)}>
+        <button type="button" className="vb-team-link" onClick={() => pushModalTeam(team)}>
           <InfoCircleOutlined />
-        </a>
+        </button>
       </div>
 
       <div className="vb-card-content">

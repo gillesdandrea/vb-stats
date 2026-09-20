@@ -6,7 +6,7 @@ import axios from 'axios';
 import Papa from 'papaparse';
 import PDFParser from 'pdf2json';
 
-import { type Entity, seasonToString } from '@/model/model';
+import { type Entity, type MatchRow, seasonToString } from '@/model/model';
 import { type Licenced, type Referee, type SheetMatch, type SheetSet, type SheetTeam } from '@/model/sheet';
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
@@ -78,7 +78,7 @@ const interval = (texts: Token[], marker: string, end?: string) => {
 
 const skip = (texts: Token[], markers: string[] = [], end?: string) => {
   let tokens = texts;
-  markers.forEach((marker, index) => {
+  markers.forEach((marker) => {
     const idx = tokens.findIndex((token) => token.text === marker);
     if (idx >= 0) {
       tokens = tokens.slice(idx + 1);
@@ -140,7 +140,7 @@ const parseSet = (teamA: string, texts: Token[], index: number): SheetSet | null
   const [idx3A, p3A] = createOptional(tokens2, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx2A);
   const [idx4A, p4A] = createOptional(tokens2, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx3A);
   const [idx5A, p5A] = createOptional(tokens2, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx4A);
-  const [idx6A, p6A] = createOptional(tokens2, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx5A);
+  const [_idx6A, p6A] = createOptional(tokens2, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx5A);
   const positionA = [p1A, p2A, p3A, p4A, p5A, p6A].map((pos) => ({
     player: pos.player.padStart(2, '0'),
     substitute: pos.substitute ? pos.substitute.padStart(2, '0') : undefined,
@@ -154,7 +154,7 @@ const parseSet = (teamA: string, texts: Token[], index: number): SheetSet | null
   const [idx3B, p3B] = createOptional(tokens3, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx2B);
   const [idx4B, p4B] = createOptional(tokens3, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx3B);
   const [idx5B, p5B] = createOptional(tokens3, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx4B);
-  const [idx6B, p6B] = createOptional(tokens3, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx5B);
+  const [_idx6B, p6B] = createOptional(tokens3, ['player', 'substitute', 'scoreIn', 'scoreOut'], idx5B);
   const positionB = [p1B, p2B, p3B, p4B, p5B, p6B].map((pos) => ({
     player: pos.player.padStart(2, '0'),
     substitute: pos.substitute ? pos.substitute.padStart(2, '0') : undefined,
@@ -213,8 +213,8 @@ const parseSet = (teamA: string, texts: Token[], index: number): SheetSet | null
 
 const parseSheetMatch = (texts: Token[]): SheetMatch => {
   const tokens1 = skip(texts, ['Licence', 'Licence', 'Licence']);
-  const [tokens2, playersL] = getArray(tokens1, ['number', 'name', 'licence']);
-  const [tokens3, playersR] = getArray(tokens2, ['number', 'name', 'licence']);
+  const [tokens2, playersL] = getArray<Licenced>(tokens1, ['number', 'name', 'licence']);
+  const [tokens3, playersR] = getArray<Licenced>(tokens2, ['number', 'name', 'licence']);
 
   const xl = tokens1[0].x;
   const xr = tokens2[0].x;
@@ -222,11 +222,11 @@ const parseSheetMatch = (texts: Token[]): SheetMatch => {
 
   const tokens4 = skip(tokens3, ['LIBEROS']);
   const [tokens5, liberosL] = getArray<Licenced>(tokens4, ['number', 'name', 'licence']);
-  const [tokens6, liberosR] = getArray<Licenced>(tokens5, ['number', 'name', 'licence']);
+  const [_tokens6, liberosR] = getArray<Licenced>(tokens5, ['number', 'name', 'licence']);
 
   const tokens7 = skip(tokens4, ['OFFICIELS']);
   const [tokens8, officielsL] = getArray<Licenced>(tokens7, ['number', 'name', 'licence']);
-  const [tokens9, officielsR] = getArray<Licenced>(tokens8, ['number', 'name', 'licence']);
+  const [_tokens9, officielsR] = getArray<Licenced>(tokens8, ['number', 'name', 'licence']);
 
   const first = skip(texts, ['1er'], '2ème');
   const second = skip(texts, ['2ème'], 'Marqueur');
@@ -234,7 +234,8 @@ const parseSheetMatch = (texts: Token[]): SheetMatch => {
   //const assistant = skip(texts, ['Marq.Ass.'], 'R.Salle');
   //const local = skip(texts, ['R.Salle'], 'Juges');
 
-  const setLicence = (player: any) => (player.licence !== '0' ? player : { ...player, licence: player.number });
+  const setLicence = (player: Licenced): Licenced =>
+    player.licence !== '0' ? player : { ...player, licence: player.number };
 
   const teamA: SheetTeam = {
     name: texts[7].text,
@@ -340,7 +341,7 @@ const cachedMatchs: Record<string, SheetMatch> = JSON.parse(sfile);
 const codent = entity === 'ACJEUNES' ? 'CDF' : entity;
 const mpath = `./public/data/FFVB-${season}-${codent}-${division}.CSV`;
 const mfile = await fs.readFile(mpath, { encoding: 'utf8' });
-const { data: csv } = await Papa.parse(mfile, {
+const { data: csv } = await Papa.parse<MatchRow>(mfile, {
   header: true,
   delimiter: ';',
   skipEmptyLines: true,
@@ -348,7 +349,7 @@ const { data: csv } = await Papa.parse(mfile, {
 
 const sheetMatchs: Record<string, SheetMatch> = {};
 for (const { Match: matchId } of csv.filter(
-  (line: any): boolean =>
+  (line: MatchRow): boolean =>
     !!cachedMatchs[line.Match] ||
     ((line.Match === pattern ||
       line.EQA_no.includes(pattern) ||
@@ -356,7 +357,7 @@ for (const { Match: matchId } of csv.filter(
       line.EQA_nom.includes(pattern) ||
       line.EQB_nom.includes(pattern)) &&
       line.Set),
-) as any[]) {
+)) {
   try {
     const cached = cachedMatchs[matchId];
     const match = cached ? cached : await parsePDF(season, entity, matchId);
