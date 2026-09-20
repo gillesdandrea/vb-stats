@@ -8,8 +8,10 @@ const iaxios = axios.create({ httpsAgent });
 
 // --- Configuration ---
 
-const SEASONS = [2022, 2023, 2024, 2025, 2026];
+const SEASONS = [2022, 2023, 2024, 2025, 2026, 2027];
 const CATEGORY_CODES: Record<string, string> = {
+  M13F: 'BFA',
+  M13M: 'BMA',
   M15F: 'MFA',
   M15M: 'MMA',
   M18F: 'CFA',
@@ -59,7 +61,8 @@ const fetchClubList = async (season: number, competCode: string): Promise<ClubIn
     const code = tds[i];
     const name = tds[i + 1];
     const city = tds[i + 2];
-    if (code && /^\d{7}$/.test(code)) {
+    // Corsican club codes carry a letter department (02A…, 02B…) instead of two digits
+    if (code && /^\d(?:\d{2}|2[AB])\d{4}$/.test(code)) {
       // Extract department from club code (digits 2-3, 1-indexed)
       const dept = code.substring(1, 3);
       clubs.push({ code, name, city, department: dept });
