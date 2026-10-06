@@ -6,6 +6,7 @@ import MatchSheetLink from '@/components/MatchSheetLink/MatchSheetLink';
 import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Match, type Team } from '@/model/model';
 import {
+  formatSets,
   getDayRanking,
   getTeamMatch,
   getTeamOpposition,
@@ -122,9 +123,7 @@ const renderMatchs = (
               <CloseCircleTwoTone twoToneColor="red" />
             )}
             &nbsp;
-            <span className="vb-tag">
-              {match.setA} - {match.setB}
-            </span>
+            <span className="vb-tag">{formatSets(match)}</span>
             &nbsp;
             <span className="vb-score-points">
               {match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}

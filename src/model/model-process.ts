@@ -21,6 +21,7 @@ import {
   getTeamRating,
   getWinProbability,
   isTeamInCourse,
+  parseSets,
   rateMatch,
 } from './model-helpers';
 import { rankingSorter } from './model-sorters';
@@ -29,9 +30,7 @@ export const createMatch = (competition: Competition, data: MatchRow): Match => 
   const teamA = getTeam(competition, data.EQA_no, data.EQA_nom);
   const teamB = getTeam(competition, data.EQB_no, data.EQB_nom);
   const day = Number(data.Jo);
-  const [ssetA, ssetB] = data.Set ? data.Set.split('/') : ['0', '0'];
-  const setA = ssetA === 'F' || ssetA === 'P' ? 0 : Number(ssetA);
-  const setB = ssetB === 'F' || ssetB === 'P' ? 0 : Number(ssetB);
+  const [{ sets: setA, sanction: sanctionA }, { sets: setB, sanction: sanctionB }] = parseSets(data.Set);
   const [stotalA, stotalB] = data.Total ? data.Total.split('-') : ['0', '0'];
   const totalA = Number(stotalA);
   const totalB = Number(stotalB);
@@ -61,6 +60,8 @@ export const createMatch = (competition: Competition, data: MatchRow): Match => 
     winner,
     setA,
     setB,
+    sanctionA,
+    sanctionB,
     totalA,
     totalB,
     score,
@@ -172,9 +173,7 @@ export const processCompetition = (competition: Competition, datas: MatchRow[][]
           const m1 = data[3 * i];
           const m2 = data[3 * i + 1];
           const m3 = data[3 * i + 2];
-          const [ssetA, ssetB] = m1.Set ? m1.Set.split('/') : ['0', '0'];
-          const setA = ssetA === 'F' ? 0 : Number(ssetA);
-          const setB = ssetB === 'F' ? 0 : Number(ssetB);
+          const [{ sets: setA }, { sets: setB }] = parseSets(m1.Set);
           const winner = setA > setB ? m1.EQA_no : m1.EQB_no;
           if (winner !== m2.EQA_no && winner !== m2.EQB_no && m1.Jo !== '99') {
             data[3 * i + 1] = m3;

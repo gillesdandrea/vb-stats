@@ -15,6 +15,7 @@ import Trophies from '@/components/Trophies/Trophies';
 import { type Competition, type Match, type Pool, type Team } from '@/model/model';
 import {
   filterTeam,
+  formatSets,
   getBoard,
   getDayRanking,
   getPoolProbabilities,
@@ -171,9 +172,7 @@ const renderMatch = ({ competition, match }: { competition: Competition; match: 
       {match.winner ? (
         <div className="vb-score-details">
           <div className="vb-score-sets">
-            <span className="vb-tag">
-              {match.setA} - {match.setB}
-            </span>
+            <span className="vb-tag">{formatSets(match)}</span>
           </div>
           <div className="vb-score-points">
             <span>{match.score.map((score) => `${score.scoreA}-${score.scoreB}`).join(' ; ')}</span>
@@ -315,7 +314,7 @@ const CompetitionPools = ({ competition, day, singleDay, qualified, tokens, setT
                         ).toFixed(1)}%`}</div>
                         <div style={{ width: '6rem' }}>{`${qa.toFixed(2)} - ${qb.toFixed(2)}`}</div>
                         <div style={{ width: '1.5rem' }}>|</div>
-                        <div style={{ width: '3rem' }}>{`${match.setA} - ${match.setB}`}</div>
+                        <div style={{ width: '3rem' }}>{formatSets(match)}</div>
                         <div>{`${match.teamA.name} - ${match.teamB.name}`}</div>
                       </div>
                     );

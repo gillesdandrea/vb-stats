@@ -1,7 +1,7 @@
 import { Rating, TrueSkill, winProbability } from 'ts-trueskill';
 
 import { getDepartment } from './geography';
-import { type Competition, type Entity, type Match, type Pool, type Stats, type Team } from './model';
+import { type Competition, type Entity, type Match, type Pool, type Sanction, type Stats, type Team } from './model';
 import { matchSorter, rankingSorter, ratingSorter, Sorting } from './model-sorters';
 
 // mu, sigma, beta, tau, drawProbability
@@ -15,6 +15,25 @@ import { matchSorter, rankingSorter, ratingSorter, Sorting } from './model-sorte
 const ts = new TrueSkill(undefined, undefined, undefined, undefined, 0);
 const TIGHT_FACTOR = 4 / 5; // 1 to disable tight score management
 const MIN_DELTA = 0.0001;
+
+export interface SetResult {
+  readonly sets: number;
+  readonly sanction?: Sanction;
+}
+
+// FFVB writes sets as " 2/0" (leading space); a team losing by forfait (F) or penalty (P) wins no set
+const parseSetResult = (value: string): SetResult => {
+  const trimmed = value.trim();
+  return trimmed === 'F' || trimmed === 'P' ? { sets: 0, sanction: trimmed } : { sets: Number(trimmed) };
+};
+
+export const parseSets = (sets: string): [SetResult, SetResult] => {
+  const [setA, setB] = sets ? sets.split('/') : ['0', '0'];
+  return [parseSetResult(setA), parseSetResult(setB)];
+};
+
+export const formatSets = (match: Match): string =>
+  `${match.sanctionA ?? match.setA} - ${match.sanctionB ?? match.setB}`;
 
 export const filterTeam = (team: Team, tokens: string[]) =>
   tokens.length === 0 ||
@@ -174,6 +193,8 @@ export const getTeamMatch = (team: Team, match: Match): Match => {
     winner: match.winner,
     setA: match.setB,
     setB: match.setA,
+    sanctionA: match.sanctionB,
+    sanctionB: match.sanctionA,
     totalA: match.totalB,
     totalB: match.totalA,
     score: match.score.map((score) => ({ scoreA: score.scoreB, scoreB: score.scoreA })),

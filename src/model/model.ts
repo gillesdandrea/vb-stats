@@ -84,6 +84,9 @@ export interface Stats {
   matchs: Match[];
 }
 
+// Forfait (F) or penalty (P): the team lost the match without playing it
+export type Sanction = 'F' | 'P';
+
 export interface Score {
   readonly scoreA: number;
   readonly scoreB: number;
@@ -112,6 +115,8 @@ export interface Match {
   readonly winner?: Team;
   readonly setA: number;
   readonly setB: number;
+  readonly sanctionA?: Sanction;
+  readonly sanctionB?: Sanction;
   readonly totalA: number;
   readonly totalB: number;
   readonly score: Score[];
